@@ -1,0 +1,1 @@
+ & d:\2026\bookshelves\server\venv\Scripts\Activate.ps1            

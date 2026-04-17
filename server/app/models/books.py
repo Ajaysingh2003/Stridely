@@ -1,11 +1,26 @@
-from typing import Optional
-from beanie import Document , Indexed ,init_beanie
-from pydantic import EmailStr, Field
+from typing import Optional, List
+from beanie import Document, Indexed , Link
+from pydantic import Field, BaseModel
+from bson import ObjectId
+from models.collection import Collection
+
+
+class Author(BaseModel):
+    name: str
+    bio: Optional[str] = None
 
 class Books(Document):
-    Title : str =Indexed(unique=True)
-    Strr:str
-
-    class Setting:
-        name="users"
-
+    title: str = Indexed(unique=True)
+    author: Author
+    collections:List[Link[Collection]]
+    language: str
+    book_cover:str
+    isFree:bool
+    isDraft:bool
+    rating: float
+    duration: Optional[str] = None
+    whats_inside: Optional[str] = None
+    takeaways: List[str] = Field(default_factory=list)
+    quotes: List[str] = Field(default_factory=list)
+    class Settings:
+        name = "books"
