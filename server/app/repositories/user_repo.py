@@ -1,5 +1,5 @@
-from app.db.client import db
+from app.models.user import User
 
-
-def Create_user(data):
-    return db.insert()
+async def create_user_repo(data: User):
+    await data.insert()
+    return data

@@ -1,8 +1,8 @@
 import 'package:app/core/app_background.dart';
 import 'package:app/features/home/presentation/widget/banner_widget.dart';
+import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,43 +14,90 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    // int _currentIndex = 0;
     return Scaffold(
+      extendBody: true,
       drawer: const SideMenu(),
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-      automaticallyImplyLeading:false,
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         shadowColor: Colors.transparent,
         scrolledUnderElevation: 0,
-
-        titleSpacing: 16, // controls left spacing globally
-
-        title: Image.asset("images/codex-color.png", height: 30),
+        titleSpacing: 26,
+        title: Row(
+          children: [
+            Image.asset("assets/images/codex-color.png", height: 30),
+            SizedBox(width: 10,),
+            Text(
+              "Stridely",
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Colors.white,
+                fontStyle: FontStyle.italic,
+                fontSize: 17,
+              ),
+            ),
+          ],
+        ),
 
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: Builder(
-              builder: (context) =>
-                 IconButton(
-              icon: SvgPicture.asset(
-                "images/menu.svg",
-                color: Colors.white,
-                height: 30,
+              builder: (context) => IconButton(
+                icon: Icon(
+                  Icons.sort,
+                  size: 36,
+                  color: Color.fromARGB(174, 255, 255, 255),
+                ),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
               ),
-              onPressed: () {
-                 Scaffold.of(context).openDrawer();
-              },
-            ),
-                  
             ),
           ),
         ],
+
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(2),
+          child: Container(
+            height: 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF000000),
+                  const Color(0xFF3B7BFB),
+                  const Color(0xFF000000),
+                ],
+                stops: [0, 0.5, 1],
+              ),
+            ),
+          ),
+        ),
       ),
-      body: AppBackground(child: Column(children: const [BannerWidget()])),
+
+      bottomNavigationBar: BottomNavigation(),
+
+      body: AppBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 100), // space for bottom nav
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                BannerWidget(),
+                SizedBox(height: 20),
+                BannerWidget(),
+                SizedBox(height: 20),
+                BannerWidget(),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
