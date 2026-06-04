@@ -1,10 +1,10 @@
-from beanie import Document
+from beanie import Document,PydanticObjectId
 from bson import ObjectId
 from datetime import datetime
 from pydantic import Field
 
 class Content(Document):
-    book_id:ObjectId
+    book_id:PydanticObjectId
     title:str
     page:int
     content:str
@@ -13,3 +13,9 @@ class Content(Document):
 
     class Settings:
         name="content"
+        indexes = [
+            [
+                ("book_id", 1), 
+                ("page", 1)
+            ]
+        ]

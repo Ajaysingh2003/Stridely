@@ -5,6 +5,7 @@ from beanie import PydanticObjectId
 class CreateCollection(BaseModel):
     title:str
     thumbnail:str
+    
 
 class CollectionType(BaseModel):
     title:str
