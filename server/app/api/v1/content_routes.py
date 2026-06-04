@@ -3,12 +3,14 @@ from typing import List, Any
 from fastapi import APIRouter, HTTPException, status, Response, Depends
 
 from app.crud.middleware.auth import required_role 
-from app.schema.collection import (
-    CreateCollection as createCollectionRequest,
-    CreatecollectionResponse,
-    getCollection
+from app.schema.content import (
+    CreateContentType,
+    ContentResponse,
+    CreateContentResponse,
+    UpdateContentResponse
 )
-from app.service.collection import CollectionService 
+
+from app.service.content import ContentService 
 
 content_router = APIRouter()
 current_env = os.getenv("ENV", "development").lower()
@@ -16,19 +18,21 @@ current_env = os.getenv("ENV", "development").lower()
 # ---------------------------------------------------------
 # 🚀 CREATE COLLECTION
 # ---------------------------------------------------------
+
 @content_router.post(
     "/create", 
-    response_model=CreatecollectionResponse, 
+    response_model=CreateContentResponse, 
     status_code=status.HTTP_201_CREATED
 )
 
 async def create_content(
-    payload: createCollectionRequest,
+    payload: CreateContentType,
     user: Any = Depends(required_role("admin"))
     ):
     try:
         # Service handles duplication check and creation logic
-        data = await CollectionService.create(payload)
+        
+        data = await ContentService.create(payload)
 
         return {
             "success": True,
@@ -51,13 +55,14 @@ async def create_content(
 # ---------------------------------------------------------
 @content_router.get(
     "/get/{book_id}", 
-    response_model=getCollection, 
+    response_model=ContentResponse, 
     status_code=status.HTTP_200_OK
 )
+
 async def get_content(book_id:str):
     try:
         # Call clean service layer method
-        data = await CollectionService.get_all()
+        data = await ContentService.get_all(book_id)
         
         return {
             "success": True,
@@ -78,18 +83,20 @@ async def get_content(book_id:str):
 # ---------------------------------------------------------
 # 🚀 UPDATE COLLECTION (New)
 # ---------------------------------------------------------
+
 @content_router.patch(
-    "/update/{collection_id}", 
-    response_model=CreatecollectionResponse, 
+    "/update/{content_id}", 
+    response_model=UpdateContentResponse, 
     status_code=status.HTTP_200_OK
 )
 async def update_collection_route(
-    collection_id: str,
-    payload: dict,  # Or replace with an UpdateCollection Pydantic schema
+    content_id: str,
+    payload: dict,
     user: Any = Depends(required_role("admin"))
 ):
     try:
-        updated_data = await CollectionService.update(collection_id, payload)
+        print("4031")
+        updated_data = await ContentService.update(content_id, payload)
         
         return {
             "success": True,
@@ -111,15 +118,15 @@ async def update_collection_route(
 # 🚀 DELETE COLLECTION (New)
 # ---------------------------------------------------------
 @content_router.delete(
-    "/delete/{collection_id}", 
+    "/delete/{content_id}", 
     status_code=status.HTTP_200_OK
 )
 async def delete_collection_route(
-    collection_id: str,
+    content_id: str,
     user: Any = Depends(required_role("admin"))
 ):
     try:
-        await CollectionService.delete(collection_id)
+        await ContentService.delete(content_id)
         
         return {
             "success": True,
