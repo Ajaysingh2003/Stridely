@@ -5,3 +5,4 @@ class Collection(Document):
     thumbnail:str
     class Settings:
         name="collection"
+

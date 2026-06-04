@@ -2,6 +2,11 @@ fastapi
 uvicorn
 python-dotenv
 pydantic
-motor
-beanie
-'pydantic[email]'
+pydantic
+argon2-cffi
+pyjwt
+dotenv
+email-validator
+beanie==1.29.0
+motor==3.6.0
+pymongo==4.9.2
