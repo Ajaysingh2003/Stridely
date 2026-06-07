@@ -2,7 +2,8 @@ import os
 from typing import List, Any
 from fastapi import APIRouter, HTTPException, status, Response, Depends
 
-from app.crud.middleware.auth import required_role 
+from app.crud.middleware.auth import required_role ,check_premium_book_access
+
 from app.schema.content import (
     CreateContentType,
     ContentResponse,
@@ -14,10 +15,6 @@ from app.service.content import ContentService
 
 content_router = APIRouter()
 current_env = os.getenv("ENV", "development").lower()
-
-# ---------------------------------------------------------
-# 🚀 CREATE COLLECTION
-# ---------------------------------------------------------
 
 @content_router.post(
     "/create", 
@@ -50,16 +47,13 @@ async def create_content(
             }
         )
 
-# ---------------------------------------------------------
-# 🚀 GET ALL COLLECTIONS
-# ---------------------------------------------------------
 @content_router.get(
     "/get/{book_id}", 
     response_model=ContentResponse, 
     status_code=status.HTTP_200_OK
 )
 
-async def get_content(book_id:str):
+async def get_content(book_id:str,user: Any = Depends(check_premium_book_access)):
     try:
         # Call clean service layer method
         data = await ContentService.get_all(book_id)
@@ -80,15 +74,12 @@ async def get_content(book_id:str):
             }
         )
 
-# ---------------------------------------------------------
-# 🚀 UPDATE COLLECTION (New)
-# ---------------------------------------------------------
-
 @content_router.patch(
     "/update/{content_id}", 
     response_model=UpdateContentResponse, 
     status_code=status.HTTP_200_OK
 )
+
 async def update_collection_route(
     content_id: str,
     payload: dict,
@@ -114,9 +105,6 @@ async def update_collection_route(
             }
         )
 
-# ---------------------------------------------------------
-# 🚀 DELETE COLLECTION (New)
-# ---------------------------------------------------------
 @content_router.delete(
     "/delete/{content_id}", 
     status_code=status.HTTP_200_OK

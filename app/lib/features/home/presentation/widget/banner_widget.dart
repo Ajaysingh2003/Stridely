@@ -7,7 +7,7 @@ class BannerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 1850,
+      height: 850,
       width: double.infinity,
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
