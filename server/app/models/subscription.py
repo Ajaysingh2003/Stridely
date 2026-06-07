@@ -17,8 +17,7 @@ class Subscription(Document):
     store: Optional[str] = None            # "PLAY_STORE", "APP_STORE"
 
     class Settings:
-        name = "user_subscriptions"
-        # 🚀 CRUCIAL: Index user_id so lookup queries remain lightning-fast
+        name = "subscriptions"
         indexes = [
             "user_id"
         ]

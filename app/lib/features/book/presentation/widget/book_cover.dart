@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+// 1. 🚀 Import the package you just downloaded
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
+
+class BookPoster extends StatelessWidget {
+  final String poster;
+
+  const BookPoster({super.key, required this.poster});
+
+  @override
+  Widget build(BuildContext context) {
+    // Calculate dimensions dynamically for a perfect look on all device sizes
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double posterHeight = screenWidth * 0.75;
+    final double posterWidth = posterHeight * 0.65;
+
+    return SizedBox(
+      width: double.infinity,
+      height: posterHeight + 40, // Padding buffer for the drop shadow
+      child: Center(
+        child: Container(
+          width: posterWidth,
+          height: posterHeight,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(120),
+                blurRadius: 6,
+                spreadRadius: 2,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            // 2. 🚀 Swap out Image.network for CachedNetworkImage
+            child: CachedNetworkImage(
+              imageUrl: poster,
+              fit: BoxFit.cover,
+
+              // Smooth fade-in animation once the image loads from the network or cache
+              fadeInDuration: const Duration(milliseconds: 250),
+
+              // 3. 🚀 The loading state UI (Skeleton Loader)
+              placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: const Color(
+                  0xFF2A2828,
+                ), // The main background color of the skeleton card
+                highlightColor: const Color(
+                  0xFF3A3838,
+                ), // The shining light color that sweeps across it
+                period: const Duration(
+                  milliseconds: 1500,
+                ), // Controls how fast the wave moves
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color:
+                      Colors.white, // This color acts as a mask, keep it white
+                ),
+              ),
+
+              // 4. 🚀 The fallback UI if the URL breaks or network is lost entirely
+              errorWidget: (context, url, error) => Container(
+                color: const Color(0xFF2D2A2A),
+                padding: const EdgeInsets.all(16),
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.menu_book_rounded,
+                      color: Colors.white38,
+                      size: 40,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Cover Unavailable",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white38,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

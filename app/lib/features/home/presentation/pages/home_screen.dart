@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               "Stridely",
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.white,
+                color: Colors.black,
                 fontStyle: FontStyle.italic,
                 fontSize: 17,
               ),
