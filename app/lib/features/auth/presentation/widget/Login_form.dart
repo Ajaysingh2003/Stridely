@@ -55,30 +55,26 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    final themeColors = Theme.of(context).colorScheme;
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // --- EMAIL ---
-          const Text(
-            'Email',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 10),
+          Text('Email', style: Theme.of(context).textTheme.headlineSmall),
+
+          const SizedBox(height: 12),
           TextFormField(
-            style: const TextStyle(color: Colors.white),
+            style: Theme.of(context).textTheme.bodySmall,
+
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               hintText: 'Enter your email address',
-              hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+              hintStyle: const TextStyle(color: Colors.black, fontSize: 14),
               filled: true,
-              fillColor: const Color(0xFF222222),
+              fillColor: const Color(0xFFF3F3F3),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -91,21 +87,16 @@ class _LoginFormState extends State<LoginForm> {
               return null;
             },
           ),
-
           // --- CONDITIONAL PASSWORD SECTION ---
           if (showPasswordField) ...[
-            const SizedBox(height: 20),
-            const Text(
+            const SizedBox(height: 12),
+             Text(
               'Password',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+            style: Theme.of(context).textTheme.headlineSmall
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             TextFormField(
-              style: const TextStyle(color: Colors.white),
+              style: Theme.of(context).textTheme.bodySmall,
               controller: _passwordController,
               keyboardType: TextInputType.visiblePassword,
               obscureText: _isPasswordObscured,
@@ -113,7 +104,7 @@ class _LoginFormState extends State<LoginForm> {
                 hintText: 'Enter your password',
                 hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
                 filled: true,
-                fillColor: const Color(0xFF222222),
+                fillColor: themeColors.secondary,
                 suffixIcon: IconButton(
                   icon: Icon(
                     _isPasswordObscured
@@ -158,9 +149,12 @@ class _LoginFormState extends State<LoginForm> {
                 onPressed: () {
                   // Navigate to reset password screen
                 },
-                child: const Text(
+                child: Text(
                   "Forgot Password?",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    decoration: TextDecoration.underline,
+                    decorationColor: Theme.of(context).colorScheme.surface,
+                  ),
                 ),
               ),
             ),
@@ -173,31 +167,55 @@ class _LoginFormState extends State<LoginForm> {
             SizedBox(
               width: double.infinity,
               height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      // Your exact custom Color rgb(33, 33, 33)
+                      color: const Color.fromARGB(
+                        255,
+                        33,
+                        33,
+                        33,
+                      ).withOpacity(0.1),
+                    
+                      blurRadius: 1,
+
+                      // Increased slightly so it evenly expands outwards past the button edges
+                      spreadRadius: 1.5,
+
+                      // Changed to zero so the shadow doesn't drop down to the bottom
+                      offset: Offset.zero,
+                    ),
+                  ],
                 ),
-                onPressed: _isLoading ? null : _handleContinueAction,
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.black,
-                          strokeWidth: 2,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeColors.primary,
+                    // foregroundColor: Colors.black,
+                    elevation: 0,
+                    // shadowColor: themeColors.secondary.withOpacity(0.4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: _isLoading ? null : _handleContinueAction,
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        ) 
+                      : Text(
+                          'Continue',
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(color: themeColors.onPrimary),
                         ),
-                      )
-                    : Text(
-                        showPasswordField ? 'Login' : 'Continue',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                ),
               ),
             ),
 
@@ -207,8 +225,8 @@ class _LoginFormState extends State<LoginForm> {
               height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
+                  backgroundColor: themeColors.primary,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -224,11 +242,9 @@ class _LoginFormState extends State<LoginForm> {
                         ),
                       )
                     : Text(
-                        showPasswordField ? 'Login' : 'Continue',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        'Login',
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(color: themeColors.onPrimary),
                       ),
               ),
             ),

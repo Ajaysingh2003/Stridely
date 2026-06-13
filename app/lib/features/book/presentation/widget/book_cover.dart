@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // 1. 🚀 Import the package you just downloaded
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BookPoster extends StatelessWidget {
@@ -12,35 +13,35 @@ class BookPoster extends StatelessWidget {
   Widget build(BuildContext context) {
     // Calculate dimensions dynamically for a perfect look on all device sizes
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double posterHeight = screenWidth * 0.75;
+    final double posterHeight = screenWidth * 0.55;
     final double posterWidth = posterHeight * 0.65;
 
+    final themeColors = Theme.of(context).colorScheme;
     return SizedBox(
       width: double.infinity,
-      height: posterHeight + 40, // Padding buffer for the drop shadow
+      height: posterHeight + 20, // Padding buffer for the drop shadow
       child: Center(
         child: Container(
           width: posterWidth,
           height: posterHeight,
+
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
+            color: Colors.red,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withAlpha(120),
-                blurRadius: 6,
+                blurRadius: 4,
                 spreadRadius: 2,
-                offset: const Offset(0, 10),
+                offset: const Offset(0, 1),
               ),
             ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            // 2. 🚀 Swap out Image.network for CachedNetworkImage
             child: CachedNetworkImage(
               imageUrl: poster,
               fit: BoxFit.cover,
-
-              // Smooth fade-in animation once the image loads from the network or cache
               fadeInDuration: const Duration(milliseconds: 250),
 
               // 3. 🚀 The loading state UI (Skeleton Loader)

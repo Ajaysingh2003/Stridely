@@ -7,27 +7,26 @@ class CustomBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 37, 37, 37),
+        color: Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
+            color: const Color.fromARGB(255, 33, 33, 33).withValues(alpha: 0.15),
 
-            blurRadius: 10,
+            blurRadius: 1,
 
-            spreadRadius: 1,
+            spreadRadius: 0.2,
 
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 1),
           ),
         ],
       ),
       child: IconButton(
         onPressed: () => Navigator.maybePop(context),
-        icon: const Icon(
+        icon: Icon(
           Icons.arrow_back_ios_new,
-          color: Colors.white,
-
-          size: 20,
+          color: Theme.of(context).colorScheme.onSecondary,
+          size: 18,
         ),
       ),
     );

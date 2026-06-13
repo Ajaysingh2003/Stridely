@@ -17,17 +17,19 @@ class _LoginPageState extends State<LoginPage> {
     // int _currentIndex = 0;
     return Scaffold(
       extendBody: true,
-      backgroundColor: Color(0xFF191717),
+      
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       // extendBodyBehindAppBar: true,
       body: Container(
         child: SafeArea(
+          
           child: SingleChildScrollView(
+            
             padding: const EdgeInsets.only(bottom: 100), // space for bottom nav
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 LoginView()
-    
               ],
             ),
           ),

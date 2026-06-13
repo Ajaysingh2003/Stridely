@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class AuthHeader extends StatelessWidget {
   final String title;
   final String subText;
-  const AuthHeader({super.key, required this.title,required this.subText});
+  const AuthHeader({super.key, required this.title, required this.subText});
 
   void _openTermsPage(BuildContext context) {
     print("Navigate to Terms of Use Page or Open Web URL");
@@ -28,7 +28,8 @@ class AuthHeader extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-              color: Colors.white,
+              // color: Colors.white,
+
               // fontStyle: FontStyle.italic,
               height: 1.2,
               fontSize: 26,
@@ -45,22 +46,24 @@ class AuthHeader extends StatelessWidget {
             text: TextSpan(
               // Base style inherited from your existing theme
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey, // Base text color
+                // color: Colors.grey, // Base text color
               ),
               children: [
-                 TextSpan(text: subText),
+                TextSpan(text: subText,style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: const Color(0x9F000000)
+                )),
 
- 
-                // 🚀 The clickable, styled link section
                 TextSpan(
                   text: " Terms of Use",
-                  style: const TextStyle(
-                    color: Colors.white70, // Link color
-                    fontWeight: FontWeight.bold, // Makes it bold
-                    decoration:
-                        TextDecoration.underline, // Adds a link underline
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.underline,
+
+                    decorationColor: Theme.of(context).colorScheme.onSurface,
+
+                    decorationThickness: 1.5,
                   ),
-                  // 🚀 Captures the tap gesture event natively
                   recognizer: TapGestureRecognizer()
                     ..onTap = () => _openTermsPage(context),
                 ),

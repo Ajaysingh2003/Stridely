@@ -10,13 +10,32 @@ class BookTypography extends StatelessWidget {
     return Container(
       width: double.infinity,
       child: Column(
-        
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Summary"),
-          Text(title),
-          Text(author),
+          Text(
+            "SUMMARY",
+
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontSize: 12),
+          ),
+          const SizedBox(height: 20),
+          Center(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            author,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              // fontWeight: FontWeight.w500,
+              fontSize: 12
+            ),
+          ),
         ],
       ),
     );
