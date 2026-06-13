@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// 1. 🚀 Import the package you just downloaded
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shimmer/shimmer.dart';
@@ -43,8 +42,7 @@ class BookPoster extends StatelessWidget {
               imageUrl: poster,
               fit: BoxFit.cover,
               fadeInDuration: const Duration(milliseconds: 250),
-
-              // 3. 🚀 The loading state UI (Skeleton Loader)
+              
               placeholder: (context, url) => Shimmer.fromColors(
                 baseColor: const Color(
                   0xFF2A2828,

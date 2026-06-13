@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class BookPage extends StatefulWidget {
   final String title;
+
   const BookPage({super.key, this.title = "Rich Dad Poor Dad"});
 
   @override
@@ -12,7 +13,8 @@ class BookPage extends StatefulWidget {
 
 class _BookPageState extends State<BookPage> {
   final ScrollController _scrollController = ScrollController();
-  static const double _expandedHeight = 400.0;
+
+  static const double _expandedHeight = 380;
 
   @override
   void dispose() {
@@ -20,31 +22,26 @@ class _BookPageState extends State<BookPage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Widget _buildHeroBackground() {
-    print(_scrollController);
-    print("check-3");
-
     return AnimatedBuilder(
-      animation: _scrollController, // listens directly to scroll
+      animation: _scrollController,
+      child: const BookHero(),
       builder: (context, child) {
-        // ✅ Compute values here — only this widget rebuilds, not BookPage
-        double scrollOffset = 0.0;
+        double offset = 0;
+
         if (_scrollController.hasClients) {
-          scrollOffset = _scrollController.offset;
+          offset = _scrollController.offset;
         }
 
-        final double scrollProgress =
-            (scrollOffset / (_expandedHeight - kToolbarHeight)).clamp(0.0, 1.0);
-        final double imageScale = 1.0 - (scrollProgress * 0.5);
-        final double imageOpacity = (1.0 - scrollProgress * 1.4).clamp(
+        final progress = (offset / (_expandedHeight - kToolbarHeight)).clamp(
           0.0,
           1.0,
         );
+
+        final imageScale = 1.0 - (progress * 0.45);
+
+        final imageOpacity = (1.0 - (progress * 1.4)).clamp(0.0, 1.0);
+
         return Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -55,133 +52,163 @@ class _BookPageState extends State<BookPage> {
           ),
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(top: 56.0),
-              child: LayoutBuilder(
-                builder: (context, constraints) => Transform.scale(
-                  scale: imageScale,
-                  alignment: Alignment.topCenter,
-                  child: Opacity(
-                    opacity: imageOpacity,
-                    child: SizedBox(
-                      width: constraints.maxWidth,
-                      height: constraints.maxHeight,
-                      child: child, // ✅ child is cached, not rebuilt
-                    ),
-                  ),
-                ),
+              padding: const EdgeInsets.only(top: 0),
+              child: Transform.scale(
+                scale: imageScale,
+                alignment: AlignmentDirectional(0, -5),
+                child: Opacity(opacity: imageOpacity, child: child),
               ),
             ),
           ),
         );
       },
-      // ✅ BookHero is built once and passed as cached child
-      child: const BookHero(),
+    );
+  }
+
+  Widget _buildTitle() {
+    return AnimatedBuilder(
+      animation: _scrollController,
+      builder: (context, _) {
+        double offset = 0;
+
+        if (_scrollController.hasClients) {
+          offset = _scrollController.offset;
+        }
+
+        final showTitle = offset > 260;
+
+        return AnimatedOpacity(
+          opacity: showTitle ? 1 : 0,
+          duration: const Duration(milliseconds: 200),
+          child: Text(
+            widget.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 18,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStartReadingButton() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: () {},
+        child: Container(
+          height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF3B7BFB),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+              SizedBox(width: 8),
+              Text(
+                "Start Reading",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeColors = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: colors.surface,
       extendBody: true,
-      backgroundColor: themeColors.surface,
-      bottomNavigationBar: _buildBottomBar(context),
+      // bottomNavigationBar: _buildBottomBar(context),
       body: CustomScrollView(
         controller: _scrollController,
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
+        physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: _expandedHeight,
-            collapsedHeight: 90,
             pinned: true,
-            elevation: 50,
-            scrolledUnderElevation: 100,
-            backgroundColor: const Color(0xFF0F172A),
-            automaticallyImplyLeading: false,
             stretch: true,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            backgroundColor: const Color(0xFF0F172A),
+            expandedHeight: _expandedHeight,
+            toolbarHeight: 90,
+            automaticallyImplyLeading: false,
+
             titleSpacing: 0,
-            title: Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.maybePop(context),
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white,
-                      size: 21,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: AnimatedBuilder(
-                      animation: _scrollController,
-                      builder: (context, _) {
-                        double offset = 0.0;
 
-                        if (_scrollController.hasClients) {
-                          offset = _scrollController.offset;
-                        }
-                        final bool showTitle = offset > 300;
-
-                        return AnimatedSlide(offset: showTitle ? Offset.zero : const Offset(0, 0.8),
-                         duration: const Duration(milliseconds: 350),curve: Curves.easeOutCubic,child: AnimatedOpacity(
-                          opacity: showTitle ? 1.0 : 0.0,
-                          duration: const Duration(microseconds: 500),
-                          child: Text(
-                            widget.title,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              color: const Color.fromARGB(205, 255, 255, 255)
-                            ),
-                          ),
-                        ),);
-                      },
-                    ),
+            title: Row(
+              children: [
+                IconButton(
+                  onPressed: () => Navigator.maybePop(context),
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
+                    size: 21,
                   ),
-                ],
-              ),
+                ),
+
+                const SizedBox(width: 4),
+
+                Expanded(child: _buildTitle()),
+              ],
             ),
+
             // actions: [
             //   IconButton(
             //     onPressed: () {},
-            //     icon: const Icon(
-            //       Icons.bookmark_add,
-            //       color: Colors.white70,
-            //       size: 23,
-            //     ),
+            //     icon: const Icon(Icons.bookmark_add, color: Colors.white70),
+            //   ),
+            //   IconButton(
+            //     onPressed: () {},
+            //     icon: const Icon(Icons.ios_share, color: Colors.white70),
             //   ),
             //   IconButton(
             //     onPressed: () {},
             //     icon: const Icon(
-            //       Icons.ios_share,
+            //       Icons.file_download_outlined,
             //       color: Colors.white70,
-            //       size: 23,
-            //     ),
-            //   ),
-            //   Padding(
-            //     padding: const EdgeInsets.only(right: 12),
-            //     child: IconButton(
-            //       onPressed: () {},
-            //       icon: const Icon(
-            //         Icons.file_download_outlined,
-            //         color: Colors.white70,
-            //         size: 26,
-            //       ),
             //     ),
             //   ),
             // ],
-            flexibleSpace: FlexibleSpaceBar(
-              background: _buildHeroBackground(),
+
+            flexibleSpace: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned.fill(child: _buildHeroBackground()),
+
+                Positioned(
+                  bottom: -24,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child:  _buildStartReadingButton(),
+                  ),
+                ),
+              ],
             ),
           ),
 
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+
           SliverToBoxAdapter(
             child: Container(
-              color: themeColors.surface,
+              color: colors.surface,
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,67 +225,50 @@ class _BookPageState extends State<BookPage> {
     return Container(
       height: 95,
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(0, 25, 23, 23),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(150),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
+      decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.1)),
       child: Row(
         children: [
           SizedBox(
-            height: 52,
             width: 130,
+            height: 52,
             child: ElevatedButton.icon(
-              onPressed: () => print("Navigate to Reader Screen"),
-              icon: const Icon(
-                Icons.format_align_left_sharp,
-                color: Colors.white,
-                size: 20,
-              ),
+              onPressed: () {},
+              icon: const Icon(Icons.menu_book_rounded, color: Colors.white),
               label: const Text(
                 "Read",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 49, 49, 49),
                 elevation: 0,
+                backgroundColor: const Color.fromARGB(255, 49, 49, 49),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
           ),
+
           const SizedBox(width: 12),
+
           Expanded(
             child: SizedBox(
               height: 52,
-              child: OutlinedButton.icon(
-                onPressed: () => print("Open Audio Player UI"),
-                icon: const Icon(
-                  Icons.headset_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                label: Text(
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.headset_rounded, color: Colors.white),
+                label: const Text(
                   "Listen",
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                style: OutlinedButton.styleFrom(
+                style: ElevatedButton.styleFrom(
                   elevation: 0,
                   backgroundColor: const Color(0xFF3B7BFB),
-                  side: BorderSide.none,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -271,3 +281,6 @@ class _BookPageState extends State<BookPage> {
     );
   }
 }
+
+
+

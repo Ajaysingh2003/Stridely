@@ -31,72 +31,75 @@ class BookView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Stack(
         children: [
-           Column(
-        
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // const BookHero(),
-
-          Positioned(child: Row(
-            
-          )),
-
-
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                
-                const SizedBox(height: 5),
-                const BookTypography(
-                  title: "Never Split the Difference",
-                  author: "Daniel Goleman, PhD",
-                ),
-                const SizedBox(height: 20),
-                const BookMetadata(),
-                const SizedBox(height: 24),
-                const InfoSection(
-                  title: "What's inside?",
-                  description: "Explore a revolutionary Japanese philosophy...",
-                ),
-                const SizedBox(height: 24),
-                const Learning(
-                  learning: [
-                    "How emotions hijack the brain.",
-                    "How emotions hijack the brain.",
+          // ---- LAYER 1: Main Scrollable Content ----
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // const BookHero(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 60, 20, 0), // 🚀 Added 60 top padding so text doesn't hide under the amber banner
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 5),
+                    const BookTypography(
+                      title: "Never Split the Difference",
+                      author: "Daniel Goleman, PhD",
+                    ),
+                    const SizedBox(height: 20),
+                    const BookMetadata(),
+                    const SizedBox(height: 24),
+                    const InfoSection(
+                      title: "What's inside?",
+                      description: "Explore a revolutionary Japanese philosophy...",
+                    ),
+                    const SizedBox(height: 24),
+                    const Learning(
+                      learning: [
+                        "How emotions hijack the brain.",
+                        "How emotions hijack the brain.",
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    KeyPoints(points: contents),
+                    const SizedBox(height: 24),
+                    const InfoSection(
+                      title: "About JD. Vince", 
+                      description: "JD vance is an american author...",
+                    ),
+                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
+                    Excerpt(excerpt: excerpt),
+                    const SizedBox(height: 20),
                   ],
                 ),
-                const SizedBox(height: 24),
-                KeyPoints(points: contents),
-                const SizedBox(height: 24),
-                const InfoSection(
-                  title: "About JD. Vince", 
-                  description: "JD vance is an american author...",
+              ),
+            ],
+          ),
+
+          Positioned(
+            top: -40,    // 🚀 Changed from -200 to 0 so it's fully visible at the absolute top
+            left: 0,   // Wall-to-wall anchoring
+            right: 0,  // Wall-to-wall anchoring
+            child: Container(
+              color: Colors.amber,
+              padding: const EdgeInsets.all(16), 
+              child: const Text(
+                "hii ajay",
+                textAlign: TextAlign.center, 
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
-
-                const SizedBox(height: 24),
-
-         
-          const SizedBox(height: 12),
-          
-          Excerpt(excerpt: excerpt),
-          
-          const SizedBox(height: 20),
-              ],
+              ),
             ),
           ),
-          
-          
         ],
       ),
-        ],
-      )
     );
   }
 }
