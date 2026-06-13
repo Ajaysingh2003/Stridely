@@ -11,7 +11,7 @@ class Excerptcarousel extends StatefulWidget {
 class _CarouselWrapperState extends State<Excerptcarousel> {
   int _current = 0;
   final CarouselSliderController _controller = CarouselSliderController();
-  
+
   static const List<List<Color>> _gradients = [
     [Color(0xFF6B3FC2), Color(0xFF3A1F8A)],
     [Color(0xFF1A6B9A), Color(0xFF0D3554)],
@@ -115,12 +115,12 @@ class _CarouselWrapperState extends State<Excerptcarousel> {
                       bottom: 0,
                       left: 0,
                       right: 0,
-                      child: Row(
-                        // 🚀 THE FIX: Spreads the children out to the absolute edges (space-between)
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                      child: Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // ── Left side item (Start) ──
                           Text(
                             "Note: Excerpt from the original book.",
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
