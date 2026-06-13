@@ -21,7 +21,10 @@ class LoginView extends StatelessWidget {
           children: [
             const CustomBackButton(),
             const SizedBox(height: 25),
-            const AuthHeader(title: "Welcome Back 👋" ,subText:"By Logging in , You agree to our "),
+            const AuthHeader(
+              title: "Welcome Back",
+              subText: "By Logging in , You agree to our ",
+            ),
             const SizedBox(height: 20),
             const LoginForm(),
             SizedBox(height: 30),
@@ -31,7 +34,9 @@ class LoginView extends StatelessWidget {
                 // Left Line
                 Expanded(
                   child: Divider(
-                    color: Colors.white24, // Matches your focused border color
+                    color: const Color(
+                      0x397C7B7B,
+                    ), // Matches your focused border color
                     thickness: 1, // Line thickness
                     endIndent: 16, // Space between line and the text
                   ),
@@ -51,9 +56,9 @@ class LoginView extends StatelessWidget {
                 // Right Line
                 Expanded(
                   child: Divider(
-                    color: Colors.white24,
+                    color: const Color(0x397C7B7B),
                     thickness: 1,
-                    indent: 16, // Space between text and the line
+                    indent: 16, 
                   ),
                 ),
               ],
@@ -62,39 +67,50 @@ class LoginView extends StatelessWidget {
 
             SizedBox(
               width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  elevation:
-                      3, // Slightly increased for a better floating effect on dark backgrounds
-                  shadowColor: Colors.black.withAlpha(
-                    80,
-                  ), // Softer shadow for a premium look
-                  backgroundColor: const Color(0xFF222222),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                onPressed: () {
-                  // Handle login logic here
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset("assets/images/google.svg", height: 20),
-                    const SizedBox(width: 12),
-                    Text(
-                      "Login with Google",
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            fontSize: 17,
-                            fontWeight: FontWeight
-                                .w500, // Semi-bold looks great on buttons
-                            // color: Colors.white,
-                          ),
+              height: 48,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF212121).withOpacity(0.1),
+                      blurRadius: 1,
+                      spreadRadius: 1.2,
+                      offset: Offset.zero,
                     ),
                   ],
+                ),
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                  ),
+                  onPressed: () {
+                    // Handle login logic here
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset("assets/images/google.svg", height: 20),
+                      const SizedBox(width: 12),
+                      Text(
+                        "Signin with Google",
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              // fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              // color: Colors.white,
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -103,59 +119,69 @@ class LoginView extends StatelessWidget {
 
             SizedBox(
               width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  elevation:
-                      3, // Slightly increased for a better floating effect on dark backgrounds
-                  shadowColor: Colors.black.withAlpha(
-                    80,
-                  ), // Softer shadow for a premium look
-                  backgroundColor: const Color(0xFF222222),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                onPressed: () {
-                  // Handle login logic here
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      "assets/images/apple.svg",
-                      height: 20,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      "Login with Apple",
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            fontSize: 17,
-                            fontWeight: FontWeight
-                                .w500, // Semi-bold looks great on buttons
-                            // color: Colors.white,
-                          ),
+              height: 48,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(
+                        255,
+                        33,
+                        33,
+                        33,
+                      ).withOpacity(0.1),
+                      blurRadius: 1,
+                      spreadRadius: 1.2,
+                      offset: Offset.zero,
                     ),
                   ],
+                ),
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                  ),
+                  onPressed: () {
+                    // Handle login logic here
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset("assets/images/apple.svg", height: 20),
+                      const SizedBox(width: 12),
+                      Text(
+                        "Signin with Google",
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              // fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              // color: Colors.white,
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
 
             const SizedBox(height: 12),
+            
             Center(
               child: RichText(
                 textAlign: TextAlign.center, // Centers the whole text block
                 text: TextSpan(
                   // Base style inherited from your existing theme
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 15,
-                    color: Colors.grey, // Base text color
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontSize: 12,
+                    color: Color.fromARGB(154, 21, 21, 21), 
                   ),
                   children: [
                     const TextSpan(text: "Don't have an Accout ? "),
@@ -164,9 +190,8 @@ class LoginView extends StatelessWidget {
                     TextSpan(
                       text: " Signup",
                       style: const TextStyle(
-                        color: Colors.white70, // Link color
                         fontWeight: FontWeight.bold, // Makes it bold
-                        fontSize: 14,
+                        fontSize: 12,
                         decoration:
                             TextDecoration.underline, // Adds a link underline
                       ),
@@ -217,6 +242,8 @@ class LoginView extends StatelessWidget {
                 ),
               ),
             ),
+
+            
           ],
         ),
       ),

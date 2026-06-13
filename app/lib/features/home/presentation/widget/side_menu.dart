@@ -40,16 +40,36 @@ class SideMenu extends StatelessWidget {
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
-                      _menuItem(context,Icons.home_rounded, "Home" ,isActive: true),
-                      _menuItem(context,Icons.leaderboard_rounded ,"Leaderboard"),
-                      _menuItem(context,Icons.insights_rounded ,"Activity"),
-                      _menuItem(context,Icons.favorite_rounded ,"Favorites"),
+                      _menuItem(
+                        context,
+                        Icons.home_rounded,
+                        "Home",
+                        isActive: true,
+                      ),
+                      _menuItem(
+                        context,
+                        Icons.leaderboard_rounded,
+                        "Leaderboard",
+                      ),
+                      _menuItem(context, Icons.insights_rounded, "Activity"),
+                      _menuItem(context, Icons.favorite_rounded, "Favorites"),
                       const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 15,
+                          horizontal: 10,
+                        ),
                         child: Divider(color: Colors.white10, thickness: 1),
                       ),
-                      _menuItem(context,Icons.settings_suggest_rounded, "Settings"),
-                      _menuItem(context, Icons.contact_support_rounded ,"Support"),
+                      _menuItem(
+                        context,
+                        Icons.settings_suggest_rounded,
+                        "Settings",
+                      ),
+                      _menuItem(
+                        context,
+                        Icons.contact_support_rounded,
+                        "Support",
+                      ),
                     ],
                   ),
                 ),
@@ -81,7 +101,7 @@ class SideMenu extends StatelessWidget {
               color: Colors.blueAccent.withOpacity(0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
-            )
+            ),
           ],
         ),
         child: Row(
@@ -94,7 +114,9 @@ class SideMenu extends StatelessWidget {
               child: const CircleAvatar(
                 radius: 30,
                 backgroundColor: Colors.white,
-                backgroundImage: NetworkImage('https://placehold.net/avatar.png'),
+                backgroundImage: NetworkImage(
+                  'https://placehold.net/avatar.png',
+                ),
               ),
             ),
             const SizedBox(width: 15),
@@ -125,7 +147,12 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  Widget _menuItem(BuildContext context , IconData icon, String title, {bool isActive = false}) {
+  Widget _menuItem(
+    BuildContext context,
+    IconData icon,
+    String title, {
+    bool isActive = false,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
@@ -142,10 +169,11 @@ class SideMenu extends StatelessWidget {
           size: 22,
         ),
         title: Text(
-
           title,
-          style:Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: isActive ? const Color(0xFFF5F5F5) : Colors.white.withOpacity(0.7),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: isActive
+                ? const Color(0xFFF5F5F5)
+                : Colors.white.withOpacity(0.7),
             fontSize: 18,
             fontWeight: isActive ? FontWeight.w500 : FontWeight.w300,
           ),
@@ -168,7 +196,10 @@ class SideMenu extends StatelessWidget {
             SizedBox(width: 12),
             Text(
               "Sign Out",
-              style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                color: Colors.white70,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),

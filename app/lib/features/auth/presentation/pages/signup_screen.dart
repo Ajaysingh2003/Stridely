@@ -15,10 +15,12 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
+
+    final themeColors = Theme.of(context).colorScheme;
     // int _currentIndex = 0;
     return Scaffold(
       extendBody: true,
-      backgroundColor: Color(0xFF191717),
+      backgroundColor: themeColors.surface,
       // extendBodyBehindAppBar: true,
       body: Container(
         child: SafeArea(
