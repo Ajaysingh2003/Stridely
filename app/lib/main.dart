@@ -81,6 +81,7 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.w400,
             color: themeColors.onSurface,
             fontSize: 16,
+            wordSpacing: 8
           ),
           bodySmall: GoogleFonts.lora(
             fontWeight: FontWeight.w400,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class BookPage extends StatefulWidget {
   final String title;
-
+  
   const BookPage({super.key, this.title = "Rich Dad Poor Dad"});
 
   @override
@@ -55,7 +55,7 @@ class _BookPageState extends State<BookPage> {
               padding: const EdgeInsets.only(top: 0),
               child: Transform.scale(
                 scale: imageScale,
-                alignment: AlignmentDirectional(0, -5),
+                alignment: AlignmentDirectional(0, -3),
                 child: Opacity(opacity: imageOpacity, child: child),
               ),
             ),
@@ -84,10 +84,8 @@ class _BookPageState extends State<BookPage> {
             widget.title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              color: const Color.fromARGB(227, 255, 255, 255),
             ),
           ),
         );
@@ -103,25 +101,86 @@ class _BookPageState extends State<BookPage> {
         onTap: () {},
         child: Container(
           height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
           decoration: BoxDecoration(
-            color: const Color(0xFF3B7BFB),
-            borderRadius: BorderRadius.circular(24),
+            color: Colors
+                .transparent, // 👈 The core middle channel remains completely transparent
+            // borderRadius: BorderRadius.circular(24),
           ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
-              SizedBox(width: 8),
-              Text(
-                "Start Reading",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                SizedBox(
+                  width:
+                      85, // Sized normally to hold the "Read" text comfortably
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.horizontal(
+                          left: Radius.circular(20),
+                          right: Radius.circular(6),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      print("Main reader flow triggered!");
+                    },
+                    child: Text(
+                      "Read",
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontWeight: FontWeight.w800,
+                          ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+
+                VerticalDivider(
+                  width: 2,
+                  thickness: 1,
+                  indent: 1,
+                  endIndent: 1,
+                  color: Colors.transparent,
+                ),
+
+                SizedBox(
+                  width: 54,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.horizontal(
+                          right: Radius.circular(20),
+                          left: Radius.circular(6),
+                        ),
+                      ),
+                    ),
+                    onPressed: () => Navigator.maybePop(context),
+                    child: Container(
+                      padding: EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.play_arrow,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -147,7 +206,7 @@ class _BookPageState extends State<BookPage> {
             scrolledUnderElevation: 0,
             backgroundColor: const Color(0xFF0F172A),
             expandedHeight: _expandedHeight,
-            toolbarHeight: 90,
+            toolbarHeight: 100,
             automaticallyImplyLeading: false,
 
             titleSpacing: 0,
@@ -186,7 +245,6 @@ class _BookPageState extends State<BookPage> {
             //     ),
             //   ),
             // ],
-
             flexibleSpace: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -196,8 +254,66 @@ class _BookPageState extends State<BookPage> {
                   bottom: -24,
                   left: 0,
                   right: 0,
-                  child: Center(
-                    child:  _buildStartReadingButton(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Row(
+                            mainAxisSize: MainAxisSize
+                                .min, // Keeps the row tight around the buttons
+                            children: [
+                              // 1. BOOKMARK BUTTON
+                              IconButton(
+                                style: IconButton.styleFrom(
+                                  fixedSize: const Size(
+                                    48,
+                                    48,
+                                  ), 
+                                  backgroundColor: colors.secondary,
+                                  shape:
+                                      const CircleBorder(),
+                                  padding: EdgeInsets
+                                      .zero,
+                                ),
+                                onPressed: () => print("Bookmark clicked"),
+                                icon: Icon(
+                                  Icons.bookmark_add_outlined,
+                                  color: colors.onSecondary,
+                                  size:
+                                      24, // Balanced icon sizing for a 54px circle
+                                ),
+                              ),
+
+                              const SizedBox(
+                                width: 24,
+                              ), // Standardized spacing separation gutter
+                              // 2. SHARE BUTTON
+                              IconButton(
+                                style: IconButton.styleFrom(
+                                  fixedSize: const Size(
+                                    48,
+                                    48,
+                                  ), // 🚀 Forces an exactly identical container shape
+                                  backgroundColor: colors.secondary,
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.zero,
+                                ),
+                                onPressed: () => print("Share clicked"),
+                                icon: Icon(
+                                  Icons.ios_share_outlined,
+                                  color: colors.onSecondary,
+                                  size: 23,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        _buildStartReadingButton(),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -209,7 +325,7 @@ class _BookPageState extends State<BookPage> {
           SliverToBoxAdapter(
             child: Container(
               color: colors.surface,
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [BookView()],
@@ -281,6 +397,3 @@ class _BookPageState extends State<BookPage> {
     );
   }
 }
-
-
-
