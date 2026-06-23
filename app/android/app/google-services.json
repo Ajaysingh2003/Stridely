@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "431868831516",
+    "project_id": "stridely-34510",
+    "storage_bucket": "stridely-34510.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:431868831516:android:c0ad46fb68bf6ce6727cd9",
+        "android_client_info": {
+          "package_name": "com.ajaysingh.stridely"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmL_BgoMBpv6UORZ8lsDIRJ4VtLd8le48"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
