@@ -1,19 +1,26 @@
+import 'package:app/features/auth/presentation/pages/signup_screen.dart';
+import 'package:app/features/auth/presentation/widget/SignupView.dart';
 import 'package:app/features/book/presentation/screen/book_screen.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart';
-
+import 'firebase_options.dart';
 import 'package:app/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).colorScheme;
@@ -96,7 +103,10 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       // home: const HomePage(),
-      home: const BookPage(),
+      home: const SignupPage(),
     );
   }
 }
+
+
+

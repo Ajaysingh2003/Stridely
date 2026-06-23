@@ -15,8 +15,7 @@ class BookTab extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-
-   final String aboutStr =
+    final String aboutStr =
     "Breadwinners (2025) delivers a profound exploration of how modern shifting income patterns and evolving gender roles are radically reshaping household power dynamics. By analyzing contemporary economic trends alongside real-world relationships, it provides a crucial playbook for navigating modern partnership, finance, and societal expectations.";
 
 final String forWhomStr =

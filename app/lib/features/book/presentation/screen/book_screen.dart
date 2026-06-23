@@ -39,7 +39,7 @@ class _BookPageState extends State<BookPage> {
         );
 
         final imageScale = 1.0 - (progress * 0.45);
-
+        
         final imageOpacity = (1.0 - (progress * 1.4)).clamp(0.0, 1.0);
 
         return Container(
