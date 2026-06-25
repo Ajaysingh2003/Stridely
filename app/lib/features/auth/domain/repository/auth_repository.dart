@@ -1,14 +1,10 @@
-
 import 'package:app/features/auth/domain/entities/auth_failure.dart';
-import 'package:dartz/dartz.dart';
-
 import 'package:app/features/auth/domain/entities/user_entity.dart';
+import 'package:dartz/dartz.dart';
 
 abstract class AuthRepository {
   Stream<UserEntity?> get authStateChanges;
-
   Future<UserEntity?> getCurrentUser();
-
 
   Future<Either<AuthFailure, UserEntity>> signInWithEmail({
     required String email,
@@ -24,10 +20,10 @@ abstract class AuthRepository {
   Future<Either<AuthFailure, UserEntity>> signInWithGoogle();
   Future<Either<AuthFailure, UserEntity>> signInWithApple();
 
-  Future<void> sendPasswordResetEmail({
+  Future<Either<AuthFailure, Unit>> sendPasswordResetEmail({
     required String email,
   });
-  Future<void> reloadUser();
-  Future<void> signOut();
+  Future<Either<AuthFailure, Unit>> reloadUser();
 
+  Future<void> signOut();
 }

@@ -1,13 +1,16 @@
+import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
+import 'package:app/features/auth/presentation/widget/auth_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginForm extends StatefulWidget {
+class LoginForm extends ConsumerStatefulWidget {
   const LoginForm({super.key});
 
   @override
-  State<LoginForm> createState() => _LoginFormState();
+  ConsumerState<LoginForm> createState() => _LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -15,6 +18,8 @@ class _LoginFormState extends State<LoginForm> {
   bool showPasswordField = false;
   bool _isLoading = false;
   bool _isPasswordObscured = true;
+  String? _errorMessage;
+  bool _showSuccess = false;
 
   @override
   void dispose() {
@@ -22,6 +27,34 @@ class _LoginFormState extends State<LoginForm> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleSubmit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _showSuccess = false;
+      _errorMessage = "";
+    });
+
+    setState(() => _isLoading = true);
+
+    try {
+      await ref
+          .read(authControllerProvider.notifier)
+          .login(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   void _handleContinueAction() {
@@ -56,6 +89,23 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).colorScheme;
+
+    final authState = ref.watch(authControllerProvider);
+    final isAppLoading = authState.isLoading;
+
+    ref.listen(authControllerProvider, (previous, next) {
+      if (next.failure != null) {
+        setState(() {
+          _errorMessage = next.failure?.message;
+          _showSuccess = false;
+        });
+      } else if (next.user != null) {
+        setState(() {
+          _errorMessage = null;
+          _showSuccess = true;
+        });
+      }
+    });
     return Form(
       key: _formKey,
       child: Column(
@@ -90,10 +140,7 @@ class _LoginFormState extends State<LoginForm> {
           // --- CONDITIONAL PASSWORD SECTION ---
           if (showPasswordField) ...[
             const SizedBox(height: 12),
-             Text(
-              'Password',
-            style: Theme.of(context).textTheme.headlineSmall
-            ),
+            Text('Password', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 12),
             TextFormField(
               style: Theme.of(context).textTheme.bodySmall,
@@ -160,6 +207,19 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ],
 
+          if (authState.failure != null) ...[
+            const SizedBox(height: 16),
+            AuthBanner(
+              message: _errorMessage ?? 'An unknown error occurred',
+              isError: true,
+            ),
+          ],
+          if (authState.user != null) ...[
+            const SizedBox(height: 16),
+            AuthBanner(message: 'Login successfully!', isError: false),
+          ],
+
+
           const SizedBox(height: 15),
 
           // --- CONTROL BUTTON ---
@@ -179,7 +239,7 @@ class _LoginFormState extends State<LoginForm> {
                         33,
                         33,
                       ).withOpacity(0.1),
-                    
+
                       blurRadius: 1,
 
                       // Increased slightly so it evenly expands outwards past the button edges
@@ -209,7 +269,7 @@ class _LoginFormState extends State<LoginForm> {
                             color: Colors.white,
                             strokeWidth: 2,
                           ),
-                        ) 
+                        )
                       : Text(
                           'Continue',
                           style: Theme.of(context).textTheme.headlineMedium
@@ -231,7 +291,7 @@ class _LoginFormState extends State<LoginForm> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: _handleContinueAction,
+                onPressed: _handleSubmit,
                 child: _isLoading
                     ? const SizedBox(
                         height: 20,

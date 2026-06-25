@@ -1,16 +1,22 @@
 import 'package:app/features/auth/presentation/pages/signup_screen.dart';
+import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/auth/presentation/widget/Login_form.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/widget/back_button.dart';
 import 'package:app/features/auth/presentation/widget/auth_header.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends ConsumerWidget {
   const LoginView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+
+    
+
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Container(
@@ -93,7 +99,7 @@ class LoginView extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // Handle login logic here
+                    ref.read(authControllerProvider.notifier).signInWithGoogle();
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

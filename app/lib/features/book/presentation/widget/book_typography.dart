@@ -1,16 +1,9 @@
+import 'dart:ffi';
+
+import 'package:app/features/book/domain/entity/tags_type.dart';
 import 'package:flutter/material.dart';
 
-class TagsType {
-  final IconData icon;
-  final String tag;
 
-  // Constructor
-  const TagsType({
-    required this.icon,
-    required this.tag,
-  });
-
-}
 class BookTypography extends StatelessWidget {
   final String title;
   final String description;
@@ -183,7 +176,7 @@ class Tags extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      item.icon, 
+                      item.iconData, 
                       size: 16, 
                       color:  Theme.of(context).colorScheme.onSecondary,
                     ),

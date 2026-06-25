@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class AuthDataSourceContract {
-  Stream<User?> authStateChanges();
+Stream<Map<String, dynamic>?> authStateChanges();
 
-  Future<User?> currentUser();
+  Future<Map<String, dynamic>?> currentUser();
 
   Future<User> signInWithEmail({
     required String email,

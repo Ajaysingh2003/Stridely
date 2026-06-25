@@ -2,53 +2,54 @@ import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:app/features/auth/domain/repository/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 
 import '../../domain/entities/auth_failure.dart';
 import '../../domain/entities/user_entity.dart';
 
-
-AuthProviderType _mapProvider(User user) {
-  if (user.isAnonymous) {
-    return AuthProviderType.anonymous;
-  }
-
-  final providers = user.providerData;
-
-  if (providers.any((p) => p.providerId == 'google.com')) {
-    return AuthProviderType.google;
-  }
-
-  if (providers.any((p) => p.providerId == 'apple.com')) {
-    return AuthProviderType.apple;
-  }
-
-  if (providers.any((p) => p.providerId == 'password')) {
-    return AuthProviderType.email;
-  }
-
-  throw UnsupportedError(
-    'Unsupported authentication provider: ${providers.map((e) => e.providerId).join(", ")}',
-  );
-}
-
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDatasource _datasource;
+
   AuthRepositoryImpl(this._datasource);
 
-  UserEntity? _mapToEntity(User? firebaseUser) {
-    if (firebaseUser == null) return null;
-    return UserEntity(uid: firebaseUser.uid, emailVerified: firebaseUser.emailVerified, provider: _mapProvider(firebaseUser));
-    
+  UserEntity? _mapFirebaseUser(User? user) {
+    if (user == null) return null;
+
+    return UserEntity(
+      uid: user.uid,
+      email: user.email,
+      name: user.displayName,
+      imgUrl: user.photoURL,
+      emailVerified: user.emailVerified,
+    );
   }
 
+  UserEntity? _mapUserData(Map<String, dynamic>? userData) {
+    if (userData == null) return null;
+
+    final uid = userData['uid'];
+    if (uid is! String || uid.isEmpty) return null;
+
+    return UserEntity(
+      uid: uid,
+      email: userData['email'] as String?,
+      name: userData['name'] as String?,
+      imgUrl: (userData['imgUrl'] ?? userData['ImgUrl']) as String?,
+      emailVerified:
+          (userData['emailVerified'] ?? userData['isVerified']) as bool? ??
+          false,
+      isPremium: userData['isPremium'] as bool? ?? false,
+    );
+  }
 
   @override
-  Stream<UserEntity?> get authStateChanges => _datasource.authStateChanges().map(_mapToEntity);
+  Stream<UserEntity?> get authStateChanges =>
+      _datasource.authStateChanges().map(_mapUserData);
 
   @override
-  Future<UserEntity?> getCurrentUser() async{
-    final user = await _datasource.currentUser();
-    return _mapToEntity(user);
+  Future<UserEntity?> getCurrentUser() async {
+    final userData = await _datasource.currentUser();
+    return _mapUserData(userData);
   }
 
   @override
@@ -57,12 +58,11 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final rawUser=await _datasource.signInWithEmail(
+      final rawUser = await _datasource.signInWithEmail(
         email: email,
-        password: password
+        password: password,
       );
-
-      return Right(_mapToEntity(rawUser)!);
+      return _successOrMappingFailure(_mapFirebaseUser(rawUser));
     } on FirebaseAuthException catch (e) {
       return Left(_mapFirebaseError(e));
     } catch (_) {
@@ -77,9 +77,12 @@ class AuthRepositoryImpl implements AuthRepository {
     String? displayName,
   }) async {
     try {
-      final rawUser=await _datasource.signUpWithEmail(email: email, password: password,displayName: displayName);
-
-      return Right(_mapToEntity(rawUser)!);
+      final rawUser = await _datasource.signUpWithEmail(
+        email: email,
+        password: password,
+        displayName: displayName,
+      );
+      return _successOrMappingFailure(_mapFirebaseUser(rawUser));
     } on FirebaseAuthException catch (e) {
       return Left(_mapFirebaseError(e));
     } catch (_) {
@@ -91,12 +94,18 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<AuthFailure, UserEntity>> signInWithGoogle() async {
     try {
       final rawUser = await _datasource.signInWithGoogle();
-      return Right(_mapToEntity(rawUser)!);
-
+      return _successOrMappingFailure(_mapFirebaseUser(rawUser));
     } on CancelledByUserFailure catch (e) {
       return Left(e);
     } on FirebaseAuthException catch (e) {
       return Left(_mapFirebaseError(e));
+    } on PlatformException catch (e) {
+      if (e.code == 'sign_in_canceled' || e.code == 'sign_in_failed') {
+        return const Left(CancelledByUserFailure());
+      }
+      return Left(
+        ServerFailure(e.message ?? 'Platform error during Google Sign-In.'),
+      );
     } catch (_) {
       return const Left(ServerFailure());
     }
@@ -106,24 +115,23 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<AuthFailure, UserEntity>> signInWithApple() async {
     try {
       final rawUser = await _datasource.signInWithApple();
-      return Right(_mapToEntity(rawUser)!); // 🛠️ Wrapped in your entity mapper
+      return _successOrMappingFailure(_mapFirebaseUser(rawUser));
     } on FirebaseAuthException catch (e) {
       return Left(_mapFirebaseError(e));
     } catch (e) {
-      // 🛠️ Handled native string checking fallback instead of unimported third-party exception types
-      if (e.toString().contains('canceled')) {
+      final message = e.toString().toLowerCase();
+      if (message.contains('canceled') || message.contains('cancelled')) {
         return const Left(CancelledByUserFailure());
       }
       return const Left(ServerFailure());
     }
   }
 
-
   @override
   Future<Either<AuthFailure, Unit>> reloadUser() async {
     try {
       await _datasource.reloadUser();
-      return const Right(unit); // 🛠️ 'unit' comes from dartz, representing a void/success state
+      return const Right(unit);
     } on FirebaseAuthException catch (e) {
       return Left(_mapFirebaseError(e));
     } catch (_) {
@@ -144,9 +152,16 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Left(ServerFailure());
     }
   }
-  
+
   @override
   Future<void> signOut() => _datasource.signOut();
+
+  Either<AuthFailure, UserEntity> _successOrMappingFailure(UserEntity? user) {
+    if (user == null) {
+      return const Left(ServerFailure('User mapping failed.'));
+    }
+    return Right(user);
+  }
 
   AuthFailure _mapFirebaseError(FirebaseAuthException e) {
     switch (e.code) {
@@ -163,6 +178,9 @@ class AuthRepositoryImpl implements AuthRepository {
         return const WeakPasswordFailure();
       case 'account-exists-with-different-credential':
         return const AccountExistsWithDifferentCredentialFailure();
+      case 'sign-in-cancelled':
+      case 'ERROR_ABORTED_BY_USER':
+        return const CancelledByUserFailure();
       default:
         return ServerFailure(e.message ?? 'Something went wrong.');
     }

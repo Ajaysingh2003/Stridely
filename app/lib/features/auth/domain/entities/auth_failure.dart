@@ -1,8 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-
-import 'package:equatable/equatable.dart';
-
 abstract class AuthFailure extends Equatable {
   final String message;
   const AuthFailure(this.message);
@@ -25,7 +22,7 @@ class UserNotFoundFailure extends AuthFailure {
 
 class EmailAlreadyInUseFailure extends AuthFailure {
   const EmailAlreadyInUseFailure()
-      : super('An account already exists for this email.');
+    : super('An account already exists for this email.');
 }
 
 class WeakPasswordFailure extends AuthFailure {
@@ -34,7 +31,7 @@ class WeakPasswordFailure extends AuthFailure {
 
 class AccountExistsWithDifferentCredentialFailure extends AuthFailure {
   const AccountExistsWithDifferentCredentialFailure()
-      : super('An account exists with a different sign-in method.');
+    : super('An account exists with a different sign-in method.');
 }
 
 class CancelledByUserFailure extends AuthFailure {
@@ -42,6 +39,5 @@ class CancelledByUserFailure extends AuthFailure {
 }
 
 class ServerFailure extends AuthFailure {
-  const ServerFailure([String message = 'An unexpected error occurred.'])
-      : super(message);
+  const ServerFailure([super.message = 'An unexpected error occurred.']);
 }

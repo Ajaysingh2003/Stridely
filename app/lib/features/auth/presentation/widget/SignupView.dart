@@ -1,18 +1,20 @@
 import 'package:app/features/auth/presentation/pages/login_screen.dart';
 import 'package:app/features/auth/presentation/pages/signup_screen.dart';
+import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/auth/presentation/widget/Login_form.dart';
 import 'package:app/features/auth/presentation/widget/signup_form.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/widget/back_button.dart';
 import 'package:app/features/auth/presentation/widget/auth_header.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class SignupView extends StatelessWidget {
+class SignupView extends ConsumerWidget {
   const SignupView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Container(
@@ -99,7 +101,9 @@ class SignupView extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // Handle login logic here
+                    ref
+                        .read(authControllerProvider.notifier)
+                        .signInWithGoogle();
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -185,7 +189,7 @@ class SignupView extends StatelessWidget {
                   // Base style inherited from your existing theme
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontSize: 12,
-                    color: Color.fromARGB(154, 21, 21, 21), 
+                    color: Color.fromARGB(154, 21, 21, 21),
                   ),
                   children: [
                     const TextSpan(text: "Don't have an Accout ? "),

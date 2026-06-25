@@ -15,12 +15,14 @@ class Excerpt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Feature Excerpt",
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontSize: 20
             ),
           ),
           SizedBox(height: 15),
