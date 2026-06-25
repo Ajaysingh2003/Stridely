@@ -1,38 +1,55 @@
+import 'package:app/features/book/domain/entity/book_entity.dart';
 import 'package:app/features/book/presentation/widget/Book_about.dart';
+import 'package:app/features/book/presentation/widget/Excerpt.dart';
 import 'package:app/features/book/presentation/widget/key_points.dart';
+import 'package:app/features/book/presentation/widget/what_you_learn.dart';
 import 'package:flutter/material.dart';
 
+// class AuthorType {
+//   final String authorName;
+//   final String authorBio;
+
+//   const AuthorType({required this.authorName, required this.authorBio});
+
+//   factory AuthorType.fromJson(Map<String, dynamic> json) {
+//     return AuthorType(
+//       authorName: json['authorName'] ?? 'Unknown Author',
+//       authorBio: json['authorBio'] ?? '',
+//     );
+//   }
+// }
+
 class BookTab extends StatelessWidget {
-  const BookTab({super.key, this.height = 1120});
+  final BookEntity book;
+  const BookTab({super.key, this.height = 1120, required this.book});
 
   final double height;
-
-
-
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final String aboutStr =
-    "Breadwinners (2025) delivers a profound exploration of how modern shifting income patterns and evolving gender roles are radically reshaping household power dynamics. By analyzing contemporary economic trends alongside real-world relationships, it provides a crucial playbook for navigating modern partnership, finance, and societal expectations.";
+    final String aboutStr = book.aboutBook ?? "";
 
-final String forWhomStr =
-    "Perfect for couples aiming to build equitable financial partnerships, professionals balancing high-stakes careers with home life, sociologists tracking modern family dynamics, and anyone interested in how economic shifts alter our most personal relationships.";
+    final String forWhomStr = book.forWhom ?? "";
 
-final AuthorType authorData = AuthorType(
-  authorName: "Susy Gala",
-  authorBio: "Susy Gala is a researcher and cultural analyst specializing in modern economic structures and family dynamics. As the visionary behind Stridely, he combines deep sociological insights with data-driven research to help readers navigate the complexities of evolving societal norms.",
-);    
+    final AuthorType authorData = AuthorType(
+      name: book.author.name,
+      bio: book.author.bio,
+    );
 
-
-
-  final List<KeyPoint> contents = [
-    KeyPoint(id: "kp1", text: "First key concept overview data marker."),
-    KeyPoint(id: "kp2", text: "Crucial strategic performance variable milestone."),
-    KeyPoint(id: "kp3", text: "Final data summary calculation metric context."),
-  ];
+    final List<KeyPoint> contents = [
+      KeyPoint(id: "kp1", text: "First key concept overview data marker."),
+      KeyPoint(
+        id: "kp2",
+        text: "Crucial strategic performance variable milestone.",
+      ),
+      KeyPoint(
+        id: "kp3",
+        text: "Final data summary calculation metric context.",
+      ),
+    ];
 
     return DefaultTabController(
       length: 4,
@@ -90,9 +107,16 @@ final AuthorType authorData = AuthorType(
             child: TabBarView(
               physics: BouncingScrollPhysics(),
               children: [
-                 BookAbout(about: aboutStr, forWhom: forWhomStr, author: authorData),
+                BookAbout(
+                  about: aboutStr,
+                  forWhom: forWhomStr,
+                  author: authorData,
+                ),
                 //  BookAbout(about: aboutStr, forWhom: forWhomStr, author: authorData),
-                KeyPoints(points: contents)
+                KeyPoints(points: contents),
+                Learning(learning: book.whatsInside),
+                // Learning(learning: book.whatsInside),
+                Excerpt(excerpt: book.quotes)
               ],
             ),
           ),

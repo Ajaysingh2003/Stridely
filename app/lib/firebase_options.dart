@@ -63,6 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '431868831516',
     projectId: 'stridely-34510',
     storageBucket: 'stridely-34510.firebasestorage.app',
+    androidClientId: '431868831516-kj0emgghvd7k931qh5namspsnuk01ifs.apps.googleusercontent.com',
+    iosClientId: '431868831516-g1ivsgqvsjlnchi954btuhhk5dms6oi0.apps.googleusercontent.com',
     iosBundleId: 'com.ajaysingh.stridely',
   );
   static const FirebaseOptions macos = FirebaseOptions(
@@ -71,6 +73,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '431868831516',
     projectId: 'stridely-34510',
     storageBucket: 'stridely-34510.firebasestorage.app',
+    androidClientId: '431868831516-kj0emgghvd7k931qh5namspsnuk01ifs.apps.googleusercontent.com',
+    iosClientId: '431868831516-vfsl1idejk9lcds0novgohl139cga8ci.apps.googleusercontent.com',
     iosBundleId: 'com.example.app',
   );
 

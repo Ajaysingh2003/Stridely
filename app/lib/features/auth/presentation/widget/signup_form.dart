@@ -172,7 +172,7 @@ class _SignupFormState extends ConsumerState<SignupForm> {
 
           if (authState.failure != null) ...[
             const SizedBox(height: 16),
-            AuthBanner(message: _errorMessage!, isError: true),
+            AuthBanner(message: _errorMessage ?? 'An unknown error occurred', isError: true),
           ],
           if (authState.user != null) ...[
             const SizedBox(height: 16),
@@ -208,6 +208,7 @@ class _SignupFormState extends ConsumerState<SignupForm> {
                       _showPasswordField ? 'Create account' : 'Continue',
                       style: tt.headlineMedium?.copyWith(color: cs.onPrimary),
                     ),
+                    
             ),
           ),
         ],

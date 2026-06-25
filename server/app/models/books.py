@@ -23,6 +23,9 @@ class Books(Document):
     whats_inside: Optional[str] = None
     takeaways: List[str] = Field(default_factory=list)
     quotes: List[str] = Field(default_factory=list)
+
+    
+    
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

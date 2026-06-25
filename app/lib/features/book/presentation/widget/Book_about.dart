@@ -1,18 +1,7 @@
+import 'package:app/features/book/domain/entity/book_entity.dart';
 import 'package:flutter/material.dart';
 
-class AuthorType {
-  final String authorName;
-  final String authorBio;
 
-  const AuthorType({required this.authorName, required this.authorBio});
-
-  factory AuthorType.fromJson(Map<String, dynamic> json) {
-    return AuthorType(
-      authorName: json['authorName'] ?? 'Unknown Author',
-      authorBio: json['authorBio'] ?? '',
-    );
-  }
-}
 
 class BookAbout extends StatelessWidget {
   final String about;
@@ -49,14 +38,14 @@ class BookAbout extends StatelessWidget {
                 ),
                 SizedBox(height: 10,),
                 Text(
-                  author.authorName,
+                  author.name,
                   style: Theme.of(
                     context,
                   ).textTheme.headlineSmall?.copyWith(fontSize: 16, fontWeight: FontWeight.w600,),
                 ),
                   SizedBox(height: 3,),
                 Text(
-                  author.authorBio,
+                  author.bio,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(),
