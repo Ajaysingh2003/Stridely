@@ -37,8 +37,8 @@ class BookEntity extends Equatable {
   final List<String> quotes;
   final String? description;
   final List<TagsType> tags;
-  final int chapterCount;
-
+  // final int chapterCount;
+  final String? audioUrl;
   const BookEntity({
     required this.uid,
     required this.forWhom,
@@ -58,7 +58,8 @@ class BookEntity extends Equatable {
     required this.takeAways,
     required this.title,
     required this.whatsInside,
-    this.chapterCount = 0,
+    // this.chapterCount = 0,
+    this.audioUrl
   });
 
   @override
@@ -76,6 +77,7 @@ class BookEntity extends Equatable {
     isFree,
     description,
     tags,
-    chapterCount,
+    // chapterCount,
+    audioUrl
   ];
 }

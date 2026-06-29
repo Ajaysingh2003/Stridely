@@ -2,6 +2,7 @@ import 'package:app/features/auth/presentation/pages/signup_screen.dart';
 import 'package:app/features/auth/presentation/widget/SignupView.dart';
 import 'package:app/features/auth/presentation/widget/autha_gatekeeper.dart';
 import 'package:app/features/book/presentation/screen/book_screen.dart';
+import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart';
 import 'firebase_options.dart';
 import 'package:app/features/auth/presentation/pages/login_screen.dart';

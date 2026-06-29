@@ -1,4 +1,6 @@
+import 'package:app/features/book/domain/entity/book_content_entity.dart';
 import 'package:app/features/book/domain/entity/book_entity.dart';
+import 'package:app/features/book/domain/entity/book_failure.dart';
 import 'package:app/features/book/domain/entity/tags_type.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -9,6 +11,83 @@ class BookRemoteDatasource {
 
   CollectionReference<Map<String, dynamic>> get _booksCollection =>
       _firestore.collection('books');
+
+  Future<BookContent> getContents(String uid) async {
+  try {
+    final snapshot = await _firestore
+        .collection("book_content")
+        .where("uid", isEqualTo: uid)
+        .limit(1)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      throw const BookNotFoundFailure('The requested content does not exist.');
+    }
+
+    final firstDoc = snapshot.docs.first;
+
+    print('this is roxxie :$snapshot');
+    return BookContent.fromFirestore(firstDoc);
+
+  } catch (e, stack) {
+    print('🚨 CRITICAL DATA SOURCE EXCEPTION: $e');
+    print('📋 STACK: $stack');
+    
+    if (e is BookFailure) rethrow;
+    throw const BookServerFailure();
+  }
+}
+
+  Future<List<Map<String, String>>> getContentTitle(String bookId) async {
+    try {
+      // print('started-chiru');
+      final snapshot = await _firestore
+          .collection("book_content")
+          .where("bookId", isEqualTo: bookId).orderBy("position")
+          .get();
+
+      final List<Map<String, String>> bookSummaries = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>?;
+
+        return {
+          'uid': doc.id, 
+          'title': data?['title'] as String? ?? 'Untitled Book',
+        };
+      }).toList();
+
+      return bookSummaries;
+    } catch (e) {
+      print('data error is here ${e}');
+      throw const BookServerFailure('Failed to load content references.');
+    }
+  }
+
+  Future<List<Map<String, String>>> getContentAudios(String bookId) async {
+  try {
+    final snapshot = await _firestore
+        .collection("book_content")
+        .where("bookId", isEqualTo: bookId)
+        .orderBy("position") // Note: Ensure an index is created in Firebase Console for this!
+        .get();
+
+    final List<Map<String, String>> bookSummaries = snapshot.docs.map((doc) {
+      final data = doc.data();
+
+      // Fallback cleanly using '??' instead of forcing direct strict type casting 'as String'
+      return {
+        'uid': doc.id, 
+        'title': data['title']?.toString() ?? 'Untitled Book',
+        'audioUrl': data['audioUrl']?.toString() ?? '', // Prevents Null-Cast Crashers
+      };
+    }).toList();
+
+    return bookSummaries;
+  } catch (e) {
+    // This will print the precise error detail (like a missing index link) to your debug panel
+    print('🎯 Firestore Fetch Error Detail: $e');
+    throw const BookServerFailure('Failed to load content references.');
+  }
+}
 
   Future<List<BookEntity>> getBooks() async {
     final snapshot = await _booksCollection
@@ -48,11 +127,17 @@ class BookRemoteDatasource {
       whatsInside: _toStringList(data['whatsInside']),
       takeAways: _toStringList(data['takeAways']),
       quotes: _toStringList(data['quotes']),
-      chapterCount: data["chapterCount"] ?? 0,
+      // chapterCount: data["chapterCount"] ?? 0,
       description: data["description"] ?? "aa",
-      tags: (data['tags'] as List<dynamic>?)
-            ?.map((tagMap) => TagsType.fromMap(tagMap as Map<String, dynamic>))
-            .toList() ?? const [],
+      tags:
+          (data['tags'] as List<dynamic>?)
+              ?.map(
+                (tagMap) => TagsType.fromMap(tagMap as Map<String, dynamic>),
+              )
+              .toList() ??
+          const [],
+
+      audioUrl: data["audioUrl"] ?? "",
     );
   }
 
