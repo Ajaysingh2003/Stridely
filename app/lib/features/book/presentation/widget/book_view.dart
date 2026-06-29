@@ -30,7 +30,9 @@ class BookView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+  final String bookId = "QPsnrnqHjaUm5ybN8YAt";
 
+      final countChapter = ref.watch(bookTitleControllerProvider(bookId)).titles.length;
     return SingleChildScrollView(
       
       physics: const BouncingScrollPhysics(),
@@ -55,7 +57,7 @@ class BookView extends ConsumerWidget {
                     BookTypography(
                       title: book.title ?? "",
                       description: book.description ?? "",
-                      chapterCount: book.chapterCount,
+                      chapterCount: countChapter,
                       playMin: book.duration,
                       ratting: book.rating,
                       tags: book.tags,

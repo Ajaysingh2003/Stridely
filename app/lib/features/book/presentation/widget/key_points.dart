@@ -7,7 +7,8 @@ class KeyPoint {
 }
 
 class KeyPoints extends StatelessWidget {
-  final List<KeyPoint> points;
+  // final List<KeyPoint> points;
+  final List<Map<String, String>> points;
   const KeyPoints({super.key, required this.points});
 
   // 🚀 UNIFIED DESIGN: Standardized shared divider property configuration
@@ -39,7 +40,8 @@ class KeyPoints extends StatelessWidget {
 }
 
 class ContentButton extends StatefulWidget {
-  final KeyPoint point;
+  // final KeyPoint point;
+  final Map<String, String> point;
   final int index;
   final bool isLast;
   final Widget sharedDivider;
@@ -83,7 +85,7 @@ class _ContentButtonState extends State<ContentButton> {
               // Point text
               Expanded(
                 child: Text(
-                  widget.point.text,
+                  widget.point["title"] ?? "",
                   overflow: TextOverflow.clip,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     // color: const Color.fromARGB(168, 255, 255, 255),

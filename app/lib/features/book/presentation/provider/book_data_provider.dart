@@ -1,10 +1,14 @@
 import 'package:app/features/book/data/datasources/book_remote_datasource.dart';
+import 'package:app/features/book/domain/entity/book_content_entity.dart';
 import 'package:app/features/book/domain/entity/book_entity.dart';
 import 'package:app/features/book/domain/entity/book_failure.dart';
 import 'package:app/features/book/domain/repository/book_repository.dart';
 import 'package:app/features/book/domain/repository/book_repository_impl.dart';
 import 'package:app/features/book/domain/usercases/get_books.dart';
 import 'package:app/features/book/domain/usercases/get_books_by_id.dart';
+import 'package:app/features/book/domain/usercases/get_content_audio.dart';
+import 'package:app/features/book/domain/usercases/get_content_title.dart';
+import 'package:app/features/book/domain/usercases/get_contents.dart';
 import 'package:app/features/book/presentation/provider/books_controller.dart';
 import 'package:app/features/book/presentation/state/bookState.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,9 +34,22 @@ final booksRepositoryProvider = Provider<BookRepository>(
 final getBooksUseCaseProvider = Provider(
   (ref) => GetBooksUseCase(ref.watch(booksRepositoryProvider)),
 );
+
 final getBookUseCaseProvider = Provider(
   (ref) => GetBooksByIdUseCase(ref.watch(booksRepositoryProvider)),
 );
+
+final getBookContentUseCaseProvider = Provider(
+  (ref) => GetContentUseCase(ref.watch(booksRepositoryProvider)),
+);
+
+final getContentTitleUseCaseProvider = Provider(
+  (ref) => GetContentTitleUseCase(ref.watch(booksRepositoryProvider)),
+);
+final getContentAudiosUseCaseProvider = Provider(
+  (ref) => GetContentAudioUseCase(ref.watch(booksRepositoryProvider)),
+);
+
 
 
 
@@ -51,4 +68,61 @@ final singleBookProvider = FutureProvider.family<Either<BookFailure, BookEntity>
   
   // Return the evaluation pipeline result
   return await getBookByIdUseCase.call(bookId);
+});
+
+
+
+// final singleBookContentProvider = FutureProvider.family<Either<BookFailure, BookContent>, String>((ref, bookId) async {
+//   // Grab the single-book lookup use case directly from your DI setup
+//   final getBookContentByBookIdUseCase = ref.watch(getBookContentUseCaseProvider);
+  
+//   // Return the evaluation pipeline result
+//   return await getBookContentByBookIdUseCase.call(bookId);
+// });
+
+
+
+final singleBookContentProvider = FutureProvider.family<BookContent, String>((ref, bookId) async {
+  final getBookContentByBookIdUseCase = ref.watch(getBookContentUseCaseProvider);
+  
+  final Either<BookFailure, BookContent> result = await getBookContentByBookIdUseCase.call(bookId);
+
+  // 🎯 Unpack the functional Either structure cleanly here
+  return result.fold(
+    (failure) => throw failure, 
+    (content) => content,      
+  );
+});
+
+
+
+
+
+
+
+
+final bookTitleControllerProvider = StateNotifierProvider.family<BookTitleController, BookContentTitleState, String>((ref, bookId) {
+  final useCase = ref.watch(getContentTitleUseCaseProvider);
+  return BookTitleController(useCase)..loadBookTitles(bookId);
+});
+
+
+
+// final bookContentAudiosControllerProvider = StateNotifierProvider.family<BookContentAudioController, BookContentAudioState, String>((ref, bookId) {
+//   final useCase = ref.watch(getContentAudiosUseCaseProvider);
+//   return BookContentAudioController(useCase)..loadBookaudios(bookId);
+// });
+
+final bookContentAudiosControllerProvider = StateNotifierProvider.family<
+    BookContentAudioController, 
+    BookContentAudioState, 
+    String
+>((ref, bookId) {
+  final useCase = ref.watch(getContentAudiosUseCaseProvider);
+  final controller = BookContentAudioController(useCase);
+  
+
+  Future.microtask(() => controller.loadBookaudios(bookId));
+  
+  return controller;
 });

@@ -10,7 +10,6 @@ class BookPoster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate dimensions dynamically for a perfect look on all device sizes
     final double screenWidth = MediaQuery.of(context).size.width;
     final double posterHeight = screenWidth * 0.55;
     final double posterWidth = posterHeight * 0.65;
@@ -18,7 +17,7 @@ class BookPoster extends StatelessWidget {
     final themeColors = Theme.of(context).colorScheme;
     return SizedBox(
       width: double.infinity,
-      height: posterHeight + 20, // Padding buffer for the drop shadow
+      height: posterHeight + 20,
       child: Center(
         child: Container(
           width: posterWidth,

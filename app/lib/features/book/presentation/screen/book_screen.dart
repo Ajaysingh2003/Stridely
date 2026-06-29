@@ -1,6 +1,13 @@
+import 'package:app/features/auth/domain/entities/user_entity.dart';
+import 'package:app/features/auth/presentation/pages/login_screen.dart';
+import 'package:app/features/book/domain/entity/book_entity.dart';
+import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/book/presentation/provider/book_data_provider.dart';
+import 'package:app/features/book/presentation/screen/book_content_screen.dart';
 import 'package:app/features/book/presentation/widget/Book_hero.dart';
+import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
 import 'package:app/features/book/presentation/widget/book_view.dart';
+import 'package:app/features/book/utility/book_utilty.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -95,7 +102,11 @@ class _BookPageState extends ConsumerState<BookPage> {
     );
   }
 
-  Widget _buildStartReadingButton() {
+  Widget _buildStartReadingButton(
+    BuildContext context,
+    BookEntity book,
+    String contentId,
+  ) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -128,8 +139,71 @@ class _BookPageState extends ConsumerState<BookPage> {
                         ),
                       ),
                     ),
-                    onPressed: () {
-                      print("Main reader flow triggered!");
+                    onPressed: () async {
+                      if (book.isFree) {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    BookContentPage(contentId: contentId),
+                            transitionDuration: const Duration(
+                              milliseconds: 550,
+                            ),
+                            reverseTransitionDuration: const Duration(
+                              milliseconds: 500,
+                            ), // Speed when going back
+                            transitionsBuilder:
+                                (
+                                  context,
+                                  animation,
+                                  secondaryAnimation,
+                                  child,
+                                ) {
+                                  // Slides from right (1.0, 0.0) to center (0.0, 0.0)
+
+                                  final begin = const Offset(1.5, 0.0);
+                                  final end = Offset.zero;
+                                  final tween = Tween(begin: begin, end: end);
+
+                                  // Makes the animation start fast and slow down gently (smooth look)
+                                  final curvedAnimation = CurvedAnimation(
+                                    parent: animation,
+
+                                    curve: Curves.easeInOutCubic,
+                                  );
+
+                                  return SlideTransition(
+                                    position: tween.animate(curvedAnimation),
+
+                                    child: child,
+                                  );
+                                },
+                          ),
+                        );
+
+                        return;
+                      }
+
+                      final UserEntity? currentUser = await ref
+                          .read(authControllerProvider.notifier)
+                          .getCurrentUser();
+
+                      final bool isPremiumUser =
+                          currentUser?.isPremium ?? false;
+
+                      if (book.canAccessAudio(isPremiumUser)) {
+                        // Navigator.push(context, LoginPage());
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      } else {
+                        // revenue cat
+                      }
+                      // print("Main reader flow triggered!");
                     },
                     child: Text(
                       "Read",
@@ -194,7 +268,14 @@ class _BookPageState extends ConsumerState<BookPage> {
     final colors = Theme.of(context).colorScheme;
     final bookId = "QPsnrnqHjaUm5ybN8YAt";
     final bookAsync = ref.watch(singleBookProvider(bookId));
-    print('🔥 RAW FIRESTORE DATA: $bookAsync');
+    final contentsync = ref.watch(bookTitleControllerProvider(bookId)).titles;
+    final firstContent = contentsync.isNotEmpty ? contentsync.first : null;
+    // final firstContent=ref.read(bookTitleControllerProvider.)
+    // final bookContentAsync = ref.watch(
+    //   singleBookContentProvider("UK3Hi4dSdiq7kU5qME6R"),
+    // );
+
+    // print('🔥 RAW FIRESTORE DATA: $bookContentAsync');
     return Scaffold(
       backgroundColor: colors.surface,
       extendBody: true,
@@ -205,8 +286,7 @@ class _BookPageState extends ConsumerState<BookPage> {
             (failure) => Center(
               child: Text('Backend Failure: ${failure.message.toString()}'),
             ),
-            
-           
+
             (book) => CustomScrollView(
               controller: _scrollController,
               physics: const BouncingScrollPhysics(),
@@ -307,7 +387,11 @@ class _BookPageState extends ConsumerState<BookPage> {
                                   ],
                                 ),
                               ),
-                              _buildStartReadingButton(),
+                              _buildStartReadingButton(
+                                context,
+                                book,
+                                firstContent?["uid"] ?? "",
+                              ),
                             ],
                           ),
                         ),
@@ -334,7 +418,7 @@ class _BookPageState extends ConsumerState<BookPage> {
         },
         error: (error, stackTrace) =>
             Center(child: Text('System Error occurred: $error')),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: BookDetailSkeleton()),
       ),
     );
   }

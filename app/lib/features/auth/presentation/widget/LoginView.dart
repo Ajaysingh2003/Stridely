@@ -203,7 +203,8 @@ class LoginView extends ConsumerWidget {
                       ),
                       // 🚀 Captures the tap gesture event natively
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () => Navigator.push(
+                        ..onTap = () => 
+                        Navigator.push(
                           context,
                           PageRouteBuilder(
                             pageBuilder:
