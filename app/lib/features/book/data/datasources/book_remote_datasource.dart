@@ -62,22 +62,24 @@ class BookRemoteDatasource {
     }
   }
 
-  Future<List<Map<String, String>>> getContentAudios(String bookId) async {
+  Future<List<Map<String, String>>> getChapters(String bookId) async {
   try {
     final snapshot = await _firestore
         .collection("book_content")
         .where("bookId", isEqualTo: bookId)
-        .orderBy("position") // Note: Ensure an index is created in Firebase Console for this!
+        .orderBy("position")
         .get();
 
     final List<Map<String, String>> bookSummaries = snapshot.docs.map((doc) {
       final data = doc.data();
 
       // Fallback cleanly using '??' instead of forcing direct strict type casting 'as String'
+
+      print(' leah jaye video $data');
       return {
         'uid': doc.id, 
         'title': data['title']?.toString() ?? 'Untitled Book',
-        'audioUrl': data['audioUrl']?.toString() ?? '', // Prevents Null-Cast Crashers
+        'startTimeMs':safeString( data['startTimeMs']),
       };
     }).toList();
 
@@ -156,4 +158,21 @@ class BookRemoteDatasource {
 
     return 0;
   }
+}
+
+
+
+
+String safeString(dynamic value, {String fallback = '0'}) {
+  if (value == null) return fallback;
+  return value.toString();
+}
+
+int safeInt(dynamic value, {int fallback = 0}) {
+  if (value == null) return fallback;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  
+  // If it's a string, safely parse it
+  return int.tryParse(value.toString()) ?? fallback;
 }

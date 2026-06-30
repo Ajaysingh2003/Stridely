@@ -4,12 +4,16 @@ import 'package:app/features/auth/presentation/widget/autha_gatekeeper.dart';
 import 'package:app/features/book/presentation/screen/book_screen.dart';
 import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart';
+// import 'package:audio_service/audio_service.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'firebase_options.dart';
 import 'package:app/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+// import 'package:just_audio_background/just_audio_background.dart'; // re-enable when ready for background audio
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +21,21 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Note: just_audio_background init temporarily disabled to avoid
+  // "single player" / LateInitializationError during development.
+  // Re-enable with proper AndroidManifest.xml service declarations
+  // and call it here when you want background playback + notifications.
+  //
+  // await JustAudioBackground.init(
+  //   androidNotificationChannelId: 'com.ajaysingh.stridely.channel.audio',
+  //   androidNotificationChannelName: 'Audio Playback',
+  //   androidNotificationOngoing: true,
+  // );
+
+
+  
+
   runApp(const ProviderScope(child: MyApp()));
 }
 

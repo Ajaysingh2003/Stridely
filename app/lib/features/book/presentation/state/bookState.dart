@@ -57,27 +57,27 @@ class BookContentTitleState {
 }
 
 
-class BookContentAudioState {
-  final List<Map<String, String>> audios;
+class BookContentChapterState {
+  final List<Map<String, String>> chapters;
   final bool isLoading;
   final String? errorMessage;
 
-  const BookContentAudioState({
-    this.audios = const [],
+  const BookContentChapterState({
+    this.chapters = const [],
     this.isLoading = false,
     this.errorMessage,
   });
 
 
-  BookContentAudioState copyWith({
-    List<Map<String, String>>? audios,
+  BookContentChapterState copyWith({
+    List<Map<String, String>>? chapters,
     bool? isLoading,
     String? errorMessage,
   })
   
    {
-    return BookContentAudioState(
-      audios: audios ?? this.audios,
+    return BookContentChapterState(
+      chapters: chapters ?? this.chapters,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
     );

@@ -106,7 +106,9 @@ class _BookPageState extends ConsumerState<BookPage> {
     BuildContext context,
     BookEntity book,
     String contentId,
-  ) {
+  )
+   
+  {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -141,44 +143,53 @@ class _BookPageState extends ConsumerState<BookPage> {
                     ),
                     onPressed: () async {
                       if (book.isFree) {
+                        // Navigator.push(
+                        //   context,
+                        //   PageRouteBuilder(
+                        //     pageBuilder:
+                        //         (context, animation, secondaryAnimation) =>
+                        //             BookContentPage(contentId: contentId),
+                        //     transitionDuration: const Duration(
+                        //       milliseconds: 550,
+                        //     ),
+                        //     reverseTransitionDuration: const Duration(
+                        //       milliseconds: 500,
+                        //     ), // Speed when going back
+                        //     transitionsBuilder:
+                        //         (
+                        //           context,
+                        //           animation,
+                        //           secondaryAnimation,
+                        //           child,
+                        //         ) {
+                        //           // Slides from right (1.0, 0.0) to center (0.0, 0.0)
+
+                        //           final begin = const Offset(1.5, 0.0);
+                        //           final end = Offset.zero;
+                        //           final tween = Tween(begin: begin, end: end);
+
+                        //           // Makes the animation start fast and slow down gently (smooth look)
+                        //           final curvedAnimation = CurvedAnimation(
+                        //             parent: animation,
+
+                        //             curve: Curves.easeInOutCubic,
+                        //           );
+
+                        //           return SlideTransition(
+                        //             position: tween.animate(curvedAnimation),
+
+                        //             child: child,
+                        //           );
+                        //         },
+                        //   ),
+                        // );
+
+
+
                         Navigator.push(
                           context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    BookContentPage(contentId: contentId),
-                            transitionDuration: const Duration(
-                              milliseconds: 550,
-                            ),
-                            reverseTransitionDuration: const Duration(
-                              milliseconds: 500,
-                            ), // Speed when going back
-                            transitionsBuilder:
-                                (
-                                  context,
-                                  animation,
-                                  secondaryAnimation,
-                                  child,
-                                ) {
-                                  // Slides from right (1.0, 0.0) to center (0.0, 0.0)
-
-                                  final begin = const Offset(1.5, 0.0);
-                                  final end = Offset.zero;
-                                  final tween = Tween(begin: begin, end: end);
-
-                                  // Makes the animation start fast and slow down gently (smooth look)
-                                  final curvedAnimation = CurvedAnimation(
-                                    parent: animation,
-
-                                    curve: Curves.easeInOutCubic,
-                                  );
-
-                                  return SlideTransition(
-                                    position: tween.animate(curvedAnimation),
-
-                                    child: child,
-                                  );
-                                },
+                          MaterialPageRoute(
+                            builder: (context) => BookContentPage(contentId: contentId),
                           ),
                         );
 

@@ -46,8 +46,8 @@ final getBookContentUseCaseProvider = Provider(
 final getContentTitleUseCaseProvider = Provider(
   (ref) => GetContentTitleUseCase(ref.watch(booksRepositoryProvider)),
 );
-final getContentAudiosUseCaseProvider = Provider(
-  (ref) => GetContentAudioUseCase(ref.watch(booksRepositoryProvider)),
+final getContentChaptersUseCaseProvider = Provider(
+  (ref) => GetContentChaptersUseCase(ref.watch(booksRepositoryProvider)),
 );
 
 
@@ -113,16 +113,22 @@ final bookTitleControllerProvider = StateNotifierProvider.family<BookTitleContro
 //   return BookContentAudioController(useCase)..loadBookaudios(bookId);
 // });
 
-final bookContentAudiosControllerProvider = StateNotifierProvider.family<
-    BookContentAudioController, 
-    BookContentAudioState, 
+
+
+final bookContentChaptersControllerProvider = StateNotifierProvider.family<
+    BookContentChapterController, 
+    BookContentChapterState, 
     String
 >((ref, bookId) {
-  final useCase = ref.watch(getContentAudiosUseCaseProvider);
-  final controller = BookContentAudioController(useCase);
+  // 1. Fetch your clean background data transmission use case
+  final useCase = ref.watch(getContentChaptersUseCaseProvider);
   
-
-  Future.microtask(() => controller.loadBookaudios(bookId));
+  // 2. Instantiate your actual CONTROLLER notifier (pass the useCase dependencies if needed)
+  final controller = BookContentChapterController(useCase);
+  
+  // 3. Trigger the data fetch lifecycle method cleanly using your public method name
+  // (Replace 'loadBookAudios' or 'fetchChapters' with your actual method name inside your controller)
+  controller.loadChapters(bookId);
   
   return controller;
 });

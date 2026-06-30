@@ -7,7 +7,7 @@ class BookContent extends Equatable {
   final String content;
   final String bookId;
   final int position;
-  final String? audioUrl;
+  final int? startTimeMs;
 
   const BookContent({
     required this.uid,
@@ -15,7 +15,7 @@ class BookContent extends Equatable {
     required this.title,
     required this.position,
     required this.content,
-    required this.audioUrl,
+    required this.startTimeMs,
   });
 
   factory BookContent.fromFirestore(DocumentSnapshot doc) {
@@ -27,7 +27,7 @@ class BookContent extends Equatable {
       bookId: doc?["bookId"] as String,
       content: data?['content'] as String? ?? '',
       position: data?["position"] ?? 0,
-      audioUrl:data?["audioUrl"] ?? ""
+      startTimeMs:data?["startTimeMs"] ?? ""
     );
   }
 
@@ -40,5 +40,5 @@ class BookContent extends Equatable {
   }
 
   @override
-  List<Object?> get props => [uid, title, content,bookId,position,audioUrl];
+  List<Object?> get props => [uid, title, content,bookId,position];
 }
