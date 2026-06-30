@@ -56,24 +56,24 @@ class BookTitleController extends StateNotifier<BookContentTitleState> {
   }
 }
 
-class BookContentAudioController extends StateNotifier<BookContentAudioState> {
-  final GetContentAudioUseCase _contentAudioUseCase;
+class BookContentChapterController extends StateNotifier<BookContentChapterState> {
+  final GetContentChaptersUseCase _contentChapterUseCase;
 
-  BookContentAudioController(this._contentAudioUseCase) : super(const BookContentAudioState());
+  BookContentChapterController(this._contentChapterUseCase) : super(const BookContentChapterState());
 
-  Future<void> loadBookaudios(String bookId) async {
+  Future<void> loadChapters(String bookId) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     
-    final result = await _contentAudioUseCase.call(bookId);
+    final result = await _contentChapterUseCase.call(bookId);
 
     result.fold(
       (failure) => state = state.copyWith(
         isLoading: false, 
         errorMessage: failure.message,
       ),
-      (audioList) => state = state.copyWith(
+      (chapterList) => state = state.copyWith(
         isLoading: false, 
-        audios: audioList,
+        chapters: chapterList,
       ),
     );
   }

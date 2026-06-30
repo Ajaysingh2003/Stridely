@@ -10,7 +10,7 @@ abstract class BookRepository {
   Future<Either<BookFailure, List<Map<String, String>>>> getContentTitle(
     String bookId,
   );
-  Future<Either<BookFailure, List<Map<String, String>>>> getContentAudios(
+  Future<Either<BookFailure, List<Map<String, String>>>> getChapters(
     String bookId,
   );
   Future<Either<BookFailure, BookEntity>> getBookById(String bookId);

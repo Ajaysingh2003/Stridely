@@ -40,11 +40,11 @@ class BookRepositoryImpl implements BookRepository {
     }
   }
   @override
-  Future<Either<BookFailure, List<Map<String, String>>>> getContentAudios(
+  Future<Either<BookFailure, List<Map<String, String>>>> getChapters(
     String bookId,
   ) async {
     try {
-      final booksContent = await _datasource.getContentAudios(bookId);
+      final booksContent = await _datasource.getChapters(bookId);
 
       // print('here is your data:${booksContent}');
       return Right(booksContent);

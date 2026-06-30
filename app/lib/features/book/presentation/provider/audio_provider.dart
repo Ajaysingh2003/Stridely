@@ -5,19 +5,19 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
-
-class CurrentChapter {
-  final String uid;
+class CurrentChapter extends Equatable {
   final String title;
-  final String audioUrl;
+  final int startTimeMs;
   final int index;
 
   const CurrentChapter({
-    required this.uid,
     required this.title,
-    required this.audioUrl,
+    required this.startTimeMs,
     required this.index,
   });
+
+  @override
+  List<Object?> get props => [title, startTimeMs, index];
 }
 
 class AudioPlayerState extends Equatable {
@@ -29,10 +29,10 @@ class AudioPlayerState extends Equatable {
   final double speed;
   final int currentIndex;
   final String? error;
-  final CurrentChapter?  currentChapters;
+  final CurrentChapter? currentChapter;
 
   const AudioPlayerState({
-    this.currentChapters,
+    this.currentChapter,
     this.isPlaying = false,
     this.isLoading = true,
     this.isBuffering = false,
@@ -43,6 +43,10 @@ class AudioPlayerState extends Equatable {
     this.error,
   });
 
+  double get progress => duration.inMilliseconds > 0
+      ? (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0)
+      : 0.0;
+
   AudioPlayerState copyWith({
     bool? isPlaying,
     bool? isLoading,
@@ -51,52 +55,65 @@ class AudioPlayerState extends Equatable {
     Duration? duration,
     double? speed,
     int? currentIndex,
+    CurrentChapter? currentChapter,
     String? error,
-  }) =>
-      AudioPlayerState(
-        isPlaying: isPlaying ?? this.isPlaying,
-        isLoading: isLoading ?? this.isLoading,
-        isBuffering: isBuffering ?? this.isBuffering,
-        position: position ?? this.position,
-        duration: duration ?? this.duration,
-        speed: speed ?? this.speed,
-        currentIndex: currentIndex ?? this.currentIndex,
-        error: error,
-      );
-
-  double get progress =>
-      duration.inMilliseconds > 0
-          ? (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0)
-          : 0.0;
+  }) => AudioPlayerState(
+    currentChapter: currentChapter ?? this.currentChapter,
+    isPlaying: isPlaying ?? this.isPlaying,
+    isLoading: isLoading ?? this.isLoading,
+    isBuffering: isBuffering ?? this.isBuffering,
+    position: position ?? this.position,
+    duration: duration ?? this.duration,
+    speed: speed ?? this.speed,
+    currentIndex: currentIndex ?? this.currentIndex,
+    error: error,
+  );
 
   @override
-  List<Object?> get props =>
-      [isPlaying, isLoading, isBuffering, position, duration, speed, currentIndex, error];
+  List<Object?> get props => [
+    currentChapter,
+    isPlaying,
+    isLoading,
+    isBuffering,
+    position,
+    duration,
+    speed,
+    currentIndex,
+    error,
+  ];
 }
 
-// ── Params — Rewritten to handle a list of Maps cleanly ───────────────────────
 class AudioParams extends Equatable {
+  final String bookId;
+  final String bookTitle;
+  final String audioUrl;
+  // Each map contains 'title' and 'startTimeMs' (string representation of an int)
   final List<Map<String, String>> chapters;
-  final int initialIndex;
 
   const AudioParams({
+    required this.bookId,
+    required this.bookTitle,
+    required this.audioUrl,
     required this.chapters,
-    this.initialIndex = 0,
   });
 
   @override
-  List<Object?> get props => [chapters, initialIndex];
+  List<Object?> get props => [bookId, bookTitle, audioUrl, chapters];
 }
 
-// ── Notifier ──────────────────────────────────────────────────────────────────
 class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   final AudioPlayer _player;
   final AudioParams params;
   bool _isInitialized = false;
+  bool _disposed = false;
 
-  AudioPlayerNotifier(this._player, this.params)
-      : super(AudioPlayerState(currentIndex: params.initialIndex)) {
+  AudioPlayerNotifier(this._player, this.params) : super(const AudioPlayerState()) {
     _init();
+  }
+
+  void _safeUpdate(AudioPlayerState newState) {
+    if (_disposed) return;
+    state = newState;
   }
 
   Future<void> _init() async {
@@ -107,64 +124,67 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.speech());
 
-      if (!mounted) return;
-
-      // Listen to play/pause and load states safely
+      // 1. Monitor Playback State
       _player.playerStateStream.listen((s) {
-        if (!mounted) return;
-        state = state.copyWith(
+        if (_disposed) return;
+        _safeUpdate(state.copyWith(
           isPlaying: s.playing,
-          isLoading: s.processingState == ProcessingState.loading ||
-              s.processingState == ProcessingState.buffering,
+          isLoading: s.processingState == ProcessingState.loading || s.processingState == ProcessingState.idle,
           isBuffering: s.processingState == ProcessingState.buffering,
-        );
+        ));
       });
 
-      // Listen to layout slider progression positions
+      // 2. Continuous Single Stream Position Listener
       _player.positionStream.listen((p) {
-        if (!mounted) return;
-        state = state.copyWith(position: p);
+        if (_disposed) return;
+        
+        // Dynamically deduce the active chapter index based on current playback milliseconds
+        final currentMs = p.inMilliseconds;
+        int activeIdx = 0;
+
+        for (int i = 0; i < params.chapters.length; i++) {
+          final startMs = int.tryParse(params.chapters[i]['startTimeMs'] ?? '0') ?? 0;
+          if (currentMs >= startMs) {
+            activeIdx = i;
+          } else {
+            break;
+          }
+        }
+
+        final ch = params.chapters[activeIdx];
+        _safeUpdate(state.copyWith(
+          position: p,
+          currentIndex: activeIdx,
+          currentChapter: CurrentChapter(
+            title: ch['title'] ?? 'Untitled Chapter',
+            startTimeMs: int.tryParse(ch['startTimeMs'] ?? '0') ?? 0,
+            index: activeIdx,
+          ),
+        ));
       });
 
-      // Listen to duration updates (fires per-track inside the playlist context)
+      // 3. Audio Stream Total Duration Listener
       _player.durationStream.listen((d) {
-        if (!mounted) return;
-        if (d != null) state = state.copyWith(duration: d);
+        if (_disposed || d == null) return;
+        _safeUpdate(state.copyWith(duration: d));
       });
 
-      // Track index changes when tracks shift automatically
-      _player.currentIndexStream.listen((index) {
-        if (!mounted || index == null) return;
-        state = state.copyWith(currentIndex: index);
-      });
-
-      // ── Build the Blinkist-Style Playlist Engine ───────────────────────────
-      final playlist = ConcatenatingAudioSource(
-        useLazyPreparation: true,
-        children: params.chapters.map((chapter) {
-          final urlStr = chapter['audioUrl'] ?? '';
-          return AudioSource.uri(
-            Uri.parse(urlStr),
-            tag: MediaItem(
-              id: urlStr,
-              title: chapter['title'] ?? 'Untitled Chapter',
-              album: 'Book Summary',
-            ),
-          );
-        }).toList(),
+      // 4. Setup Single Audio Source with background controls
+      final source = AudioSource.uri(
+        Uri.parse(params.audioUrl),
+        tag: MediaItem(
+          id: params.bookId,
+          title: params.bookTitle,
+          album: 'Book Summary',
+        ),
       );
 
-      // Mount the entire pipeline cluster cleanly
-      await _player.setAudioSource(playlist, initialIndex: params.initialIndex);
+      _safeUpdate(state.copyWith(isLoading: true, error: null));
+      await _player.setAudioSource(source);
+      _safeUpdate(state.copyWith(isLoading: false));
 
-      if (!mounted) return;
-      state = state.copyWith(isLoading: false, speed: _player.speed);
     } catch (e) {
-      if (!mounted) return;
-      state = state.copyWith(
-        isLoading: false,
-        error: 'Failed to load audio playlist: $e',
-      );
+      _safeUpdate(state.copyWith(isLoading: false, error: 'Failed to initialize master track: $e'));
     }
   }
 
@@ -172,56 +192,59 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     _player.playing ? await _player.pause() : await _player.play();
   }
 
-  Future<void> seekTo(Duration position) async {
-    await _player.seek(position);
+  Future<void> seekToProgress(double globalProgress) async {
+    final targetMs = (state.duration.inMilliseconds * globalProgress.clamp(0.0, 1.0)).round();
+    await _player.seek(Duration(milliseconds: targetMs));
+  }
+
+  Future<void> seekToChapter(int index) async {
+    if (index < 0 || index >= params.chapters.length) return;
+    final startMs = int.tryParse(params.chapters[index]['startTimeMs'] ?? '0') ?? 0;
+    await _player.seek(Duration(milliseconds: startMs));
   }
 
   Future<void> skipForward() async {
-    final target = state.position + const Duration(seconds: 10);
+    final target = _player.position + const Duration(seconds: 10);
     await _player.seek(target > state.duration ? state.duration : target);
   }
 
   Future<void> skipBackward() async {
-    final target = state.position - const Duration(seconds: 10);
+    final target = _player.position - const Duration(seconds: 10);
     await _player.seek(target < Duration.zero ? Duration.zero : target);
   }
 
-  // Next Track Skip (Used by the double-arrow layout widgets)
   Future<void> skipToNextChapter() async {
-    if (_player.hasNext) {
-      await _player.seekToNext();
+    final nextIdx = state.currentIndex + 1;
+    if (nextIdx < params.chapters.length) {
+      await seekToChapter(nextIdx);
     }
   }
 
-  // Previous Track Skip (Used by the double-arrow layout widgets)
   Future<void> skipToPreviousChapter() async {
-    if (_player.hasPrevious) {
-      await _player.seekToPrevious();
+    final prevIdx = state.currentIndex - 1;
+    if (prevIdx >= 0) {
+      await seekToChapter(prevIdx);
     }
   }
 
   Future<void> setSpeed(double speed) async {
     await _player.setSpeed(speed);
-    if (!mounted) return;
-    state = state.copyWith(speed: speed);
+    if (_disposed) return;
+    _safeUpdate(state.copyWith(speed: speed));
   }
 
   @override
   void dispose() {
-    _player.stop(); 
+    _disposed = true;
+    _player.stop();
     super.dispose();
   }
 }
 
-
-final audioPlayerProvider = StateNotifierProvider.autoDispose
-    .family<AudioPlayerNotifier, AudioPlayerState, AudioParams>(
+final audioPlayerProvider = StateNotifierProvider.family.autoDispose<AudioPlayerNotifier, AudioPlayerState, AudioParams>(
   (ref, params) {
     final player = AudioPlayer();
-    
-    // Explicit clean disposal handshake execution when UI context changes
     ref.onDispose(() => player.dispose());
-    
     return AudioPlayerNotifier(player, params);
   },
 );
