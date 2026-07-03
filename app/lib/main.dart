@@ -4,6 +4,7 @@ import 'package:app/features/auth/presentation/widget/autha_gatekeeper.dart';
 import 'package:app/features/book/presentation/screen/book_screen.dart';
 import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart';
+import 'package:app/features/onboarding/presentation/screen/onBoarding_screen.dart';
 // import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -121,7 +122,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       // home: const HomePage(),
-      home: const BookPage(),
+      home: const OnboardingScreen(),
     );
   }
 }

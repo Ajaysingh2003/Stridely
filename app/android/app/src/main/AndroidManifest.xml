@@ -7,8 +7,8 @@
 
     <application
         android:name="${applicationName}"
-        android:label="app"
-        android:icon="@mipmap/ic_launcher">
+        android:label="stridely"
+        android:icon="@mipmap/launcher_icon">
 
         <activity
             android:name=".MainActivity"
