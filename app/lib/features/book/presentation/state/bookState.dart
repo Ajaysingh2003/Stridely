@@ -1,27 +1,31 @@
 // features/book/presentation/provider/book_state.dart
 import 'package:app/features/book/domain/entity/book_entity.dart';
-
 class BookState {
   final List<BookEntity> books;
+  final List<BookEntity> freeBooks; // ── 🎯 DEDICATED FREE BOOKS SLOT ──
   final bool isLoading;
   final String? errorMessage;
 
   const BookState({
     this.books = const [],
+    this.freeBooks = const [], // Initialized cleanly as empty array matrix
     this.isLoading = false,
     this.errorMessage,
   });
 
   BookState copyWith({
     List<BookEntity>? books,
+    List<BookEntity>? freeBooks,
     bool? isLoading,
-    String? errorMessage,
-  }) 
-  {
+    // We use an explicit fallback token checker structure for error handling
+    String? Function()? errorMessage, 
+  }) {
     return BookState(
       books: books ?? this.books,
+      freeBooks: freeBooks ?? this.freeBooks, // Handles separate stream merges smoothly
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage,
+      // ── 🎯 FIXED: Allows explicitly resetting to null vs using old state ──
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }
 }

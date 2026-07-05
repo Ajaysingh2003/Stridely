@@ -56,6 +56,7 @@ class MyApp extends StatelessWidget {
           onPrimary: Color(0xFFFFFFFF),
           secondary: Color(0xFFF3F3F3),
           tertiary: Color.fromARGB(255, 1, 1, 2),
+          onTertiary: Color.fromARGB(255, 255, 255, 255),
           // surface: Color.fromARGB(70, 12, 23, 45), 
           surface: Color(0xFFFFFFFF), 
           // onSurface: Color.fromARGB(200, 255, 255, 255),
@@ -117,12 +118,12 @@ class MyApp extends StatelessWidget {
 
           labelLarge: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
           labelMedium: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
-          labelSmall: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
+          labelSmall: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500,fontSize: 12),
         ),
       ),
       debugShowCheckedModeBanner: false,
       // home: const HomePage(),
-      home: const OnboardingScreen(),
+      home: const HomePage(),
     );
   }
 }

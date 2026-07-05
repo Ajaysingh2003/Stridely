@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 
 abstract class BookRepository {
   Future<Either<BookFailure, List<BookEntity>>> getBooks();
+  Future<Either<BookFailure, List<BookEntity>>> getFreeBooks();
 
   Future<Either<BookFailure, BookContent>> getContents(String uid);
   Future<Either<BookFailure, List<Map<String, String>>>> getContentTitle(

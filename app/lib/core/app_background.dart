@@ -9,21 +9,17 @@ class AppBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox.expand(
       child: Container(
-      decoration: BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-
-        Color.fromARGB(255, 0, 0, 0),
-        Color(0xFF46062B),
-        Color(0xFF000000),
-
-      ],
-      stops: [0.18, 0.5, 0.72],
-    ),
-    // borderRadius: BorderRadius.circular(50), // matches your design
+  decoration: const BoxDecoration(
+  gradient: LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.center,
+    colors: [
+      Color.fromARGB(255, 162, 233, 255),
+      Color.fromARGB(255, 217, 226, 251),
+      Color.fromARGB(255, 255, 255, 255),
+    ],
   ),
+),
   child: child,
 )
     );

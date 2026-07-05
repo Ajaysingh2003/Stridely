@@ -1,5 +1,6 @@
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/auth/presentation/widget/auth_banner.dart';
+import 'package:app/features/home/presentation/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,34 +30,78 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     super.dispose();
   }
 
-  Future<void> _handleSubmit() async {
-    if (!_formKey.currentState!.validate()) return;
+  // Future<void> _handleSubmit() async {
+  //   if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _showSuccess = false;
-      _errorMessage = "";
-    });
+  //   setState(() {
+  //     _showSuccess = false;
+  //     _errorMessage = "";
+  //   });
 
-    setState(() => _isLoading = true);
+  //   setState(() => _isLoading = true);
 
-    try {
-      await ref
-          .read(authControllerProvider.notifier)
-          .login(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+  //   try {
+  //     await ref
+  //         .read(authControllerProvider.notifier)
+  //         .login(
+  //           email: _emailController.text.trim(),
+  //           password: _passwordController.text.trim(),
+  //         );
+
+
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => const HomePage()),
+  //         );
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(
+  //         context,
+  //       ).showSnackBar(SnackBar(content: Text(e.toString())));
+  //     }
+  //   } finally {
+  //     if (mounted) setState(() => _isLoading = false);
+  //   }
+  // }
+
+
+
+Future<void> _handleSubmit() async {
+  if (!_formKey.currentState!.validate()) return;
+
+  setState(() {
+    _showSuccess = false;
+    _errorMessage = "";
+    _isLoading = true; // Unified state execution
+  });
+
+  try {
+    // 1. Await network authentication response
+    await ref.read(authControllerProvider.notifier).login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+    // ── 🎯 CRITICAL FIX: Verify widget tree state after async operation ──
+    if (!mounted) return;
+
+    // 2. Perform safe context-driven navigation
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  } finally {
+    if (mounted) {
+      setState(() => _isLoading = false);
     }
   }
-
+}
   void _handleContinueAction() {
     if (!showPasswordField) {
       final emailInput = _emailController.text.trim();
@@ -91,6 +136,10 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     final themeColors = Theme.of(context).colorScheme;
 
     final authState = ref.watch(authControllerProvider);
+
+
+      
+   
     final isAppLoading = authState.isLoading;
 
     ref.listen(authControllerProvider, (previous, next) {

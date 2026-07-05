@@ -1,30 +1,27 @@
 import 'dart:math' as math;
 import 'dart:ui';
-import 'package:app/features/onboarding/presentation/widget/Sparklepoint.dart';
 import 'package:app/features/onboarding/presentation/widget/intro_card.dart';
 import 'package:app/features/onboarding/presentation/widget/page_indicator.dart';
 import 'package:flutter/material.dart';
 
-class FirstScreen extends StatefulWidget {
-  const FirstScreen({super.key});
+class ThirdScreen extends StatefulWidget {
+  const ThirdScreen({super.key});
 
   @override
-  State<FirstScreen> createState() => _FirstScreenState();
+  State<ThirdScreen> createState() => _ThirdScreenState();
 }
 
-class _FirstScreenState extends State<FirstScreen>
+class _ThirdScreenState extends State<ThirdScreen>
     with SingleTickerProviderStateMixin {
-
-  
-  late final Animation<double> _entranceSlide;
+      late final Animation<double> _entranceSlide;
   late final Animation<double> _entranceOpacity;
 
   late final AnimationController _floatCtrl;
   late final Animation<double> _float;
   bool _isEntranceComplete = false;
+
   @override
-  // void initState() {
-    void initState() {
+   void initState() {
     super.initState();
     
     _floatCtrl = AnimationController(
@@ -76,6 +73,7 @@ class _FirstScreenState extends State<FirstScreen>
     return Scaffold(
       body: Stack(
         children: [
+         
           // ── Background gradient ──────────────────────────────────
           Container(
             decoration: const BoxDecoration(
@@ -119,7 +117,7 @@ class _FirstScreenState extends State<FirstScreen>
             (s) => Positioned(
               top: s.dy,
               left: s.dx,
-              child: SparklePoint(seed: s.dy.toInt()),
+              child: _SparklePoint(seed: s.dy.toInt()),
             ),
           ),
 
@@ -150,48 +148,43 @@ class _FirstScreenState extends State<FirstScreen>
               ),
             ),
           ),
-          Positioned(
-            top: 65,
+Positioned(
+  top: 65,  
 
-            left: 90,
-            // child: Transform.rotate(
-            // angle: -math.pi / 4,
-            child: Container(
-              width: 260,
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 207, 230, 247),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(
-                      255,
-                      3,
-                      24,
-                      17,
-                    ).withValues(alpha: 0.1),
-                    blurRadius: 3,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-
-              alignment: Alignment.center,
-              child: Text(
-                "⭐ Trusted by 50,000+ readers",
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 13,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
-            // ),
+  left: 90, 
+  // child: Transform.rotate(
+    // angle: -math.pi / 4,
+    child: Container(
+      width: 260,
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 207, 230, 247),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 3, 24, 17).withValues(alpha: 0.1),
+            blurRadius: 3,
+            offset: const Offset(0, 4),
           ),
+        ],
+      ),
+      
+      alignment: Alignment.center,
+      child: Text(
+        "Knowledge in minutes.",
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Colors.black,
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
+              letterSpacing: 0.5,
+            ),
+      ),
+    ),
+  // ),
+),
           // ── Mascot — animated float ──────────────────────────────
-         Positioned(
+          Positioned(
             top: 95,
             left: 0,
             right: 0,
@@ -215,56 +208,15 @@ class _FirstScreenState extends State<FirstScreen>
               },
               child: Center(
                 child: Image.asset(
-                  'assets/images/hii_character.png',
+                  'assets/images/screen_3.png',
                   height: 520,
                 ),
               ),
             ),
           ),
 
-          Positioned(
-            bottom: 330,
-            left: 200,
-            right: 0,
-            child: AnimatedBuilder(
-              animation: _floatCtrl,
-              builder: (_, child) {
-                final double dy = math.sin(_floatCtrl.value * 2 * math.pi) * 8;
-                final double dx = math.cos(_floatCtrl.value * 2 * math.pi) * 4;
-
-                return Transform.translate(
-                  offset: Offset(dx, dy),
-                  child: child,
-                );
-              },
-              child: const Center(
-                child: _FloatingBookCard(
-                  title: "Atomic Habits",
-                  category: "Self Help",
-                  book_cover: "assets/images/atomic_habit.png",
-                  showStars: true,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 400,
-            left: 0,
-            right: 200,
-            child: AnimatedBuilder(
-              animation: _floatCtrl,
-              builder: (_, child) {
-                final double dy = math.sin(_floatCtrl.value * 2 * math.pi) * 8;
-                final double dx = math.cos(_floatCtrl.value * 2 * math.pi) * 4;
-
-                return Transform.translate(
-                  offset: Offset(dx, dy),
-                  child: child,
-                );
-              },
-              child: const Center(child: _FloatingTimeSavedCard()),
-            ),
-          ),
+        
+          
 
           Positioned(
             top: 60,
@@ -351,6 +303,91 @@ class _FirstScreenState extends State<FirstScreen>
   ];
 }
 
+// ── Sparkle dot with pulse ────────────────────────────────────────────────────
+class _SparklePoint extends StatefulWidget {
+  const _SparklePoint({required this.seed});
+  final int seed;
+
+  @override
+  State<_SparklePoint> createState() => _SparklePointState();
+}
+
+class _SparklePointState extends State<_SparklePoint>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1800 + (widget.seed % 700)),
+    )..repeat(reverse: true);
+    _scale = Tween<double>(
+      begin: 0.5,
+      end: 1.2,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => ScaleTransition(
+    scale: _scale,
+    child: Container(
+      width: 5,
+      height: 5,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        // shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xff58B4FE).withValues(alpha: 0.8),
+            blurRadius: 6,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+// ── Glass pill badge ──────────────────────────────────────────────────────────
+class _GlassBadge extends StatelessWidget {
+  const _GlassBadge({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: BorderRadius.circular(20),
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.75),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.9)),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xff4A8FE8).withValues(alpha: 0.1),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: child,
+      ),
+    ),
+  );
+}
+
+// ── Floating book card ────────────────────────────────────────────────────────
 class _FloatingBookCard extends StatelessWidget {
   const _FloatingBookCard({
     required this.title,
@@ -373,7 +410,7 @@ class _FloatingBookCard extends StatelessWidget {
         // color: Colors.white.withValues(alpha: 0.82),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 255, 255),
+        color: const Color.fromARGB(255, 255, 255, 255),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: Colors.white.withValues(alpha: 0.9)),
           boxShadow: [
@@ -394,18 +431,21 @@ class _FloatingBookCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 // gradient: LinearGradient(
-                // begin: Alignment.topLeft,
-                // end: Alignment.bottomRight,
-                // colors: [book_cover, book_cover.withValues(alpha: 0.65)],
-              ),
-              // ),
-              child: Transform.rotate(
-                angle: -math.pi / 60,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(book_cover, fit: BoxFit.fitWidth),
+                  // begin: Alignment.topLeft,
+                  // end: Alignment.bottomRight,
+                  // colors: [book_cover, book_cover.withValues(alpha: 0.65)],
                 ),
-              ),
+              // ),
+                child: Transform.rotate(
+                  angle: -math.pi / 60,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      book_cover,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
             ),
             const SizedBox(width: 9),
             Column(
@@ -418,7 +458,7 @@ class _FloatingBookCard extends StatelessWidget {
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
-                  ),
+                  )
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -428,13 +468,13 @@ class _FloatingBookCard extends StatelessWidget {
                     color: const Color(0xFF585757),
                     fontWeight: FontWeight.w500,
                     letterSpacing: 1.2,
-                  ),
+                  )
                 ),
                 if (showStars) ...[
                   const SizedBox(height: 2),
                   const Text(
                     '⭐⭐⭐⭐⭐',
-                    style: TextStyle(fontSize: 8, letterSpacing: 1.1),
+                    style: TextStyle(fontSize: 8, letterSpacing: 1.1 ,),
                   ),
                 ],
               ],
@@ -446,6 +486,78 @@ class _FloatingBookCard extends StatelessWidget {
   );
 }
 
+// ── Floating stat card ────────────────────────────────────────────────────────
+// class _FloatingStatCard extends StatelessWidget {
+//   const _FloatingStatCard({
+//     required this.value,
+//     required this.unit,
+//     required this.label,
+//   });
+
+//   final String value;
+//   final String unit;
+//   final String label;
+  
+//   @override
+//   Widget build(BuildContext context) => ClipRRect(
+//     borderRadius: BorderRadius.circular(14),
+//     child: BackdropFilter(
+//       filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+//       child: Container(
+//         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+//         decoration: BoxDecoration(
+//           color: Colors.white.withValues(alpha: 0.82),
+//           borderRadius: BorderRadius.circular(14),
+//           border: Border.all(color: Colors.white.withValues(alpha: 0.9)),
+//           boxShadow: [
+//             BoxShadow(
+//               color: const Color(0xff4A8FE8).withValues(alpha: 0.12),
+//               blurRadius: 20,
+//               offset: const Offset(0, 6),
+//             ),
+//           ],
+//         ),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             RichText(
+//               text: TextSpan(
+//                 children: [
+//                   TextSpan(
+//                     text: value,
+//                     style: const TextStyle(
+//                       fontSize: 18,
+//                       fontWeight: FontWeight.w800,
+//                       color: Color(0xff12284A),
+//                     ),
+//                   ),
+//                   TextSpan(
+//                     text: unit,
+//                     style: const TextStyle(
+//                       fontSize: 10,
+//                       fontWeight: FontWeight.w700,
+//                       color: Color(0xff4A8FE8),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             const SizedBox(height: 2),
+//             Text(
+//               label.toUpperCase(),
+//               style: const TextStyle(
+//                 fontSize: 7,
+//                 fontWeight: FontWeight.w700,
+//                 letterSpacing: 0.5,
+//                 color: Color(0xff6B7E8F),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     ),
+//   );
+// }
 class _FloatingTimeSavedCard extends StatelessWidget {
   const _FloatingTimeSavedCard({super.key});
 
@@ -454,9 +566,15 @@ class _FloatingTimeSavedCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        filter: ImageFilter.blur(
+          sigmaX: 14,
+          sigmaY: 14,
+        ),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -473,7 +591,8 @@ class _FloatingTimeSavedCard extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xff58B4FE).withValues(alpha: .18),
+                color: const Color(0xff58B4FE)
+                    .withValues(alpha: .18),
                 blurRadius: 26,
                 spreadRadius: -2,
                 offset: const Offset(0, 10),
@@ -489,7 +608,8 @@ class _FloatingTimeSavedCard extends StatelessWidget {
                 height: 42,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xff58B4FE).withValues(alpha: .12),
+                  color: const Color(0xff58B4FE)
+                      .withValues(alpha: .12),
                 ),
                 child: const Center(
                   child: Icon(
@@ -504,12 +624,15 @@ class _FloatingTimeSavedCard extends StatelessWidget {
 
               // Text
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   RichText(
                     text: TextSpan(
+
                       children: [
+                      
                         TextSpan(
                           text: '12',
                           style: TextStyle(
@@ -519,16 +642,17 @@ class _FloatingTimeSavedCard extends StatelessWidget {
                             letterSpacing: -.5,
                           ),
                         ),
-
+                      
                         TextSpan(
                           text: '  hrs',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: Color.fromARGB(221, 84, 82, 82),
+                            color:Color.fromARGB(221, 84, 82, 82)
                             // color: Color(0xff58B4FE),
                           ),
                         ),
+                      
                       ],
                     ),
                   ),
@@ -552,4 +676,31 @@ class _FloatingTimeSavedCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// ── Category chip ─────────────────────────────────────────────────────────────
+class _CategoryChip extends StatelessWidget {
+  const _CategoryChip({
+    required this.label,
+    required this.color,
+    required this.bg,
+  });
+
+  final String label;
+  final Color color;
+  final Color bg;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+    decoration: BoxDecoration(
+      color: bg,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: color.withValues(alpha: 0.3)),
+    ),
+    child: Text(
+      label,
+      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color),
+    ),
+  );
 }

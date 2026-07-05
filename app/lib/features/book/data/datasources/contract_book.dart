@@ -22,6 +22,7 @@ import 'package:app/features/book/domain/entity/book_entity.dart';
 abstract class BookSourceContract {
   // 🚀 FIXED: Removed the Either wrappers from the Data Source layer
   Future<List<BookEntity>> getBooks();
+  Future<List<BookEntity>> getFreeBooks();
   
   Future<BookEntity?> getBookById(String bookId);
   

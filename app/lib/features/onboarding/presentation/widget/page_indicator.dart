@@ -48,16 +48,16 @@ class PremiumPageIndicator extends StatelessWidget {
             curve: Curves.easeOutCubic,
             margin: const EdgeInsets.symmetric(horizontal: 4),
             width: isActive ? 30 : 8,
-            height: 8,
+            height: 6,
             decoration: BoxDecoration(
               color: isActive
-                  ? const Color(0xFF45A8F8)
-                  : Colors.grey.shade300,
+                  ? const Color.fromARGB(143, 0, 0, 0)
+                  : Colors.grey.shade500,
               borderRadius: BorderRadius.circular(20),
               boxShadow: isActive
                   ? [
                       BoxShadow(
-                        color: const Color(0xFF45A8F8).withOpacity(.35),
+                        color: const Color.fromARGB(0, 46, 46, 46).withOpacity(0),
                         blurRadius: 10,
                         spreadRadius: 1,
                       )

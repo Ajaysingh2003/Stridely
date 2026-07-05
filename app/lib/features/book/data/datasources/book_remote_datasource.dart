@@ -98,6 +98,14 @@ class BookRemoteDatasource {
 
     return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
   }
+  Future<List<BookEntity>> getFreeBooks() async {
+    final snapshot = await _booksCollection
+        .where('isDraft', isEqualTo: false)
+        .where('isFree', isEqualTo: true)
+        .get();
+print('this is free books :$snapshot');
+    return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
+  }
 
   Future<BookEntity?> getBookById(String bookId) async {
     final doc = await _booksCollection.doc(bookId).get();

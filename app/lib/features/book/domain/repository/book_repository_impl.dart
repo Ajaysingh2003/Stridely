@@ -66,6 +66,15 @@ class BookRepositoryImpl implements BookRepository {
       return const Left(BookServerFailure());
     }
   }
+  Future<Either<BookFailure, List<BookEntity>>> getFreeBooks() async {
+    try {
+      final books = await _datasource.getFreeBooks();
+      return Right(books);
+    } catch (_) {
+      // print('hey pichu : $e');
+      return const Left(BookServerFailure());
+    }
+  }
 
   @override
   Future<Either<BookFailure, BookEntity>> getBookById(String bookId) async {

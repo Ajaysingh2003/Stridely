@@ -32,17 +32,14 @@ class HomePage extends ConsumerWidget {
         surfaceTintColor: Colors.transparent,
         shadowColor: Colors.transparent,
         scrolledUnderElevation: 0,
-        titleSpacing: 26,
+        titleSpacing: 16,
         title: Row(
           children: [
-            Image.asset("assets/images/codex-color.png", height: 30),
-            const SizedBox(width: 10),
             Text(
-              "Stridely",
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.black,
-                fontStyle: FontStyle.italic,
-                fontSize: 17,
+              "For You",
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 24,
               ),
             ),
           ],
@@ -55,7 +52,7 @@ class HomePage extends ConsumerWidget {
                 icon: const Icon(
                   Icons.sort,
                   size: 36,
-                  color: Color.fromARGB(174, 255, 255, 255),
+                  color: Color.fromARGB(173, 0, 0, 0),
                 ),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
@@ -64,24 +61,9 @@ class HomePage extends ConsumerWidget {
             ),
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(
-            height: 1,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF000000),
-                  Color(0xFF3B7BFB),
-                  Color(0xFF000000),
-                ],
-                stops: [0, 0.5, 1],
-              ),
-            ),
-          ),
-        ),
+        
       ),
-      bottomNavigationBar: const BottomNavigation(),
+      bottomNavigationBar: BottomNavigation(),
       body: AppBackground(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -90,64 +72,61 @@ class HomePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 🚀 2. Use Riverpod's pattern matcher to display or clear data
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: authStateAsync.when(
-                    loading: () => const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                    error: (err, stack) => Text(
-                      'Error: $err',
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                    data: (user) {
-                      if (user == null) {
-                        return Text(
-                          'Browsing as Guest',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: Colors.white70),
-                        );
-                      }
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Email: ${user.email}',
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: Colors.white),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'UID: ${user.isPremium}',
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: Colors.white70),
-                          ),
-                        ], 
-                      );
-                    },
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(16.0),
+                //   child: authStateAsync.when(
+                //     loading: () => const SizedBox(
+                //       height: 20,
+                //       width: 20,
+                //       child: CircularProgressIndicator(strokeWidth: 2),
+                //     ),
+                //     error: (err, stack) => Text(
+                //       'Error: $err',
+                //       style: const TextStyle(color: Colors.red),
+                //     ),
+                //     data: (user) {
+                //       if (user == null) {
+                //         return Text(
+                //           'Browsing as Guest',
+                //           style: Theme.of(context).textTheme.bodyMedium
+                //               ?.copyWith(color: Colors.white70),
+                //         );
+                //       }
+                //       return Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           Text(
+                //             'Email: ${user.email}',
+                //             style: Theme.of(context).textTheme.bodyMedium
+                //                 ?.copyWith(color: Colors.white),
+                //           ),
+                //           const SizedBox(height: 4),
+                //           Text(
+                //             'UID: ${user.isPremium}',
+                //             style: Theme.of(context).textTheme.bodyMedium
+                //                 ?.copyWith(color: Colors.white70),
+                //           ),
+                //         ], 
+                //       );
+                //     },
+                //   ),
+                // ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ElevatedButton(
-                    onPressed: () =>
-                        ref.read(authControllerProvider.notifier).logout(),
-                    child: const Text("logout"),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                //   child: ElevatedButton(
+                //     onPressed: () =>
+                //         ref.read(authControllerProvider.notifier).logout(),
+                //     child: const Text("logout"),
+                //   ),
+                // ),
 
                 const BannerWidget(),
                 const SizedBox(height: 20),
-                const BannerWidget(),
-                const SizedBox(height: 20),
-                Text(
-                  'UID: ${user?.email}',
-                  style: TextStyle(color: Colors.red),
-                ),
-                const BannerWidget(),
+                // const BannerWidget(),
+                // const SizedBox(height: 20),
+                
+                // const BannerWidget(),
               ],
             ),
           ),

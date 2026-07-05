@@ -4,14 +4,14 @@ import 'package:app/features/onboarding/presentation/widget/intro_card.dart';
 import 'package:app/features/onboarding/presentation/widget/page_indicator.dart';
 import 'package:flutter/material.dart';
 
-class SecondScreen extends StatefulWidget {
-  const SecondScreen({super.key});
+class FourthScreen extends StatefulWidget {
+  const FourthScreen({super.key});
 
   @override
-  State<SecondScreen> createState() => _SecondScreenState();
+  State<FourthScreen> createState() => _FourthScreenState();
 }
 
-class _SecondScreenState extends State<SecondScreen>
+class _FourthScreenState extends State<FourthScreen>
     with SingleTickerProviderStateMixin {
    late final Animation<double> _entranceSlide;
   late final Animation<double> _entranceOpacity;
@@ -19,9 +19,9 @@ class _SecondScreenState extends State<SecondScreen>
   late final AnimationController _floatCtrl;
   late final Animation<double> _float;
   bool _isEntranceComplete = false;
+
   @override
-  // void initState() {
-    void initState() {
+   void initState() {
     super.initState();
     
     _floatCtrl = AnimationController(
@@ -73,6 +73,7 @@ class _SecondScreenState extends State<SecondScreen>
     return Scaffold(
       body: Stack(
         children: [
+         
           // ── Background gradient ──────────────────────────────────
           Container(
             decoration: const BoxDecoration(
@@ -147,48 +148,43 @@ class _SecondScreenState extends State<SecondScreen>
               ),
             ),
           ),
-          Positioned(
-            top: 65,
+Positioned(
+  top: 65,  
 
-            left: 90,
-            // child: Transform.rotate(
-            // angle: -math.pi / 4,
-            child: Container(
-              width: 260,
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 207, 230, 247),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(
-                      255,
-                      3,
-                      24,
-                      17,
-                    ).withValues(alpha: 0.1),
-                    blurRadius: 3,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-
-              alignment: Alignment.center,
-              child: Text(
-                " 📘 Library of 10,000+ books",
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 13,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
-            // ),
+  left: 90, 
+  // child: Transform.rotate(
+    // angle: -math.pi / 4,
+    child: Container(
+      width: 260,
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 207, 230, 247),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 3, 24, 17).withValues(alpha: 0.1),
+            blurRadius: 3,
+            offset: const Offset(0, 4),
           ),
+        ],
+      ),
+      
+      alignment: Alignment.center,
+      child: Text(
+        "Start your reading journey today!",
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Colors.black,
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
+              letterSpacing: 0.5,
+            ),
+      ),
+    ),
+  // ),
+),
           // ── Mascot — animated float ──────────────────────────────
-           Positioned(
+          Positioned(
             top: 95,
             left: 0,
             right: 0,
@@ -212,7 +208,7 @@ class _SecondScreenState extends State<SecondScreen>
               },
               child: Center(
                 child: Image.asset(
-                  'assets/images/screen_2.png',
+                  'assets/images/screen_4.png',
                   height: 520,
                 ),
               ),
@@ -290,11 +286,14 @@ class _SecondScreenState extends State<SecondScreen>
               ),
             ),
           ),
+
+          // ── Content ──────────────────────────────────────────────
         ],
       ),
     );
   }
 
+  // Sparkle positions — hand-picked to feel scattered, not random
   static const List<Offset> _sparklePositions = [
     Offset(28, 160),
     Offset(82, 130),
@@ -302,6 +301,7 @@ class _SecondScreenState extends State<SecondScreen>
   ];
 }
 
+// ── Sparkle dot with pulse ────────────────────────────────────────────────────
 class _SparklePoint extends StatefulWidget {
   const _SparklePoint({required this.seed});
   final int seed;
