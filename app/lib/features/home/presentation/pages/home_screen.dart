@@ -1,8 +1,10 @@
 import 'package:app/core/app_background.dart';
 import 'package:app/features/auth/domain/entities/user_entity.dart';
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
+import 'package:app/features/home/presentation/widget/InsightsView.dart';
 import 'package:app/features/home/presentation/widget/banner_widget.dart';
 import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
+import 'package:app/features/home/presentation/widget/purchase_carousel.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
@@ -71,62 +73,15 @@ class HomePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 🚀 2. Use Riverpod's pattern matcher to display or clear data
-                // Padding(
-                //   padding: const EdgeInsets.all(16.0),
-                //   child: authStateAsync.when(
-                //     loading: () => const SizedBox(
-                //       height: 20,
-                //       width: 20,
-                //       child: CircularProgressIndicator(strokeWidth: 2),
-                //     ),
-                //     error: (err, stack) => Text(
-                //       'Error: $err',
-                //       style: const TextStyle(color: Colors.red),
-                //     ),
-                //     data: (user) {
-                //       if (user == null) {
-                //         return Text(
-                //           'Browsing as Guest',
-                //           style: Theme.of(context).textTheme.bodyMedium
-                //               ?.copyWith(color: Colors.white70),
-                //         );
-                //       }
-                //       return Column(
-                //         crossAxisAlignment: CrossAxisAlignment.start,
-                //         children: [
-                //           Text(
-                //             'Email: ${user.email}',
-                //             style: Theme.of(context).textTheme.bodyMedium
-                //                 ?.copyWith(color: Colors.white),
-                //           ),
-                //           const SizedBox(height: 4),
-                //           Text(
-                //             'UID: ${user.isPremium}',
-                //             style: Theme.of(context).textTheme.bodyMedium
-                //                 ?.copyWith(color: Colors.white70),
-                //           ),
-                //         ], 
-                //       );
-                //     },
-                //   ),
-                // ),
-
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                //   child: ElevatedButton(
-                //     onPressed: () =>
-                //         ref.read(authControllerProvider.notifier).logout(),
-                //     child: const Text("logout"),
-                //   ),
-                // ),
-
+               
                 const BannerWidget(),
+
                 const SizedBox(height: 20),
-                // const BannerWidget(),
-                // const SizedBox(height: 20),
-                
-                // const BannerWidget(),
+
+                const InsightsView() ,
+                const SizedBox(height: 20),
+                const PurchaseCarousel()
+
               ],
             ),
           ),

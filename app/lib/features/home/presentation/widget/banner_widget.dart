@@ -17,28 +17,10 @@ class BannerWidget extends StatelessWidget {
           color: Colors.white.withValues(alpha: 0.08),
           width: 1.0,
         ),
-
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFFFFFFFF).withValues(alpha: 0.04),
-            const Color.fromARGB(255, 172, 220, 255).withValues(alpha: 0.03),
-            const Color.fromARGB(70, 250, 191, 225).withValues(alpha: 0.60), 
-          ],
-          stops: const [0.0, 0.1, 1.6],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.1),
-            blurRadius: 3,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: BackdropFilter(
 
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
           child: Column(
@@ -91,23 +73,6 @@ Widget buildHeader(BuildContext context) {
               ),
             ),
             
-            // Container(
-            //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            //   decoration: BoxDecoration(
-            //     color: const Color(0xff4A8FE8).withValues(alpha: 0.15),
-            //     borderRadius: BorderRadius.circular(20),
-            //     border: Border.all(color: const Color(0xff4A8FE8).withValues(alpha: 0.3), width: 1),
-            //   ),
-            //   child: const Text(
-            //     "FEATURED",
-            //     style: TextStyle(
-            //       color: Color(0xff4A8FE8),
-            //       fontSize: 10,
-            //       fontWeight: FontWeight.w800,
-            //       letterSpacing: 1.0,
-            //     ),
-            //   ),
-            // ),
           ],
         ),
         const SizedBox(height: 6),

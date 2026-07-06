@@ -12,9 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BookPage extends ConsumerStatefulWidget {
-  final String title;
+  final String bookId;
 
-  const BookPage({super.key, this.title = "Rich Dad Poor Dad"});
+  const BookPage({super.key, required this.bookId});
 
   @override
   ConsumerState<BookPage> createState() => _BookPageState();
@@ -277,7 +277,7 @@ class _BookPageState extends ConsumerState<BookPage> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final bookId = "QPsnrnqHjaUm5ybN8YAt";
+    final bookId = widget.bookId;
     final bookAsync = ref.watch(singleBookProvider(bookId));
     final contentsync = ref.watch(bookTitleControllerProvider(bookId)).titles;
     final firstContent = contentsync.isNotEmpty ? contentsync.first : null;

@@ -18,14 +18,25 @@
 
 import 'package:app/features/book/domain/entity/book_content_entity.dart';
 import 'package:app/features/book/domain/entity/book_entity.dart';
+import 'package:app/features/book/domain/entity/books_response.dart';
+import 'package:app/features/book/domain/entity/insights_entity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class BookSourceContract {
-  // 🚀 FIXED: Removed the Either wrappers from the Data Source layer
+
   Future<List<BookEntity>> getBooks();
+  Future<PaginatedResponse<BookEntity>> getFilteredBooks({
+    String? categoryId,
+    String? collectionId,
+    String? searchQuery,
+    int limit = 10,
+    DocumentSnapshot? lastDocument,
+  });
+  
   Future<List<BookEntity>> getFreeBooks();
+  Future<InsightsEntity> getInsightes();
   
   Future<BookEntity?> getBookById(String bookId);
-  
   Future<BookContent> getContents(String uid);
 
   Future<List<Map<String, String>>> getContentTitle(String bookId);  

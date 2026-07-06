@@ -1,4 +1,6 @@
 import 'package:app/features/book/presentation/provider/book_data_provider.dart';
+import 'package:app/features/book/presentation/screen/book_screen.dart';
+import 'package:app/features/home/presentation/widget/FreeBooksLoading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -29,17 +31,12 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
   Widget build(BuildContext context) {
     final bookState = ref.watch(booksControllerProvider);
 
-    // ── 🎯 FIX 1: Return clean inline widgets instead of nested Scaffolds ──
-    if (bookState.isLoading) {
-      return const SizedBox(
-        height: 220,
-        child: Center(
-          child: CircularProgressIndicator(color: Color(0xff4A8FE8)),
-        ),
-      );
+
+    if (bookState.freeBooksLoading) {
+      return  FreeBooksSkeleton();
     }
 
-    if (bookState.errorMessage != null) {
+    if (bookState.booksErrorMessage != null) {
       return SizedBox(
         height: 220,
         child: Center(
@@ -63,7 +60,8 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
       children: [
         CarouselSlider(
           items: freeBooks.map((book) {
-            return Padding(
+            return 
+            Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Transform(
                 alignment: Alignment.center,
@@ -75,28 +73,28 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
                   clipBehavior: Clip.none,
                   children: [
                     // BIG SHADOW
-                    Positioned(
-                      left: 20,
-                      right: 5,
-                      bottom: -18,
-                      child: Transform.scale(
-                        scaleY: .35,
-                        child: Container(
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            color: Colors.black.withOpacity(.1),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(.15),
-                                blurRadius: 30,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Positioned(
+                    //   left: 20,
+                    //   right: 5,
+                    //   bottom: -18,
+                    //   child: Transform.scale(
+                    //     scaleY: .35,
+                    //     child: Container(
+                    //       height: 40,
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(40),
+                    //         color: Colors.black.withOpacity(.1),
+                    //         boxShadow: [
+                    //           BoxShadow(
+                    //             color: Colors.black.withOpacity(.15),
+                    //             blurRadius: 30,
+                    //             spreadRadius: 2,
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
                     // PAGE EDGE
                     Positioned(
@@ -122,26 +120,26 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
                     ),
 
                     // SPINE
-                    Positioned(
-                      left: 0,
-                      top: 6,
-                      bottom: 6,
-                      child: Container(
-                        width: 14,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Color(0xff9b9b9b),
-                              Color(0xffdddddd),
-                              Color(0xffbdbdbd),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Positioned(
+                    //   left: 0,
+                    //   top: 6,
+                    //   bottom: 6,
+                    //   child: Container(
+                    //     width: 14,
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       gradient: const LinearGradient(
+                    //         begin: Alignment.centerLeft,
+                    //         end: Alignment.centerRight,
+                    //         colors: [
+                    //           Color(0xff9b9b9b),
+                    //           Color(0xffdddddd),
+                    //           Color(0xffbdbdbd),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
                     // FRONT COVER
                     Container(
@@ -149,14 +147,14 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
                         borderRadius: BorderRadius.circular(18),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color.fromARGB(255, 58, 176, 255).withOpacity(.22),
+                            color: const Color.fromARGB(255, 58, 176, 255).withOpacity(0),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(12),
                         child: CachedNetworkImage(
                           imageUrl: book.bookCover!,
                           fit: BoxFit.cover,
@@ -205,35 +203,51 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
                     ),
 
                     // GLOSS
-                    Positioned(
-                      left: 10,
-                      top: 12,
-                      child: Transform.rotate(
-                        angle: -.35,
-                        child: Container(
-                          width: 70,
-                          height: 160,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.white.withOpacity(.28),
-                                Colors.white.withOpacity(.08),
-                                Colors.transparent,
-                              ],
-                            ),
-                          ),
+                    // 
+
+                    // ── 🎯 ENTIRE BACKGROUND HIT ACTION LAYER ──
+                    Positioned.fill(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(18),
+                          splashColor: Colors.white.withOpacity(0.15),
+                          highlightColor: Colors.white.withOpacity(0.05),
+                          onTap: () {
+                            // Tapping anywhere else on the book triggers your page routing action
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation, secondaryAnimation) => BookPage(bookId: book.uid,),
+                                transitionDuration: const Duration(milliseconds: 550),
+                                reverseTransitionDuration: const Duration(milliseconds: 500), 
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  final begin = const Offset(1.5, 0.0);
+                                  final end = Offset.zero;
+                                  final tween = Tween(begin: begin, end: end);
+                                  final curvedAnimation = CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeInOutCubic,
+                                  );
+                                  return SlideTransition(
+                                    position: tween.animate(curvedAnimation),
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
+              ), 
             );
           }).toList(),
           carouselController: _controller,
           options: CarouselOptions(
-            height: 290,
+            height: 230,
             autoPlay: true,
             viewportFraction: 0.45,
             enlargeCenterPage: true,
@@ -246,7 +260,27 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
           ),
         ),
         const SizedBox(height: 16),
-
+        // Positioned(
+        //               left: 10,
+        //               top: 12,
+        //               child: Transform.rotate(
+        //                 angle: -.35,
+        //                 child: Container(
+        //                   width: 70,
+        //                   height: 160,
+        //                   decoration: BoxDecoration(
+        //                     borderRadius: BorderRadius.circular(40),
+        //                     gradient: LinearGradient(
+        //                       colors: [
+        //                         Colors.white.withOpacity(.28),
+        //                         Colors.white.withOpacity(.08),
+        //                         Colors.transparent,
+        //                       ],
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
         // Premium Indicator Dots
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

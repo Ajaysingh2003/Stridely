@@ -117,7 +117,7 @@ class MyApp extends StatelessWidget {
           ),
 
           labelLarge: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
-          labelMedium: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
+          labelMedium: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600,fontSize: 20),
           labelSmall: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500,fontSize: 12),
         ),
       ),

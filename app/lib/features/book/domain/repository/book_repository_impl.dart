@@ -2,7 +2,10 @@ import 'package:app/features/book/data/datasources/book_remote_datasource.dart';
 import 'package:app/features/book/domain/entity/book_content_entity.dart';
 import 'package:app/features/book/domain/entity/book_entity.dart';
 import 'package:app/features/book/domain/entity/book_failure.dart';
+import 'package:app/features/book/domain/entity/books_response.dart';
+import 'package:app/features/book/domain/entity/insights_entity.dart';
 import 'package:app/features/book/domain/repository/book_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 
 class BookRepositoryImpl implements BookRepository {
@@ -56,8 +59,37 @@ class BookRepositoryImpl implements BookRepository {
     }
   }
 
+
+  @override
+
+  Future<Either<PaginatedResponse<BookEntity>, BookFailure>> getFilteredBooks({
+    String? categoryId,
+    String? collectionId,
+    String? searchQuery,
+    int limit = 10,
+    DocumentSnapshot? lastDocument,
+  }) async {
+    try {
+      final paginatedResult = await _datasource.getFilteredBooks(
+        categoryId: categoryId,
+        collectionId: collectionId,
+        searchQuery: searchQuery,
+        limit: limit,
+        lastDocument: lastDocument,
+      );
+      
+
+      return Left(paginatedResult);
+    } catch (error) {
+
+      return const Right(BookServerFailure());
+    }
+  }
+  
+
   @override
   Future<Either<BookFailure, List<BookEntity>>> getBooks() async {
+
     try {
       final books = await _datasource.getBooks();
       return Right(books);
@@ -66,12 +98,22 @@ class BookRepositoryImpl implements BookRepository {
       return const Left(BookServerFailure());
     }
   }
+
   Future<Either<BookFailure, List<BookEntity>>> getFreeBooks() async {
     try {
       final books = await _datasource.getFreeBooks();
       return Right(books);
     } catch (_) {
       // print('hey pichu : $e');
+      return const Left(BookServerFailure());
+    }
+  }
+  Future<Either<BookFailure, List<InsightsEntity>>> getInsightes() async {
+    try {
+      final insights = await _datasource.getInsightes();
+      return Right(insights);
+    } catch (e) {
+      print(' error from insights $e');
       return const Left(BookServerFailure());
     }
   }

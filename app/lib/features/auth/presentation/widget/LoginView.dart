@@ -461,7 +461,8 @@ class LoginView extends ConsumerWidget {
                         decoration: TextDecoration.underline, 
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () => Navigator.push(
+                        ..onTap = () => 
+                        Navigator.push(
                           context,
                           PageRouteBuilder(
                             pageBuilder: (context, animation, secondaryAnimation) => const SignupPage(),

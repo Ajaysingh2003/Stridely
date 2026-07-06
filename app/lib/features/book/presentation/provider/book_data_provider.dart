@@ -9,7 +9,9 @@ import 'package:app/features/book/domain/usercases/get_books_by_id.dart';
 import 'package:app/features/book/domain/usercases/get_content_audio.dart';
 import 'package:app/features/book/domain/usercases/get_content_title.dart';
 import 'package:app/features/book/domain/usercases/get_contents.dart';
+import 'package:app/features/book/domain/usercases/get_filters_books.dart';
 import 'package:app/features/book/domain/usercases/get_free_books.dart';
+import 'package:app/features/book/domain/usercases/get_insights.dart';
 import 'package:app/features/book/presentation/provider/books_controller.dart';
 import 'package:app/features/book/presentation/state/bookState.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,8 +37,17 @@ final booksRepositoryProvider = Provider<BookRepository>(
 final getBooksUseCaseProvider = Provider(
   (ref) => GetBooksUseCase(ref.watch(booksRepositoryProvider)),
 );
+
+final getContentChaptersUseCaseProvider = Provider(
+  (ref) => GetContentChaptersUseCase(ref.watch(booksRepositoryProvider)),
+);
+
 final getFreeBooksUseCaseProvider = Provider(
   (ref) => GetFreeBooksUseCase(ref.watch(booksRepositoryProvider)),
+);
+
+final getInsightsUseCaseProvider = Provider(
+  (ref) => GetInsightsUseCase(ref.watch(booksRepositoryProvider)),
 );
 
 final getBookUseCaseProvider = Provider(
@@ -47,11 +58,16 @@ final getBookContentUseCaseProvider = Provider(
   (ref) => GetContentUseCase(ref.watch(booksRepositoryProvider)),
 );
 
+// final getContentTitleUseCaseProvider = Provider(
+//   (ref) => GetContentTitleUseCase(ref.watch(booksRepositoryProvider)),
+// );
+
 final getContentTitleUseCaseProvider = Provider(
   (ref) => GetContentTitleUseCase(ref.watch(booksRepositoryProvider)),
 );
-final getContentChaptersUseCaseProvider = Provider(
-  (ref) => GetContentChaptersUseCase(ref.watch(booksRepositoryProvider)),
+
+final getFilterdUseCaseProvider = Provider(
+  (ref) => GetFiltersBooksUseCase(ref.watch(booksRepositoryProvider)),
 );
 
 
@@ -61,7 +77,17 @@ final booksControllerProvider =
     StateNotifierProvider<BooksController, BookState>((ref) {
       return BooksController(
         ref.watch(getBooksUseCaseProvider),
-        ref.watch(getFreeBooksUseCaseProvider)
+        ref.watch(getFreeBooksUseCaseProvider),
+        ref.watch(getInsightsUseCaseProvider)
+      );
+    });
+
+
+
+final filterdBooksControllerProvider =
+    StateNotifierProvider<FiltersBooksController, FilterBookState>((ref) {
+      return FiltersBooksController(
+        ref.watch(getFilterdUseCaseProvider)
       );
     });
 
