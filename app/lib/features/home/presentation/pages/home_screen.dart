@@ -1,6 +1,7 @@
 import 'package:app/core/app_background.dart';
 import 'package:app/features/auth/domain/entities/user_entity.dart';
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
+import 'package:app/features/book/presentation/widget/category_widget.dart';
 import 'package:app/features/home/presentation/widget/InsightsView.dart';
 import 'package:app/features/home/presentation/widget/banner_widget.dart';
 import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
@@ -80,7 +81,9 @@ class HomePage extends ConsumerWidget {
 
                 const InsightsView() ,
                 const SizedBox(height: 20),
-                const PurchaseCarousel()
+                const PurchaseCarousel(),
+                const SizedBox(height: 20),
+                CategoryWidget(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "New Arrivals",)
 
               ],
             ),

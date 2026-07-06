@@ -132,8 +132,8 @@ class BookRemoteDatasource {
     }
 
     // ── 🔢 1. FETCH TOTAL DATA COUNT (Aggregated efficiently on Firestore servers) ──
-    final countSnapshot = await query.count().get();
-    final int totalCount = countSnapshot.count ?? 0;
+    // final countSnapshot = await query.count().get();
+    // final int totalCount = countSnapshot.count ?? 0;
 
     // ── 🎛️ 2. APPLY PAGINATION LIMIT CURSORS ──
     Query<Map<String, dynamic>> paginatedQuery = query.limit(limit);
@@ -158,7 +158,7 @@ class BookRemoteDatasource {
     return PaginatedResponse<BookEntity>(
       items: books,
       lastDocument: lastDoc,
-      totalCount: totalCount,
+      totalCount: 5,
       hasMore: hasMore,
     );
   }

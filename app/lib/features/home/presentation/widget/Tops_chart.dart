@@ -6,23 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 
-class CategoryWidget extends ConsumerStatefulWidget {
+class TopsChart extends ConsumerStatefulWidget {
   final String categoryId;
   final String title;
-  const CategoryWidget({super.key, required this.categoryId,required this.title});
+  const TopsChart({super.key, required this.categoryId,required this.title});
 
   @override
-  ConsumerState<CategoryWidget> createState() => _CategoryWidgetState();
+  ConsumerState<TopsChart> createState() => _ChartWidgetState();
 }
 
-class _CategoryWidgetState extends ConsumerState<CategoryWidget> {
+class _ChartWidgetState extends ConsumerState<TopsChart> {
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
       ref
           .read(filterdBooksControllerProvider.notifier)
-          .loadFilterdBooks(categoryId: widget.categoryId, limit: 6 ,isRefresh: true);
+          .loadFilterdBooks(categoryId: widget.categoryId, limit: 4 ,isRefresh: true);
     });
   }
 

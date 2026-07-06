@@ -81,7 +81,7 @@ class BookRepositoryImpl implements BookRepository {
 
       return Left(paginatedResult);
     } catch (error) {
-
+      print(' looky looky  $error');
       return const Right(BookServerFailure());
     }
   }
