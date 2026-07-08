@@ -47,7 +47,7 @@ class BottomNavigation extends StatelessWidget {
                           const Text(
                             "Home",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black87,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -71,7 +71,7 @@ class BottomNavigation extends StatelessWidget {
                           Text(
                             "Discover",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black87,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -98,7 +98,7 @@ class BottomNavigation extends StatelessWidget {
                                   Text(
                                     "Collection",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black87,
                                       fontWeight: FontWeight.w500,
                                       fontSize: 14,
                                     ),
@@ -116,7 +116,7 @@ class BottomNavigation extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.person, size: 30, color: Colors.white),
+                          Icon(Icons.person, size: 30, color: Colors.black87),
                           SizedBox(height: 4), // spacing between icon and text
                           const Text(
                             "Profile",

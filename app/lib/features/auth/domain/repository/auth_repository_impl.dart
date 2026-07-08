@@ -107,6 +107,7 @@ class AuthRepositoryImpl implements AuthRepository {
         ServerFailure(e.message ?? 'Platform error during Google Sign-In.'),
       );
     } catch (_) {
+      // print('Unexpected error during Google Sign-In: $e');
       return const Left(ServerFailure());
     }
   }

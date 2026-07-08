@@ -17,7 +17,7 @@ class BookContentPage extends ConsumerStatefulWidget {
 }
 
 class _BookContentPageState extends ConsumerState<BookContentPage> {
-  // 🚀 FIXED: State variable must live here, outside the build method layer!
+
   bool _isAudioMode = false;
 
   
@@ -33,7 +33,7 @@ class _BookContentPageState extends ConsumerState<BookContentPage> {
 
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 11, 22, 30),
+      backgroundColor: const Color(0xFF0B161E),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
