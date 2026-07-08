@@ -14,6 +14,7 @@ import 'package:app/features/book/domain/usercases/get_free_books.dart';
 import 'package:app/features/book/domain/usercases/get_insights.dart';
 import 'package:app/features/book/presentation/provider/books_controller.dart';
 import 'package:app/features/book/presentation/state/bookState.dart';
+import 'package:app/features/home/domain/usecase/get_collection_usecase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,6 +72,11 @@ final getFilterdUseCaseProvider = Provider(
 );
 
 
+final getCollectionUseCaseProvider = Provider(
+  (ref) => GetCollectionUseCase(ref.watch(booksRepositoryProvider)),
+);
+
+
 
 
 final booksControllerProvider =
@@ -78,19 +84,17 @@ final booksControllerProvider =
       return BooksController(
         ref.watch(getBooksUseCaseProvider),
         ref.watch(getFreeBooksUseCaseProvider),
-        ref.watch(getInsightsUseCaseProvider)
+        ref.watch(getInsightsUseCaseProvider),
+        ref.watch(getCollectionUseCaseProvider),
       );
     });
-
-
 
 final filterdBooksControllerProvider =
-    StateNotifierProvider<FiltersBooksController, FilterBookState>((ref) {
+    StateNotifierProvider.family<FiltersBooksController, FilterBookState, String>((ref, categoryId) {
       return FiltersBooksController(
-        ref.watch(getFilterdUseCaseProvider)
+        ref.watch(getFilterdUseCaseProvider),categoryId,
       );
     });
-
 
 
 final singleBookProvider = FutureProvider.family<Either<BookFailure, BookEntity>, String>((ref, bookId) async {

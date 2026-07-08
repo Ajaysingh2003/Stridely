@@ -6,6 +6,7 @@ import 'package:app/features/book/domain/usercases/get_filters_books.dart';
 import 'package:app/features/book/domain/usercases/get_free_books.dart';
 import 'package:app/features/book/domain/usercases/get_insights.dart';
 import 'package:app/features/book/presentation/state/bookState.dart';
+import 'package:app/features/home/domain/usecase/get_collection_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/legacy.dart';
 
@@ -14,11 +15,13 @@ class BooksController extends StateNotifier<BookState> {
   final GetBooksUseCase _getBooksUsecase;
   final GetFreeBooksUseCase _getFreeBooksUsecase;
   final GetInsightsUseCase _getInsightsUseCase;
+  final GetCollectionUseCase _getCollectionUseCase;
   
   BooksController(
     this._getBooksUsecase,
     this._getFreeBooksUsecase,
     this._getInsightsUseCase,
+    this._getCollectionUseCase,
   ) : super(const BookState());
 
   Future<void> loadAllBooks() async {
@@ -66,6 +69,29 @@ class BooksController extends StateNotifier<BookState> {
       ),
     );
   }
+
+  
+  Future<void> loadCollection() async {
+
+    state = state.copyWith(collectionLoading: true, collectionsErrorMessage: null);
+
+
+    final result = await _getCollectionUseCase.call();
+
+    result.fold(
+      (failure) => state = state.copyWith(
+        collectionLoading: false,
+        collectionsErrorMessage: () => failure.message,
+      ),
+      (collectionList) => state = state.copyWith(
+        collectionLoading: false,
+        collections: collectionList,
+        collectionsErrorMessage: () => null,
+      ),
+    );
+  }
+
+
 }
 
 class BookTitleController extends StateNotifier<BookContentTitleState> {
@@ -120,12 +146,12 @@ class BookContentChapterController
 
 
 
-
+  
 
 class FiltersBooksController extends StateNotifier<FilterBookState> {
   final GetFiltersBooksUseCase _getFiltersBooksUseCase;
-
-  FiltersBooksController(this._getFiltersBooksUseCase)
+  final String categoryId;
+  FiltersBooksController(this._getFiltersBooksUseCase,this.categoryId)
     : super(const FilterBookState());
 
 

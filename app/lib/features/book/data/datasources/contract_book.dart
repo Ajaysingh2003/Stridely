@@ -20,6 +20,7 @@ import 'package:app/features/book/domain/entity/book_content_entity.dart';
 import 'package:app/features/book/domain/entity/book_entity.dart';
 import 'package:app/features/book/domain/entity/books_response.dart';
 import 'package:app/features/book/domain/entity/insights_entity.dart';
+import 'package:app/features/home/domain/entity/collection_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class BookSourceContract {
@@ -34,6 +35,7 @@ abstract class BookSourceContract {
   });
   
   Future<List<BookEntity>> getFreeBooks();
+  Future<List<CollectionEntity>> getCollections();
   Future<InsightsEntity> getInsightes();
   
   Future<BookEntity?> getBookById(String bookId);

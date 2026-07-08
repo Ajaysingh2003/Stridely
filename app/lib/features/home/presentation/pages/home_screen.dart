@@ -2,7 +2,9 @@ import 'package:app/core/app_background.dart';
 import 'package:app/features/auth/domain/entities/user_entity.dart';
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/book/presentation/widget/category_widget.dart';
+import 'package:app/features/home/presentation/widget/Collections.dart';
 import 'package:app/features/home/presentation/widget/InsightsView.dart';
+import 'package:app/features/home/presentation/widget/Tops_chart.dart';
 import 'package:app/features/home/presentation/widget/banner_widget.dart';
 import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/purchase_carousel.dart';
@@ -75,16 +77,19 @@ class HomePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                
+                const PurchaseCarousel(),
+                const SizedBox(height: 20),
                 const BannerWidget(),
 
                 const SizedBox(height: 20),
 
                 const InsightsView() ,
                 const SizedBox(height: 20),
-                const PurchaseCarousel(),
-                const SizedBox(height: 20),
-                CategoryWidget(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "New Arrivals",)
-
+                CategoryWidget(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "New Arrivals",),
+                SizedBox(height: 20),
+                BooksList(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "Self Growth",),
+                SizedBox(height: 20),
+                Collections()
               ],
             ),
           ),

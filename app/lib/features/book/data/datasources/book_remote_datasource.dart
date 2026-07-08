@@ -4,6 +4,7 @@ import 'package:app/features/book/domain/entity/book_failure.dart';
 import 'package:app/features/book/domain/entity/books_response.dart';
 import 'package:app/features/book/domain/entity/insights_entity.dart';
 import 'package:app/features/book/domain/entity/tags_type.dart';
+import 'package:app/features/home/domain/entity/collection_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookRemoteDatasource {
@@ -79,7 +80,7 @@ class BookRemoteDatasource {
 
         // Fallback cleanly using '??' instead of forcing direct strict type casting 'as String'
 
-        print(' leah jaye video $data');
+
         return {
           'uid': doc.id,
           'title': data['title']?.toString() ?? 'Untitled Book',
@@ -102,8 +103,17 @@ class BookRemoteDatasource {
 
     return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
   }
+  
+  Future<List<CollectionEntity>> getCollections() async {
 
+    final snapshot = await _firestore.collection('collections').get();
 
+    final collection=snapshot.docs.map((doc) => _collectionMap(doc.id, doc.data())).toList();
+
+    print(' sex video $collection');
+    return collection;
+
+  }
 
   Future<PaginatedResponse<BookEntity>> getFilteredBooks({
     String? categoryId,
@@ -221,6 +231,16 @@ class BookRemoteDatasource {
           const [],
 
       audioUrl: data["audioUrl"] ?? "",
+    );
+  }
+
+  CollectionEntity _collectionMap(String id, Map<String, dynamic> data) {
+
+    return CollectionEntity(
+      uid: data['uid'] as String,
+      title: data['title'] as String,
+      description: data['description'] as String,
+      coverUrl: data['coverUrl'] as String,
     );
   }
 

@@ -1,17 +1,24 @@
 import 'package:app/features/book/domain/entity/book_entity.dart';
 import 'package:app/features/book/domain/entity/insights_entity.dart';
+import 'package:app/features/home/domain/entity/collection_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookState {
   final List<BookEntity> books;
   final List<BookEntity> freeBooks;
   final List<InsightsEntity> insights;
+
+  final List <CollectionEntity> collections;
+
   final bool isLoading;
   final bool freeBooksLoading;
   final bool insightsLoading;
+  final bool collectionLoading;
+  
 
   final String? booksErrorMessage;
   final String? insightsErrorMessage;
+  final String? collectionsErrorMessage;
 
 
   const BookState({
@@ -23,6 +30,9 @@ class BookState {
     this.booksErrorMessage,
     this.insightsErrorMessage,
     this.insightsLoading =false,
+    this.collectionLoading=false,
+    this.collections=const [],
+    this.collectionsErrorMessage
   });
 
   BookState copyWith({
@@ -32,10 +42,11 @@ class BookState {
     bool? isLoading,
     bool ? freeBooksLoading,
     bool ? insightsLoading,
-    // We use an explicit fallback token checker structure for error handling
-    // String? Function()? errorMessage, 
     String? Function()? booksErrorMessage,
     String? Function()? insightsErrorMessage,
+    String? Function()? collectionsErrorMessage,
+    bool ? collectionLoading,
+    List <CollectionEntity> ? collections
   }) {
     return BookState(
       books: books ?? this.books,
@@ -44,9 +55,11 @@ class BookState {
       insights: insights ?? this.insights,
       isLoading: isLoading ?? this.isLoading,
       freeBooksLoading: freeBooksLoading ?? this.freeBooksLoading,
-      // ── 🎯 FIXED: Allows explicitly resetting to null vs using old state ──
       booksErrorMessage: booksErrorMessage != null ? booksErrorMessage() : this.booksErrorMessage,
       insightsErrorMessage: insightsErrorMessage != null ? insightsErrorMessage() : this.insightsErrorMessage,
+      collections:collections ?? this.collections,
+      collectionLoading: collectionLoading ?? this.collectionLoading,
+      collectionsErrorMessage: collectionsErrorMessage !=null ? collectionsErrorMessage() :this.collectionsErrorMessage
     );
   }
 }

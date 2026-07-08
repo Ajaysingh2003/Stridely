@@ -5,6 +5,7 @@ import 'package:app/features/book/presentation/screen/book_screen.dart';
 import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart';
 import 'package:app/features/onboarding/presentation/screen/onBoarding_screen.dart';
+import 'package:app/features/subscriptions/service/init.dart';
 // import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -16,12 +17,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 // import 'package:just_audio_background/just_audio_background.dart'; // re-enable when ready for background audio
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Note: just_audio_background init temporarily disabled to avoid
   // "single player" / LateInitializationError during development.
@@ -34,19 +33,18 @@ void main() async{
   //   androidNotificationOngoing: true,
   // );
 
-
-  
+  RevenueCatService.instance.init();
 
   runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).colorScheme;
-// backgroundColor: const Color(),
+    // backgroundColor: const Color(),
     return MaterialApp(
       title: 'Stridely',
       theme: ThemeData(
@@ -57,8 +55,8 @@ class MyApp extends StatelessWidget {
           secondary: Color(0xFFF3F3F3),
           tertiary: Color.fromARGB(255, 1, 1, 2),
           onTertiary: Color.fromARGB(255, 255, 255, 255),
-          // surface: Color.fromARGB(70, 12, 23, 45), 
-          surface: Color(0xFFFFFFFF), 
+          // surface: Color.fromARGB(70, 12, 23, 45),
+          surface: Color(0xFFFFFFFF),
           // onSurface: Color.fromARGB(200, 255, 255, 255),
           onSurface: Color(0xC9151515),
         ),
@@ -108,7 +106,7 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.w400,
             color: themeColors.onSurface,
             fontSize: 16,
-            wordSpacing: 5
+            wordSpacing: 5,
           ),
           bodySmall: GoogleFonts.lora(
             fontWeight: FontWeight.w400,
@@ -117,8 +115,14 @@ class MyApp extends StatelessWidget {
           ),
 
           labelLarge: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
-          labelMedium: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600,fontSize: 20),
-          labelSmall: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500,fontSize: 12),
+          labelMedium: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
+          labelSmall: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w500,
+            fontSize: 12,
+          ),
         ),
       ),
       debugShowCheckedModeBanner: false,
@@ -127,6 +131,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-

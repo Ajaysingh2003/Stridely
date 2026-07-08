@@ -21,14 +21,14 @@ class _CategoryWidgetState extends ConsumerState<CategoryWidget> {
     super.initState();
     Future.microtask(() {
       ref
-          .read(filterdBooksControllerProvider.notifier)
+          .read(filterdBooksControllerProvider(widget.categoryId).notifier)
           .loadFilterdBooks(categoryId: widget.categoryId, limit: 6 ,isRefresh: true);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(filterdBooksControllerProvider);
+    final state = ref.watch(filterdBooksControllerProvider(widget.categoryId));
     final books = state.books;
 
     if (state.isLoading && books.isEmpty) {
@@ -99,10 +99,11 @@ class _CategoryWidgetState extends ConsumerState<CategoryWidget> {
               Text(
                 widget.title, // Fixed typo "Arivals" -> "Arrivals"
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondary,
-                  letterSpacing: 1.3,
-                  fontWeight: FontWeight.bold,
-                ),
+                    color: Theme.of(context).colorScheme.onSecondary,
+                    letterSpacing: 0.5,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
               ),
 
               // ── 🎯 MODERN TEXT ACTION STYLE ──
@@ -123,7 +124,7 @@ class _CategoryWidgetState extends ConsumerState<CategoryWidget> {
                   mainAxisSize: MainAxisSize.min,
                   children: const [
                     Text(
-                      "View",
+                      "View All",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -211,11 +212,7 @@ class _CategoryWidgetState extends ConsumerState<CategoryWidget> {
                     maxLines: 2,
                     textAlign: TextAlign.left,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
+                    style: Theme.of(context).textTheme.headlineSmall
                   ),
 
                  

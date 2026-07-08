@@ -26,7 +26,7 @@ class _InsightsViewState extends ConsumerState<InsightsView> {
     final insightsState = ref.watch(booksControllerProvider).insights;
     
     // Smooth looping calculation array payload list
-    final List structuralList = List.generate(22, (_) => insightsState).expand((i) => i).toList();
+    final List structuralList = List.generate(1, (_) => insightsState).expand((i) => i).toList();
 
     // ── 🎯 THE FIX: Removed outer structural margin from this root wrapper container ──
     return Column(
@@ -70,9 +70,9 @@ class _InsightsViewState extends ConsumerState<InsightsView> {
                 decelerationRate: ScrollDecelerationRate.normal, 
               ),
             ),
-            itemCount: structuralList.length,
+            itemCount: insightsState.length,
             itemBuilder: (context, index) {
-              final singleInsight = structuralList[index];
+              final singleInsight = insightsState[index];
               return Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: InsightsCard(card: singleInsight),

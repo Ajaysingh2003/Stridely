@@ -6,223 +6,189 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 
-class TopsChart extends ConsumerStatefulWidget {
+class BooksList extends ConsumerStatefulWidget {
   final String categoryId;
   final String title;
-  const TopsChart({super.key, required this.categoryId,required this.title});
+  const BooksList({super.key, required this.categoryId, required this.title});
 
   @override
-  ConsumerState<TopsChart> createState() => _ChartWidgetState();
+  ConsumerState<BooksList> createState() => _BooksListWidgetState();
 }
 
-class _ChartWidgetState extends ConsumerState<TopsChart> {
+class _BooksListWidgetState extends ConsumerState<BooksList> {
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
       ref
-          .read(filterdBooksControllerProvider.notifier)
-          .loadFilterdBooks(categoryId: widget.categoryId, limit: 4 ,isRefresh: true);
+          .read(filterdBooksControllerProvider(widget.categoryId).notifier)
+          .loadFilterdBooks(categoryId: widget.categoryId, limit: 6, isRefresh: true);
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(filterdBooksControllerProvider);
+    final state = ref.watch(filterdBooksControllerProvider(widget.categoryId));
     final books = state.books;
+    // final ssss=[...books,...books,...books,...books,...books,...books,...books];
 
+    // ── ⏳ SKELETON SHIMMER LOADING ROW ──
     if (state.isLoading && books.isEmpty) {
       return Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(vertical: 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Shimmer row header placeholder block
-            const SkeletonBlock(width: 140, height: 20, borderRadius: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              child: const SkeletonBlock(width: 160, height: 22, borderRadius: 4),
+            ),
             const SizedBox(height: 16),
-            
-            // 3-Column Loading Grid Mirror
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 6, // Renders a perfect 2-row layout mask skeleton frame
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.55,
-              ),
-              itemBuilder: (context, index) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Book Cover Aspect Ratio Box Frame
-                    const AspectRatio(
-                      aspectRatio: 0.72,
-                      child: SkeletonBlock(width: double.infinity, height: double.infinity, borderRadius: 12),
+            SizedBox(
+              height: 210, 
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.all(14),
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 125,
+                    margin: const EdgeInsets.only(right: 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const AspectRatio(
+                          aspectRatio: 0.7,
+                          child: SkeletonBlock(width: double.infinity, height: double.infinity, borderRadius: 12),
+                        ),
+                        const SizedBox(height: 8),
+                        const SkeletonBlock(width: double.infinity, height: 12, borderRadius: 4),
+                        const SizedBox(height: 4),
+                        const SkeletonBlock(width: 60, height: 12, borderRadius: 4),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    // Title Text Row 1
-                    const SkeletonBlock(width: double.infinity, height: 12, borderRadius: 4),
-                    const SizedBox(height: 4),
-                    // Title Text Row 2 (Shorter)
-                    const SkeletonBlock(width: 60, height: 12, borderRadius: 4),
-                  ],
-                );
-              },
+                  );
+                },
+              ),
             ),
           ],
         ),
       );
     }
 
-    if (books.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Text(
-            "No books available in this category.",
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-      );
-    }
+    if (books.isEmpty) return const SizedBox.shrink(); // Hide the container completely if empty
 
     return Container(
-      padding: EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(vertical: 14),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                widget.title, // Fixed typo "Arivals" -> "Arrivals"
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondary,
-                  letterSpacing: 1.3,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              // ── 🎯 MODERN TEXT ACTION STYLE ──
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color(
-                    0xff4A8FE8,
-                  ), // Accent blue matching your brand
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
+          // ── 🎯 ROW HEADER ──
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.title,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSecondary,
+                    letterSpacing: 0.5,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Text(
-                      "View",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Icon(Icons.arrow_forward_ios_rounded, size: 10),
-                  ],
+                TextButton(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xff4A8FE8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Text("View All", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                      SizedBox(width: 4),
+                      Icon(Icons.arrow_forward_ios_rounded, size: 10),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          GridView.builder(
-            shrinkWrap: true, 
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
-            itemCount: math.min(books.length, 6),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 12, 
-              mainAxisSpacing: 16, 
-              childAspectRatio: 0.7,
+              ],
             ),
-            itemBuilder: (context, index) {
-              final book = books[index];
+          ),
+          const SizedBox(height: 12),
 
-              return GestureDetector(
-                onTap: () {
-                   Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) =>  BookPage(bookId: book.uid,),
-                            transitionDuration: const Duration(milliseconds: 550),
-                            reverseTransitionDuration: const Duration(milliseconds: 500), 
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                              final begin = const Offset(1.5, 0.0);
-                              final end = Offset.zero;
-                              final tween = Tween(begin: begin, end: end);
-                              final curvedAnimation = CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeInOutCubic,
-                              );
-                              return SlideTransition(
-                                position: tween.animate(curvedAnimation),
-                                child: child,
-                              );
-                            },
+          // ── 📜 HORIZONTAL SCROLLABLE LISTVIEW ──
+          SizedBox(
+            height: 210,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              itemCount: books.length,
+              itemBuilder: (context, index) {
+                final book = books[index];
+
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) => BookPage(bookId: book.uid),
+                        transitionDuration: const Duration(milliseconds: 550),
+                        reverseTransitionDuration: const Duration(milliseconds: 500),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          return SlideTransition(
+                            position: Tween(begin: const Offset(1.5, 0.0), end: Offset.zero)
+                                .animate(CurvedAnimation(parent: animation, curve: Curves.easeInOutCubic)),
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 105, // Give every book layout box a clean fixed width profile
+                    margin: const EdgeInsets.only(right: 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 🔒 Fixed Cover Aspect Ratio Wrapper
+                        AspectRatio(
+                          aspectRatio: 0.7,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.white.withOpacity(0.12)),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CachedNetworkImage(
+                                imageUrl: book.bookCover,
+                                fit: BoxFit.cover, 
+                              ),
+                            ),
                           ),
-                        );
-                },
-                child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                        ),
+                        const SizedBox(height: 8),
 
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0),
-                        borderRadius: BorderRadius.circular(12),
-                        // borderRadius:BorderRadius.circular(radius),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.12),
+                        // 📝 Title Segment
+                        Text(
+                          book.title ?? "",
+                          maxLines: 2,
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.headlineSmall
                         ),
-                      ),
-                      child: 
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                          12,
-                        ), // ◄ Match the container radius exactly
-                        child: CachedNetworkImage(
-                          imageUrl: book.bookCover,
-                          fit: BoxFit
-                              .fill, // ◄ Corrected syntax: Boxfit.cover -> BoxFit.cover
-                        ),
-                      ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 6),
-
-                  // 📝 Title Label
-                  Text(
-                    book.title ?? "",
-                    maxLines: 2,
-                    textAlign: TextAlign.left,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-
-                 
-                ],
-              ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ],
       ),

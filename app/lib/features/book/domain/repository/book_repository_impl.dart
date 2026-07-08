@@ -5,6 +5,7 @@ import 'package:app/features/book/domain/entity/book_failure.dart';
 import 'package:app/features/book/domain/entity/books_response.dart';
 import 'package:app/features/book/domain/entity/insights_entity.dart';
 import 'package:app/features/book/domain/repository/book_repository.dart';
+import 'package:app/features/home/domain/entity/collection_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 
@@ -95,6 +96,18 @@ class BookRepositoryImpl implements BookRepository {
       return Right(books);
     } catch (_) {
       // print('hey pichu : $e');
+      return const Left(BookServerFailure());
+    }
+  }
+  
+  @override
+  Future<Either<BookFailure, List<CollectionEntity>>> getCollections() async {
+
+    try {
+      final collection = await _datasource.getCollections();
+      return Right(collection);
+    } catch (e) {
+      print(' look at thissss  $e');
       return const Left(BookServerFailure());
     }
   }
