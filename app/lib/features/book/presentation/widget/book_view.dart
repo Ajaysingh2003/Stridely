@@ -22,15 +22,15 @@ class BookView extends ConsumerWidget {
   final BookEntity book;
   BookView({super.key, required this.book});
 
-  final List<String> excerpt = [
-    "Never give up",
-    "Focus on Your goal.",
-    "Crucial strategic performance variable milestone.",
-  ];
+  // final List<String> excerpt = [
+  //   "Never give up",
+  //   "Focus on Your goal.",
+  //   "Crucial strategic performance variable milestone.",
+  // ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-  final String bookId = "QPsnrnqHjaUm5ybN8YAt";
+  final String bookId = book.uid;
 
       final countChapter = ref.watch(bookTitleControllerProvider(bookId)).titles.length;
     return SingleChildScrollView(

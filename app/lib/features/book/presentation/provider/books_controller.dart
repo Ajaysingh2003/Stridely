@@ -1,22 +1,22 @@
 import 'package:app/features/book/domain/usercases/get_books.dart';
-import 'package:app/features/book/domain/usercases/get_books_by_id.dart';
+// import 'package:app/features/book/domain/usercases/get_books_by_id.dart';
 import 'package:app/features/book/domain/usercases/get_content_audio.dart';
 import 'package:app/features/book/domain/usercases/get_content_title.dart';
 import 'package:app/features/book/domain/usercases/get_filters_books.dart';
 import 'package:app/features/book/domain/usercases/get_free_books.dart';
 import 'package:app/features/book/domain/usercases/get_insights.dart';
+import 'package:app/features/book/presentation/state/all_book_list_State.dart';
 import 'package:app/features/book/presentation/state/bookState.dart';
 import 'package:app/features/home/domain/usecase/get_collection_usecase.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/legacy.dart';
 
 class BooksController extends StateNotifier<BookState> {
-  
   final GetBooksUseCase _getBooksUsecase;
   final GetFreeBooksUseCase _getFreeBooksUsecase;
   final GetInsightsUseCase _getInsightsUseCase;
   final GetCollectionUseCase _getCollectionUseCase;
-  
+
   BooksController(
     this._getBooksUsecase,
     this._getFreeBooksUsecase,
@@ -46,14 +46,15 @@ class BooksController extends StateNotifier<BookState> {
         insightsLoading: false,
         insightsErrorMessage: () => failure.message,
       ),
-      (insightsList) => state = state.copyWith(insightsLoading: false, insights: insightsList),
+      (insightsList) => state = state.copyWith(
+        insightsLoading: false,
+        insights: insightsList,
+      ),
     );
   }
 
   Future<void> loadFreeBooks() async {
-
     state = state.copyWith(freeBooksLoading: true, booksErrorMessage: null);
-
 
     final result = await _getFreeBooksUsecase.call();
 
@@ -70,11 +71,11 @@ class BooksController extends StateNotifier<BookState> {
     );
   }
 
-  
   Future<void> loadCollection() async {
-
-    state = state.copyWith(collectionLoading: true, collectionsErrorMessage: null);
-
+    state = state.copyWith(
+      collectionLoading: true,
+      collectionsErrorMessage: null,
+    );
 
     final result = await _getCollectionUseCase.call();
 
@@ -90,15 +91,39 @@ class BooksController extends StateNotifier<BookState> {
       ),
     );
   }
-
-
 }
+
+// class BookTitleController extends StateNotifier<BookContentTitleState> {
+//   final GetContentTitleUseCase _contentTitleUseCase;
+//   final String bookId;
+//   BookTitleController(this._contentTitleUseCase, this.bookId)
+//     : super(const BookContentTitleState());
+
+//   Future<void> loadBookTitles(String bookId) async {
+//     state = state.copyWith(isLoading: true, errorMessage: null);
+
+//     final result = await _contentTitleUseCase.call(bookId);
+
+//     result.fold(
+//       (failure) => state = state.copyWith(
+//         isLoading: false,
+//         errorMessage: failure.message,
+//       ),
+//       (titlesList) =>
+//           state = state.copyWith(isLoading: false, titles: titlesList),
+//     );
+//   }
+// }
 
 class BookTitleController extends StateNotifier<BookContentTitleState> {
   final GetContentTitleUseCase _contentTitleUseCase;
+  final String bookId;
 
-  BookTitleController(this._contentTitleUseCase)
-    : super(const BookContentTitleState());
+  BookTitleController(this._contentTitleUseCase, this.bookId)
+    : super(const BookContentTitleState()) {
+    // 🚨 FIX: Call the method here so it triggers automatically when the book changes
+    loadBookTitles(bookId);
+  }
 
   Future<void> loadBookTitles(String bookId) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
@@ -139,21 +164,15 @@ class BookContentChapterController
   }
 }
 
-
-
-
-
-
-
-
-  
-
 class FiltersBooksController extends StateNotifier<FilterBookState> {
   final GetFiltersBooksUseCase _getFiltersBooksUseCase;
-  final String categoryId;
-  FiltersBooksController(this._getFiltersBooksUseCase,this.categoryId)
-    : super(const FilterBookState());
-
+  final String? categoryId;
+  final String? collectionId;
+  FiltersBooksController(
+    this._getFiltersBooksUseCase,
+    this.categoryId,
+    this.collectionId,
+  ) : super(const FilterBookState());
 
   Future<void> loadFilterdBooks({
     String? categoryId,
@@ -167,7 +186,7 @@ class FiltersBooksController extends StateNotifier<FilterBookState> {
 
     // Set loading state and clear list if performing a fresh filter refresh reset
     state = state.copyWith(
-      isLoading: true, 
+      isLoading: true,
       errorMessage: null,
       books: isRefresh ? const [] : state.books,
     );
@@ -188,6 +207,7 @@ class FiltersBooksController extends StateNotifier<FilterBookState> {
       (paginatedResponse) {
         state = state.copyWith(
           isLoading: false,
+          totalCount: state.totalCount,
           books: [...state.books, ...paginatedResponse.items],
           lastDocument: paginatedResponse.lastDocument,
           hasMore: paginatedResponse.hasMore,
@@ -196,9 +216,103 @@ class FiltersBooksController extends StateNotifier<FilterBookState> {
       (failure) {
         state = state.copyWith(
           isLoading: false,
-          errorMessage:()=> failure.message, 
+          errorMessage: () => failure.message,
           hasMore: false,
         );
+      },
+    );
+  }
+}
+
+// class AllBooksController extends StateNotifier<BookListState> {
+//   final GetFiltersBooksUseCase _getFiltersBooksUseCase;
+//   AllBooksController(this._getFiltersBooksUseCase)
+//     : super( BookListState());
+
+//   Future<void> loadFilterdBooks({
+//     String? searchQuery,
+//     int limit = 10,
+//     bool isRefresh = false,
+//   }) async {
+//     // Prevent double-fetching if a network call is already active
+//     if (state.isLoading || (!state.hasMore && !isRefresh)) return;
+
+//     // Set loading state and clear list if performing a fresh filter refresh reset
+//     state = state.copyWith(
+//       isLoading: true,
+//       errorMessage: null,
+//       books: isRefresh ? const [] : state.books,
+//     );
+
+//     // ── 🎯 THE FIX: Package parameters into your Clean Architecture Params object ──
+//     final result = await _getFiltersBooksUseCase.call(
+//       FilterBookParams(
+//         searchQuery: searchQuery,
+//         limit: limit,
+//         lastDocument: isRefresh ? null : state.lastDocument,
+//       ),
+//     );
+
+//     // ── 🎯 THE FIX: fold(left, right) -> left is PaginatedResponse (Success), right is BookFailure ──
+//     result.fold(
+//       (paginatedResponse) {
+//         state = state.copyWith(
+//           isLoading: false,
+//           books: [...state.books, ...paginatedResponse.items],
+//           lastDocument: paginatedResponse.lastDocument,
+//           hasMore: paginatedResponse.hasMore,
+//         );
+//       },
+//       (failure) {
+//         state = state.copyWith(
+//           isLoading: false,
+//           errorMessage: ()=>failure.message,
+//           hasMore: false,
+//         );
+//       },
+//     );
+//   }
+// }
+
+class AllBooksController extends StateNotifier<BookListState> {
+  final GetFiltersBooksUseCase _getFiltersBooksUseCase;
+  AllBooksController(this._getFiltersBooksUseCase) : super(BookListState());
+
+  Future<void> loadFilterdBooks({bool isRefresh = false}) async {
+    // 1. The Gatekeeper
+    if (state.isLoading) return;
+    if (!isRefresh && !state.hasMore) return;
+
+    // 2. Synchronous update (Blocks subsequent calls)
+    state = state.copyWith(
+      isLoading: true,
+      books: isRefresh ? [] : state.books,
+    );
+
+    final result = await _getFiltersBooksUseCase.call(
+      FilterBookParams(
+        limit: 10,
+        lastDocument: isRefresh ? null : state.lastDocument,
+      ),
+    );
+
+    result.fold(
+      (paginatedResponse) {
+        state = state.copyWith(
+          isLoading: false, // 3. Re-enable after data arrives
+          books: [...state.books, ...paginatedResponse.items],
+          lastDocument: paginatedResponse.lastDocument,
+          hasMore: paginatedResponse.hasMore,
+        );
+
+        print("========== LOAD ==========");
+        print("Current books: ${state.books.length}");
+        print("Current cursor: ${state.lastDocument?.id}");
+        print("Refresh: $isRefresh");
+        
+      },
+      (failure) {
+        state = state.copyWith(isLoading: false, hasMore: false);
       },
     );
   }

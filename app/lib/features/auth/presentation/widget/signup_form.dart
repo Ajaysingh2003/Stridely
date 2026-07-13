@@ -1,4 +1,5 @@
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
+import 'package:app/features/subscriptions/service/init.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,6 +49,16 @@ class _SignupFormState extends ConsumerState<SignupForm> {
             password: _passwordController.text.trim(),
             displayName: _nameController.text.trim(),
           );
+
+
+           final user = ref.read(authControllerProvider).user;
+
+      if (user != null) {
+        // Pass the real Firebase UID instead of the '/' placeholder
+        await RevenueCatService.instance.loginUser(user);
+      } else {
+        debugPrint("⚠️ Auth succeeded, but user object or UID was null.");
+      }
 
       // if (mounted) {
       //   ScaffoldMessenger.of(context).showSnackBar(

@@ -8,31 +8,29 @@ class BookState {
   final List<BookEntity> freeBooks;
   final List<InsightsEntity> insights;
 
-  final List <CollectionEntity> collections;
+  final List<CollectionEntity> collections;
 
   final bool isLoading;
   final bool freeBooksLoading;
   final bool insightsLoading;
   final bool collectionLoading;
-  
 
   final String? booksErrorMessage;
   final String? insightsErrorMessage;
   final String? collectionsErrorMessage;
 
-
   const BookState({
     this.books = const [],
-    this.insights=const [],
+    this.insights = const [],
     this.freeBooks = const [],
-    this.freeBooksLoading=false,
+    this.freeBooksLoading = false,
     this.isLoading = false,
     this.booksErrorMessage,
     this.insightsErrorMessage,
-    this.insightsLoading =false,
-    this.collectionLoading=false,
-    this.collections=const [],
-    this.collectionsErrorMessage
+    this.insightsLoading = false,
+    this.collectionLoading = false,
+    this.collections = const [],
+    this.collectionsErrorMessage,
   });
 
   BookState copyWith({
@@ -40,26 +38,32 @@ class BookState {
     List<BookEntity>? freeBooks,
     List<InsightsEntity>? insights,
     bool? isLoading,
-    bool ? freeBooksLoading,
-    bool ? insightsLoading,
+    bool? freeBooksLoading,
+    bool? insightsLoading,
     String? Function()? booksErrorMessage,
     String? Function()? insightsErrorMessage,
     String? Function()? collectionsErrorMessage,
-    bool ? collectionLoading,
-    List <CollectionEntity> ? collections
+    bool? collectionLoading,
+    List<CollectionEntity>? collections,
   }) {
     return BookState(
       books: books ?? this.books,
       freeBooks: freeBooks ?? this.freeBooks,
-      insightsLoading:insightsLoading?? this.insightsLoading,
+      insightsLoading: insightsLoading ?? this.insightsLoading,
       insights: insights ?? this.insights,
       isLoading: isLoading ?? this.isLoading,
       freeBooksLoading: freeBooksLoading ?? this.freeBooksLoading,
-      booksErrorMessage: booksErrorMessage != null ? booksErrorMessage() : this.booksErrorMessage,
-      insightsErrorMessage: insightsErrorMessage != null ? insightsErrorMessage() : this.insightsErrorMessage,
-      collections:collections ?? this.collections,
+      booksErrorMessage: booksErrorMessage != null
+          ? booksErrorMessage()
+          : this.booksErrorMessage,
+      insightsErrorMessage: insightsErrorMessage != null
+          ? insightsErrorMessage()
+          : this.insightsErrorMessage,
+      collections: collections ?? this.collections,
       collectionLoading: collectionLoading ?? this.collectionLoading,
-      collectionsErrorMessage: collectionsErrorMessage !=null ? collectionsErrorMessage() :this.collectionsErrorMessage
+      collectionsErrorMessage: collectionsErrorMessage != null
+          ? collectionsErrorMessage()
+          : this.collectionsErrorMessage,
     );
   }
 }
@@ -75,14 +79,11 @@ class BookContentTitleState {
     this.errorMessage,
   });
 
-
   BookContentTitleState copyWith({
     List<Map<String, String>>? titles,
     bool? isLoading,
     String? errorMessage,
-  })
-  
-   {
+  }) {
     return BookContentTitleState(
       titles: titles ?? this.titles,
       isLoading: isLoading ?? this.isLoading,
@@ -102,14 +103,11 @@ class BookContentChapterState {
     this.errorMessage,
   });
 
-
   BookContentChapterState copyWith({
     List<Map<String, String>>? chapters,
     bool? isLoading,
     String? errorMessage,
-  })
-  
-   {
+  }) {
     return BookContentChapterState(
       chapters: chapters ?? this.chapters,
       isLoading: isLoading ?? this.isLoading,
@@ -122,31 +120,34 @@ class FilterBookState {
   final List<BookEntity> books;
   final bool isLoading;
   final bool hasMore;
+  final int totalCount;
   final String? errorMessage;
   final DocumentSnapshot? lastDocument;
-  
+
   const FilterBookState({
     this.books = const [],
+    this.totalCount = 0,
     this.isLoading = false,
     this.hasMore = true,
     this.lastDocument,
-    this.errorMessage
+    this.errorMessage,
   });
 
-  // A helper method to easily modify properties while keeping the current state intact
   FilterBookState copyWith({
     List<BookEntity>? books,
     bool? isLoading,
     bool? hasMore,
     DocumentSnapshot? lastDocument,
-     String? Function()? errorMessage,
+    String? Function()? errorMessage,
+    int? totalCount,
   }) {
     return FilterBookState(
       books: books ?? this.books,
       isLoading: isLoading ?? this.isLoading,
       hasMore: hasMore ?? this.hasMore,
       lastDocument: lastDocument,
-      errorMessage:  errorMessage != null ? errorMessage() : this.errorMessage
+      totalCount: this.totalCount,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }
 }

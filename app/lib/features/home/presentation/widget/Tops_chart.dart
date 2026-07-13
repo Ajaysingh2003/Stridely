@@ -1,10 +1,10 @@
 import 'package:app/core/loader.dart';
 import 'package:app/features/book/presentation/provider/book_data_provider.dart';
 import 'package:app/features/book/presentation/screen/book_screen.dart';
+import 'package:app/features/home/presentation/pages/Category_pages.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:math' as math;
 
 class BooksList extends ConsumerStatefulWidget {
   final String categoryId;
@@ -26,14 +26,11 @@ class _BooksListWidgetState extends ConsumerState<BooksList> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(filterdBooksControllerProvider(widget.categoryId));
     final books = state.books;
-    // final ssss=[...books,...books,...books,...books,...books,...books,...books];
 
-    // ── ⏳ SKELETON SHIMMER LOADING ROW ──
     if (state.isLoading && books.isEmpty) {
       return Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -77,7 +74,7 @@ class _BooksListWidgetState extends ConsumerState<BooksList> {
       );
     }
 
-    if (books.isEmpty) return const SizedBox.shrink(); // Hide the container completely if empty
+    if (books.isEmpty) return const SizedBox.shrink();
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -101,7 +98,28 @@ class _BooksListWidgetState extends ConsumerState<BooksList> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                     Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      settings: RouteSettings(
+                        name: 'category${widget.categoryId}',
+                      ),
+                      transitionDuration: const Duration(milliseconds: 400),
+                      reverseTransitionDuration: const Duration(
+                        milliseconds: 350,
+                      ),
+                      pageBuilder: (_, animation, __) => FadeTransition(
+                        opacity: animation,
+                        child: CategoryPages(
+                          title: widget.title,
+                          coverUrl: "https://pub-d0026e62fb874713bb7e643ae55b5e34.r2.dev/ChatGPT%20Image%20Jul%2012%2C%202026%20at%2010_00_08%20PM.png",
+                          categoryId: widget.categoryId,
+                        ),
+                      ),
+                    ),
+                  );
+                  },
                   style: TextButton.styleFrom(
                     foregroundColor: const Color(0xff4A8FE8),
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -195,3 +213,4 @@ class _BooksListWidgetState extends ConsumerState<BooksList> {
     );
   }
 }
+

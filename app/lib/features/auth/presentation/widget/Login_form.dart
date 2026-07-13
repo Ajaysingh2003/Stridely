@@ -1,6 +1,7 @@
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/auth/presentation/widget/auth_banner.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart';
+import 'package:app/features/subscriptions/service/init.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -48,7 +49,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   //           password: _passwordController.text.trim(),
   //         );
 
-
   //         Navigator.pushReplacement(
   //           context,
   //           MaterialPageRoute(builder: (context) => const HomePage()),
@@ -64,44 +64,55 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   //   }
   // }
 
+  Future<void> _handleSubmit() async {
+    if (!_formKey.currentState!.validate()) return;
 
+    setState(() {
+      _showSuccess = false;
+      _errorMessage = "";
+      _isLoading = true; // Unified state execution
+    });
 
-Future<void> _handleSubmit() async {
-  if (!_formKey.currentState!.validate()) return;
+    try {
+      // 1. Await network authentication response
+      await ref
+          .read(authControllerProvider.notifier)
+          .login(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
 
-  setState(() {
-    _showSuccess = false;
-    _errorMessage = "";
-    _isLoading = true; // Unified state execution
-  });
+      final user = ref.read(authControllerProvider).user;
 
-  try {
-    // 1. Await network authentication response
-    await ref.read(authControllerProvider.notifier).login(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
+      if (user != null) {
+        // Pass the real Firebase UID instead of the '/' placeholder
+        await RevenueCatService.instance.loginUser(user);
+      } else {
+        debugPrint("⚠️ Auth succeeded, but user object or UID was null.");
+      }
+      // RevenueCatService.instance.loginUser(userId);
 
-    // ── 🎯 CRITICAL FIX: Verify widget tree state after async operation ──
-    if (!mounted) return;
+      // ── 🎯 CRITICAL FIX: Verify widget tree state after async operation ──
+      if (!mounted) return;
 
-    // 2. Perform safe context-driven navigation
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomePage()),
-    );
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
+      // 2. Perform safe context-driven navigation
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
-    }
-  } finally {
-    if (mounted) {
-      setState(() => _isLoading = false);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
-}
+
   void _handleContinueAction() {
     if (!showPasswordField) {
       final emailInput = _emailController.text.trim();
@@ -137,9 +148,6 @@ Future<void> _handleSubmit() async {
 
     final authState = ref.watch(authControllerProvider);
 
-
-      
-   
     final isAppLoading = authState.isLoading;
 
     ref.listen(authControllerProvider, (previous, next) {
@@ -267,7 +275,6 @@ Future<void> _handleSubmit() async {
             const SizedBox(height: 16),
             AuthBanner(message: 'Login successfully!', isError: false),
           ],
-
 
           const SizedBox(height: 15),
 

@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 class InsightsEntity extends Equatable {
   final String uid;
   final String author;
-  final String coverUrl;
+  final String ? coverUrl;
   final String bookId;
   final List<String> insights;
 
@@ -12,7 +12,7 @@ class InsightsEntity extends Equatable {
     required this.uid,
     required this.author,
     required this.insights,
-    required this.coverUrl,
+     this.coverUrl,
     required this.bookId
   });
 

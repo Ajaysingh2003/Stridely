@@ -31,9 +31,8 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
   Widget build(BuildContext context) {
     final bookState = ref.watch(booksControllerProvider);
 
-
     if (bookState.freeBooksLoading) {
-      return  FreeBooksSkeleton();
+      return FreeBooksSkeleton();
     }
 
     if (bookState.booksErrorMessage != null) {
@@ -53,15 +52,14 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
 
     final freeBooks = bookState.freeBooks;
 
-    print('🔥 FREE BOOKS DATA: $freeBooks');
+    // print('🔥 FREE BOOKS DATA: $freeBooks');
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         CarouselSlider(
           items: freeBooks.map((book) {
-            return 
-            Padding(
+            return Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Transform(
                 alignment: Alignment.center,
@@ -97,27 +95,27 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
                     // ),
 
                     // PAGE EDGE
-                    Positioned(
-                      left: -5,
-                      top: 10,
-                      bottom: 10,
-                      child: Container(
-                        width: 10,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          gradient: const LinearGradient(
+                    // Positioned(
+                    //   left: -5,
+                    //   top: 10,
+                    //   bottom: 10,
+                    //   child: Container(
+                    //     width: 10,
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(8),
+                    //       gradient: const LinearGradient(
 
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Color.fromARGB(196, 253, 251, 245),
-                              Color(0xffece7db),
-                              Color(0xffd9d3c8),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    //         begin: Alignment.topCenter,
+                    //         end: Alignment.bottomCenter,
+                    //         colors: [
+                    //           Color.fromARGB(196, 253, 251, 245),
+                    //           Color(0xffece7db),
+                    //           Color(0xffd9d3c8),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
                     // SPINE
                     // Positioned(
@@ -163,47 +161,52 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
                     ),
 
                     // LEFT HIGHLIGHT
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white.withOpacity(.45),
-                                Colors.transparent,
-                                Colors.transparent,
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Positioned.fill(
+
+                    //   child: IgnorePointer(
+
+                    //     child: DecoratedBox(
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(18),
+                    //         gradient: LinearGradient(
+                    //           begin: Alignment.topLeft,
+                    //           end: Alignment.bottomRight,
+                    //           colors: [
+                    //             Colors.white.withOpacity(.45),
+                    //             Colors.transparent,
+                    //             Colors.transparent,
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
                     // RIGHT SHADE
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                Colors.transparent,
-                                Colors.transparent,
-                                Colors.black.withOpacity(.18),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Positioned(
+                    //   top: 0,
+                    //   bottom: 0,
+                    //   right: 0,
+                    //   width: 150, // Set a fixed width or use a percentage
+                    //   child: IgnorePointer(
+                    //     child: DecoratedBox(
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(18),
+                    //         gradient: LinearGradient(
+                    //           begin: Alignment.topLeft,
+                    //           end: Alignment.centerRight,
+                    //           colors: [
+                    //             Colors.transparent,
+                    //             Colors.black.withOpacity(.10),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
                     // GLOSS
-                    // 
+                    //
 
                     // ── 🎯 ENTIRE BACKGROUND HIT ACTION LAYER ──
                     Positioned.fill(
@@ -220,7 +223,7 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
                               PageRouteBuilder(
                                 pageBuilder: (context, animation, secondaryAnimation) => BookPage(bookId: book.uid,),
                                 transitionDuration: const Duration(milliseconds: 550),
-                                reverseTransitionDuration: const Duration(milliseconds: 500), 
+                                reverseTransitionDuration: const Duration(milliseconds: 500),
                                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                   final begin = const Offset(1.5, 0.0);
                                   final end = Offset.zero;
@@ -239,10 +242,10 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
                           },
                         ),
                       ),
-                    ),
+                    ),    
                   ],
                 ),
-              ), 
+              ),
             );
           }).toList(),
           carouselController: _controller,

@@ -689,7 +689,7 @@ class _CategoryChip extends StatelessWidget {
   final String label;
   final Color color;
   final Color bg;
-
+  
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),

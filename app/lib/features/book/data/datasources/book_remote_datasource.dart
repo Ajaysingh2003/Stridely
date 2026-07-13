@@ -110,7 +110,7 @@ class BookRemoteDatasource {
 
     final collection=snapshot.docs.map((doc) => _collectionMap(doc.id, doc.data())).toList();
 
-    print(' sex video $collection');
+
     return collection;
 
   }
@@ -132,6 +132,7 @@ class BookRemoteDatasource {
     if (collectionId != null && collectionId.isNotEmpty) {
       query = query.where('collections', arrayContains: collectionId);
     }
+
     if (searchQuery != null && searchQuery.isNotEmpty) {
       query = query
           .where('title', isGreaterThanOrEqualTo: searchQuery)
@@ -151,24 +152,21 @@ class BookRemoteDatasource {
       paginatedQuery = paginatedQuery.startAfterDocument(lastDocument);
     }
 
-    // Execute paginated document data payload pull
+    print("Previous lastDoc: ${lastDocument?.id}");
+
+
     final snapshot = await paginatedQuery.get();
     
-    // Map Firestore Documents into Clean Domain Entities
     final books = snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
-    
-    // Track cursor updates safely
+    print("Returned docs:");
     final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
-    
-    // ── 🏁 3. CALCULATE IF MORE ITEMS EXIST IN THE QUEUE ──
-    // If the pulled items match your target page limit boundary, check if total count has more left
+    print("New lastDoc: ${snapshot.docs.isNotEmpty ? snapshot.docs.last.id : null}");    
     final bool hasMore = books.length == limit;
 
-    // Return encapsulated metadata package payload
     return PaginatedResponse<BookEntity>(
       items: books,
       lastDocument: lastDoc,
-      totalCount: 5,
+      totalCount: 0,
       hasMore: hasMore,
     );
   }
@@ -235,12 +233,14 @@ class BookRemoteDatasource {
   }
 
   CollectionEntity _collectionMap(String id, Map<String, dynamic> data) {
-
+    // print(data['secondaryCoverUrl'],);
+    // print("fuck a girl");
     return CollectionEntity(
       uid: data['uid'] as String,
       title: data['title'] as String,
       description: data['description'] as String,
       coverUrl: data['coverUrl'] as String,
+      secondaryCoverUrl:data["secondaryCoverUrl"] as String?
     );
   }
 

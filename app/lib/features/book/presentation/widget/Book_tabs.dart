@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BookTab extends ConsumerStatefulWidget {
   final BookEntity book;
+
   const BookTab({super.key, required this.book});
 
   @override
@@ -18,7 +19,7 @@ class BookTab extends ConsumerStatefulWidget {
 class _BookTabState extends ConsumerState<BookTab> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _currentTabIndex = 0;
-  final String bookId = "QPsnrnqHjaUm5ybN8YAt";
+  String get bookId => widget.book.uid;
 
   @override
   void initState() {

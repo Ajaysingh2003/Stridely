@@ -8,8 +8,12 @@ import 'package:app/features/book/presentation/widget/Book_hero.dart';
 import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
 import 'package:app/features/book/presentation/widget/book_view.dart';
 import 'package:app/features/book/utility/book_utilty.dart';
+import 'package:app/features/subscriptions/providers/subscription_provider.dart';
+import 'package:app/features/subscriptions/service/init.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:purchases_ui_flutter/paywall_result.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 class BookPage extends ConsumerStatefulWidget {
   final String bookId;
@@ -106,9 +110,8 @@ class _BookPageState extends ConsumerState<BookPage> {
     BuildContext context,
     BookEntity book,
     String contentId,
-  )
-   
-  {
+    bool showReadButton,
+  ) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -122,152 +125,193 @@ class _BookPageState extends ConsumerState<BookPage> {
             // borderRadius: BorderRadius.circular(24),
           ),
           child: IntrinsicHeight(
-            child: Row(
-              children: [
-                SizedBox(
-                  width:
-                      85, // Sized normally to hold the "Read" text comfortably
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.horizontal(
-                          left: Radius.circular(20),
-                          right: Radius.circular(6),
+            child:true
+            //  showReadButton || book.isFree
+                ? Row(
+                    children: [
+                      SizedBox(
+                        width:
+                            85, // Sized normally to hold the "Read" text comfortably
+                        height: 48,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.horizontal(
+                                left: Radius.circular(20),
+                                right: Radius.circular(6),
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            print('isFree chiku ${book.isFree}');
+                            // 1. 🆓 FREE CHECK: If the book is free, open it instantly
+                            if (book.isFree) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BookContentPage(contentId: contentId),
+                                ),
+                              );
+                              return;
+                            }
+
+                            // 2. 🛡️ PREMIUM CHECK: If it's a paid book, check if they are already Premium
+                            final isPremium = await RevenueCatService.instance
+                                .isUserPremium();
+
+                            if (isPremium) {
+                              // Already premium? Skip the paywall entirely!
+                              if (context.mounted) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BookContentPage(contentId: contentId),
+                                  ),
+                                );
+                              }
+                              return;
+                            }
+
+                            // 3. 💳 PAYWALL TRIGGER: Not premium? Pop up your RevenueCat UI sheet
+                            if (context.mounted) {
+                              final PaywallResult result =
+                                  // await RevenueCatUI.presentPaywall(
+                                  //   displayCloseButton: true,
+                                  // );
+                                  await RevenueCatUI.presentPaywall(
+                                    displayCloseButton: true,
+                                  );
+
+                              // 4. 🎯 HANDLE THE PAYWALL RESULT:
+                              if (result == PaywallResult.purchased ||
+                                  result == PaywallResult.restored) {
+                                print("🎉 Access Granted! Let them read.");
+
+                                if (context.mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          BookContentPage(contentId: contentId),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                print("❌ Purchase cancelled or failed.");
+                                // The paywall closes automatically, leaving them on the current screen.
+                              }
+                            }
+                          },
+                          child: Text(
+                            "Read",
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
                         ),
                       ),
+
+                      VerticalDivider(
+                        width: 2,
+                        thickness: 1,
+                        indent: 1,
+                        endIndent: 1,
+                        color: Colors.transparent,
+                      ),
+
+                      SizedBox(
+                        width: 54,
+                        height: 48,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.horizontal(
+                                right: Radius.circular(20),
+                                left: Radius.circular(6),
+                              ),
+                            ),
+                          ),
+                          onPressed: () => Navigator.maybePop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.play_arrow,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ref.watch(isPremiumProvider)
+                          ? Theme.of(context).colorScheme.primary
+                          : const Color(0xFF212121),
+                      foregroundColor: Colors.white,
+                      // padding: const EdgeInsets.symmetric(
+                      //   horizontal: 24,
+                      //   vertical: 14,
+                      // ),
+                      // shape: RoundedRectangleBorder(
+                      //   borderRadius: BorderRadius.circular(12),
+                      // ),
                     ),
                     onPressed: () async {
-                      if (book.isFree) {
-                        // Navigator.push(
-                        //   context,
-                        //   PageRouteBuilder(
-                        //     pageBuilder:
-                        //         (context, animation, secondaryAnimation) =>
-                        //             BookContentPage(contentId: contentId),
-                        //     transitionDuration: const Duration(
-                        //       milliseconds: 550,
-                        //     ),
-                        //     reverseTransitionDuration: const Duration(
-                        //       milliseconds: 500,
-                        //     ), // Speed when going back
-                        //     transitionsBuilder:
-                        //         (
-                        //           context,
-                        //           animation,
-                        //           secondaryAnimation,
-                        //           child,
-                        //         ) {
-                        //           // Slides from right (1.0, 0.0) to center (0.0, 0.0)
+                      final isPremiumUser = ref.read(isPremiumProvider);
 
-                        //           final begin = const Offset(1.5, 0.0);
-                        //           final end = Offset.zero;
-                        //           final tween = Tween(begin: begin, end: end);
-
-                        //           // Makes the animation start fast and slow down gently (smooth look)
-                        //           final curvedAnimation = CurvedAnimation(
-                        //             parent: animation,
-
-                        //             curve: Curves.easeInOutCubic,
-                        //           );
-
-                        //           return SlideTransition(
-                        //             position: tween.animate(curvedAnimation),
-
-                        //             child: child,
-                        //           );
-                        //         },
-                        //   ),
-                        // );
+                      if (!isPremiumUser) {
 
 
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BookContentPage(contentId: contentId),
-                          ),
+                        await RevenueCatUI.presentPaywall(
+                          displayCloseButton: true,
                         );
-
-                        return;
-                      }
-
-                      final UserEntity? currentUser = await ref
-                          .read(authControllerProvider.notifier)
-                          .getCurrentUser();
-
-                      final bool isPremiumUser =
-                          currentUser?.isPremium ?? false;
-
-                      if (book.canAccessAudio(isPremiumUser)) {
-                        // Navigator.push(context, LoginPage());
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
-                        );
-                      } else {
-                        // revenue cat
-                      }
-                      // print("Main reader flow triggered!");
+                      } 
+                      
                     },
-                    child: Text(
-                      "Read",
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontWeight: FontWeight.w800,
-                          ),
-                    ),
-                  ),
-                ),
-
-                VerticalDivider(
-                  width: 2,
-                  thickness: 1,
-                  indent: 1,
-                  endIndent: 1,
-                  color: Colors.transparent,
-                ),
-
-                SizedBox(
-                  width: 54,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.horizontal(
-                          right: Radius.circular(20),
-                          left: Radius.circular(6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.lock_outline_rounded,
+                          size: 18,
+                          color: Colors.amber,
                         ),
-                      ),
-                    ),
-                    onPressed: () => Navigator.maybePop(context),
-                    child: Container(
-                      padding: EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.play_arrow,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 16,
-                      ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Unlock',
+                          style: Theme.of(context).textTheme.labelLarge
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
@@ -281,6 +325,9 @@ class _BookPageState extends ConsumerState<BookPage> {
     final bookAsync = ref.watch(singleBookProvider(bookId));
     final contentsync = ref.watch(bookTitleControllerProvider(bookId)).titles;
     final firstContent = contentsync.isNotEmpty ? contentsync.first : null;
+
+    // final streamUserInfo=ref.watch(subscriptionStreamProvider)
+    final isPremium = ref.watch(isPremiumProvider);
     // final firstContent=ref.read(bookTitleControllerProvider.)
     // final bookContentAsync = ref.watch(
     //   singleBookContentProvider("UK3Hi4dSdiq7kU5qME6R"),
@@ -402,6 +449,7 @@ class _BookPageState extends ConsumerState<BookPage> {
                                 context,
                                 book,
                                 firstContent?["uid"] ?? "",
+                                isPremium,
                               ),
                             ],
                           ),

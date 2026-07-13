@@ -13,6 +13,7 @@ import 'package:app/features/book/domain/usercases/get_filters_books.dart';
 import 'package:app/features/book/domain/usercases/get_free_books.dart';
 import 'package:app/features/book/domain/usercases/get_insights.dart';
 import 'package:app/features/book/presentation/provider/books_controller.dart';
+import 'package:app/features/book/presentation/state/all_book_list_State.dart';
 import 'package:app/features/book/presentation/state/bookState.dart';
 import 'package:app/features/home/domain/usecase/get_collection_usecase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -92,9 +93,19 @@ final booksControllerProvider =
 final filterdBooksControllerProvider =
     StateNotifierProvider.family<FiltersBooksController, FilterBookState, String>((ref, categoryId) {
       return FiltersBooksController(
-        ref.watch(getFilterdUseCaseProvider),categoryId,
+        ref.watch(getFilterdUseCaseProvider),categoryId,null
       );
     });
+
+
+final filterdBooksCollectionControllerProvider =
+    StateNotifierProvider.family<FiltersBooksController, FilterBookState, String>((ref, collectionId) {
+      return FiltersBooksController(
+        ref.watch(getFilterdUseCaseProvider),null,collectionId,
+      );
+    });
+
+    
 
 
 final singleBookProvider = FutureProvider.family<Either<BookFailure, BookEntity>, String>((ref, bookId) async {
@@ -104,6 +115,8 @@ final singleBookProvider = FutureProvider.family<Either<BookFailure, BookEntity>
   // Return the evaluation pipeline result
   return await getBookByIdUseCase.call(bookId);
 });
+
+
 
 
 
@@ -138,7 +151,7 @@ final singleBookContentProvider = FutureProvider.family<BookContent, String>((re
 
 final bookTitleControllerProvider = StateNotifierProvider.family<BookTitleController, BookContentTitleState, String>((ref, bookId) {
   final useCase = ref.watch(getContentTitleUseCaseProvider);
-  return BookTitleController(useCase)..loadBookTitles(bookId);
+  return BookTitleController(useCase,bookId);
 });
 
 
@@ -167,3 +180,17 @@ final bookContentChaptersControllerProvider = StateNotifierProvider.family<
   
   return controller;
 });
+
+
+
+
+
+
+
+final allBooksControllerProvider =
+    StateNotifierProvider<AllBooksController, BookListState>((ref) {
+      return AllBooksController(
+        ref.watch(getFilterdUseCaseProvider),
+      );
+    });
+    

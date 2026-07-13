@@ -3,6 +3,7 @@ import 'package:app/features/auth/presentation/pages/signup_screen.dart';
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/auth/presentation/widget/Login_form.dart';
 import 'package:app/features/auth/presentation/widget/signup_form.dart';
+import 'package:app/features/subscriptions/service/init.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/widget/back_button.dart';
@@ -100,10 +101,33 @@ class SignupView extends ConsumerWidget {
                       vertical: 14,
                     ),
                   ),
-                  onPressed: () {
-                    ref
-                        .read(authControllerProvider.notifier)
-                        .signInWithGoogle();
+                  onPressed: () async {
+                    // ◄ Added 'async' here
+                    try {
+                      // 1. Wait completely for the Google Sign-In network flow to finish
+                      await ref
+                          .read(authControllerProvider.notifier)
+                          .signInWithGoogle();
+
+                      // 2. Safely check the updated auth state right after completion
+                      final user = ref.read(authControllerProvider).user;
+
+                      if (user != null) {
+                        // Pass the real Firebase UID instead of a placeholder
+                        await RevenueCatService.instance.loginUser(user);
+                        debugPrint(
+                          "🔗 Successfully synchronized Firebase UID ($user) with RevenueCat.",
+                        );
+                      } else {
+                        debugPrint(
+                          "⚠️ Auth completed, but user object or UID was null.",
+                        );
+                      }
+                    } catch (e) {
+                      debugPrint(
+                        "💥 Google Sign-In workflow encountered an error: $e",
+                      );
+                    }
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

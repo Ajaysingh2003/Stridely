@@ -15,8 +15,6 @@
 //   @override
 //   Widget build(BuildContext context,WidgetRef ref) {
 
-        
-
 //     return Padding(
 //       padding: const EdgeInsets.all(20),
 //       child: Container(
@@ -64,7 +62,7 @@
 //                   child: Divider(
 //                     color: const Color(0x397C7B7B),
 //                     thickness: 1,
-//                     indent: 16, 
+//                     indent: 16,
 //                   ),
 //                 ),
 //               ],
@@ -179,7 +177,7 @@
 //             ),
 
 //             const SizedBox(height: 12),
-            
+
 //             Center(
 //               child: RichText(
 //                 textAlign: TextAlign.center, // Centers the whole text block
@@ -187,7 +185,7 @@
 //                   // Base style inherited from your existing theme
 //                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
 //                     fontSize: 12,
-//                     color: Color.fromARGB(154, 21, 21, 21), 
+//                     color: Color.fromARGB(154, 21, 21, 21),
 //                   ),
 //                   children: [
 //                     const TextSpan(text: "Don't have an Accout ? "),
@@ -203,7 +201,7 @@
 //                       ),
 //                       // 🚀 Captures the tap gesture event natively
 //                       recognizer: TapGestureRecognizer()
-//                         ..onTap = () => 
+//                         ..onTap = () =>
 //                         Navigator.push(
 //                           context,
 //                           PageRouteBuilder(
@@ -250,7 +248,6 @@
 //               ),
 //             ),
 
-            
 //           ],
 //         ),
 //       ),
@@ -261,6 +258,7 @@ import 'package:app/features/auth/presentation/pages/signup_screen.dart';
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/auth/presentation/widget/Login_form.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart'; // Verified import path matches
+import 'package:app/features/subscriptions/service/init.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/widget/back_button.dart';
@@ -273,19 +271,18 @@ class LoginView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
     // ── 🎯 THE AUTOMATIC REDIRECTION LISTENER MATRIX ──
-      ref.listen<bool>(
-    authControllerProvider.select((state) => state.user != null), 
-    (previous, nextHasUser) {
-      if (nextHasUser == true && context.mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
-      }
-    },
-  );
+    ref.listen<bool>(
+      authControllerProvider.select((state) => state.user != null),
+      (previous, nextHasUser) {
+        if (nextHasUser == true && context.mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
+      },
+    );
     // Watch the state token to dynamically manage loading indicators if needed
     final authState = ref.watch(authControllerProvider);
 
@@ -310,9 +307,9 @@ class LoginView extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Divider(
-                    color: const Color(0x397C7B7B), 
-                    thickness: 1, 
-                    endIndent: 16, 
+                    color: const Color(0x397C7B7B),
+                    thickness: 1,
+                    endIndent: 16,
                   ),
                 ),
                 const Text(
@@ -328,7 +325,7 @@ class LoginView extends ConsumerWidget {
                   child: Divider(
                     color: const Color(0x397C7B7B),
                     thickness: 1,
-                    indent: 16, 
+                    indent: 16,
                   ),
                 ),
               ],
@@ -363,9 +360,31 @@ class LoginView extends ConsumerWidget {
                       vertical: 14,
                     ),
                   ),
-                  onPressed: authState.isLoading 
-                      ? null // Prevent spam double-taps while processing
-                      : () => ref.read(authControllerProvider.notifier).signInWithGoogle(),
+                   onPressed: authState.isLoading
+    ? null // Prevent spam double-taps while processing
+    : () async { // ◄ Added 'async' here
+        try {
+          // 1. Wait completely for the Google Sign-In network flow to finish
+          await ref.read(authControllerProvider.notifier).signInWithGoogle();
+
+          // 2. Safely check the updated auth state right after completion
+          final user = ref.read(authControllerProvider).user;
+
+          if (user != null) {
+            // print(' checking the userId for firebseuid $userId');
+            // Pass the real Firebase UID instead of a placeholder
+            await RevenueCatService.instance.loginUser(user);
+            debugPrint("🔗 Successfully synchronized Firebase UID ($user) with RevenueCat.");
+
+            
+          } else {
+            debugPrint("⚠️ Auth completed, but user object or UID was null.");
+          }
+        } catch (e) {
+          debugPrint("💥 Google Sign-In workflow encountered an error: $e");
+        }
+      },
+
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -373,16 +392,21 @@ class LoginView extends ConsumerWidget {
                         const SizedBox(
                           height: 18,
                           width: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black54),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black54,
+                          ),
                         ),
                       ] else ...[
-                        SvgPicture.asset("assets/images/google.svg", height: 20),
+                        SvgPicture.asset(
+                          "assets/images/google.svg",
+                          height: 20,
+                        ),
                         const SizedBox(width: 12),
                         Text(
                           "Signin with Google",
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.w500),
                         ),
                       ],
                     ],
@@ -402,7 +426,12 @@ class LoginView extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(255, 33, 33, 33).withOpacity(0.1),
+                      color: const Color.fromARGB(
+                        255,
+                        33,
+                        33,
+                        33,
+                      ).withOpacity(0.1),
                       blurRadius: 1,
                       spreadRadius: 1.2,
                       offset: Offset.zero,
@@ -431,9 +460,8 @@ class LoginView extends ConsumerWidget {
                       const SizedBox(width: 12),
                       Text(
                         "Signin with Apple", // 🎯 Fixed label type name mismatch
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w500,
-                            ),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -442,45 +470,56 @@ class LoginView extends ConsumerWidget {
             ),
 
             const SizedBox(height: 12),
-            
+
             Center(
               child: RichText(
-                textAlign: TextAlign.center, 
+                textAlign: TextAlign.center,
                 text: TextSpan(
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontSize: 12,
-                    color: const Color.fromARGB(154, 21, 21, 21), 
+                    color: const Color.fromARGB(154, 21, 21, 21),
                   ),
                   children: [
                     const TextSpan(text: "Don't have an Account ? "),
                     TextSpan(
                       text: " Signup",
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold, 
+                        fontWeight: FontWeight.bold,
                         fontSize: 12,
-                        decoration: TextDecoration.underline, 
+                        decoration: TextDecoration.underline,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () => 
-                        Navigator.push(
+                        ..onTap = () => Navigator.push(
                           context,
                           PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) => const SignupPage(),
-                            transitionDuration: const Duration(milliseconds: 550),
-                            reverseTransitionDuration: const Duration(milliseconds: 500), 
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                              final begin = const Offset(1.5, 0.0);
-                              final end = Offset.zero;
-                              final tween = Tween(begin: begin, end: end);
-                              final curvedAnimation = CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeInOutCubic,
-                              );
-                              return SlideTransition(
-                                position: tween.animate(curvedAnimation),
-                                child: child,
-                              );
-                            },
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    const SignupPage(),
+                            transitionDuration: const Duration(
+                              milliseconds: 550,
+                            ),
+                            reverseTransitionDuration: const Duration(
+                              milliseconds: 500,
+                            ),
+                            transitionsBuilder:
+                                (
+                                  context,
+                                  animation,
+                                  secondaryAnimation,
+                                  child,
+                                ) {
+                                  final begin = const Offset(1.5, 0.0);
+                                  final end = Offset.zero;
+                                  final tween = Tween(begin: begin, end: end);
+                                  final curvedAnimation = CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeInOutCubic,
+                                  );
+                                  return SlideTransition(
+                                    position: tween.animate(curvedAnimation),
+                                    child: child,
+                                  );
+                                },
                           ),
                         ),
                     ),

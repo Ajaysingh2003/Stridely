@@ -6,22 +6,25 @@ class CollectionEntity {
   final String title;
   final String description;
   final String coverUrl; 
-
+  final String? secondaryCoverUrl; 
 
   const CollectionEntity({
     required this.uid,
     required this.title,
     required this.description,
     required  this.coverUrl,
+    this.secondaryCoverUrl
   });
 
   /// Factory constructor to parse data from your backend API response
   factory CollectionEntity.fromMap(Map<String, dynamic> map) {
+
     return CollectionEntity(
       uid: map['uid'] as String,
       title: map['title'] as String,
       description: map['description'] as String,
       coverUrl: map['coverUrl'] as String,
+      secondaryCoverUrl: map["secondaryCoverUrl"] as String?
     );
   }
 
@@ -32,6 +35,7 @@ class CollectionEntity {
       'title': title,
       'description': description,
       'coverUrl': coverUrl,
+      "secondaryCoverUrl":secondaryCoverUrl
     };
   }
 

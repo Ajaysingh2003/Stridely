@@ -25,9 +25,11 @@ class _InsightsViewState extends ConsumerState<InsightsView> {
   Widget build(BuildContext context) {
     final insightsState = ref.watch(booksControllerProvider).insights;
     
-    // Smooth looping calculation array payload list
     final List structuralList = List.generate(1, (_) => insightsState).expand((i) => i).toList();
 
+if (insightsState.isEmpty){
+  return SizedBox();
+}
     // ── 🎯 THE FIX: Removed outer structural margin from this root wrapper container ──
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,9 +50,10 @@ class _InsightsViewState extends ConsumerState<InsightsView> {
               Text(
                 "Learn 5 key insights in just 1 minute",
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondary,
+                  color: Colors.black87,
                   letterSpacing: 1.3,
-                  fontSize: 14,
+                  fontSize: 12,
+                
                 ),
               ),
             ],
@@ -85,16 +88,17 @@ class _InsightsViewState extends ConsumerState<InsightsView> {
   }
 }
 
-class InsightsCard extends StatelessWidget {
+class InsightsCard extends ConsumerWidget {
   final InsightsEntity card;
   const InsightsCard({super.key, required this.card});
 
   @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque, 
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 1. WATCH the provider instead of reading/awaiting
+    final bookAsync = ref.watch(singleBookProvider(card.bookId));
+
+    return bookAsync.when(
+      data: (eitherResult) =>eitherResult.fold((failure)=>Center(child: Text(failure.message),), (bookData)=>GestureDetector(
         onTap: () {
           Navigator.push(
             context,
@@ -118,16 +122,16 @@ class InsightsCard extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: CachedNetworkImage(
-              imageUrl: card.coverUrl,
+              imageUrl: bookData.bookCover ?? "",
               fit: BoxFit.cover,
-              filterQuality: FilterQuality.low,
-              fadeInDuration: const Duration(milliseconds: 200), 
-              placeholder: (context, url) => Container(color: Colors.white.withOpacity(0.05)),
-              errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.white24),
             ),
           ),
         ),
-      ),
+      ),), 
+      
+      // 2. Handle Loading and Error states gracefully
+      loading: () => Container(width: 70, height: 100, color: Colors.white10),
+      error: (_, __) => Container(width: 70, height: 100, child: Icon(Icons.error)),
     );
   }
 }

@@ -102,7 +102,7 @@ class BookRepositoryImpl implements BookRepository {
   
   @override
   Future<Either<BookFailure, List<CollectionEntity>>> getCollections() async {
-
+    
     try {
       final collection = await _datasource.getCollections();
       return Right(collection);
@@ -113,13 +113,15 @@ class BookRepositoryImpl implements BookRepository {
   }
 
   Future<Either<BookFailure, List<BookEntity>>> getFreeBooks() async {
+
     try {
       final books = await _datasource.getFreeBooks();
       return Right(books);
-    } catch (_) {
-      // print('hey pichu : $e');
+    } catch (e) {
+      print('hey pichu : $e');
       return const Left(BookServerFailure());
     }
+
   }
   Future<Either<BookFailure, List<InsightsEntity>>> getInsightes() async {
     try {

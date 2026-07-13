@@ -6,74 +6,73 @@ class FreeBooksSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Deep dark background color palette matching your home view layout shell
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return SizedBox(
       height: 220,
-      child: Shimmer.fromColors(
-        baseColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[300]!,
-        highlightColor: isDark ? Colors.white.withOpacity(0.12) : Colors.grey[100]!,
-        period: const Duration(milliseconds: 1500),
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          physics: const NeverScrollableScrollPhysics(), // Keeps it locked while loading
-          itemCount: 4, // Fits nicely across the viewport horizontal profile bounds
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(right: 24, top: 10, bottom: 10),
-              child: Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..rotateY(-0.15)
-                  ..rotateZ(-0.03),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    // PAGE EDGE SIMULATION
-                    Positioned(
-                      left: -5,
-                      top: 10,
-                      bottom: 10,
-                      child: Container(
-                        width: 10,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-
-                    // SPINE SIMULATION
-                    Positioned(
-                      left: 0,
-                      top: 6,
-                      bottom: 6,
-                      child: Container(
-                        width: 14,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-
-                    // MAIN FRONT COVER SKELETON BOX
-                    Container(
-                      width: 110, // Matches your card's proportional visual width profile 
+      // Use LayoutBuilder to ensure constraints are passed safely during the first frame
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Shimmer.fromColors(
+            // Neutral light-theme colors
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            period: const Duration(milliseconds: 1500),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 4,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 24, top: 10, bottom: 10),
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.identity()
+                      ..setEntry(3, 2, 0.002)
+                      ..rotateY(-0.2),
+                    child: SizedBox(
+                      width: 110,
                       height: 180,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
+                      child: Stack(
+                        children: [
+                          // Main Cover
+                          Container(
+                            width: 110,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          // Page Edge / Shadow Effect
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: 30,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(12),
+                                  bottomRight: Radius.circular(12),
+                                ),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.black.withOpacity(0.0),
+                                    Colors.black.withOpacity(0.1),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
