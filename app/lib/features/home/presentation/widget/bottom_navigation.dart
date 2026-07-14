@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:app/features/home/presentation/pages/Collection_screen.dart';
+import 'package:app/features/home/presentation/pages/explore_screen.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
@@ -39,16 +40,15 @@ class BottomNavigation extends StatelessWidget {
                     child: Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors
-                                      .transparent, // ◄ Sets the fill to transparent
-                                  shadowColor: Colors
-                                      .transparent, // ◄ Removes the shadow color
-                                  elevation: 0, // ◄ Removes the depth/elevation
-                                  padding: EdgeInsets
-                                      .zero, // ◄ Removes default internal padding
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
+                          backgroundColor: Colors
+                              .transparent, // ◄ Sets the fill to transparent
+                          shadowColor:
+                              Colors.transparent, // ◄ Removes the shadow color
+                          elevation: 0, // ◄ Removes the depth/elevation
+                          padding: EdgeInsets
+                              .zero, // ◄ Removes default internal padding
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                         onPressed: () {
                           final currentRoute = ModalRoute.of(
                             context,
@@ -120,25 +120,82 @@ class BottomNavigation extends StatelessWidget {
                   ),
                   Expanded(
                     child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.explore,
-                            // color: Colors.white,
-                            size: 28,
-                            color: Colors.black.withOpacity(0.9),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Discover",
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors
+                              .transparent, // ◄ Sets the fill to transparent
+                          shadowColor:
+                              Colors.transparent, // ◄ Removes the shadow color
+                          elevation: 0, // ◄ Removes the depth/elevation
+                          padding: EdgeInsets
+                              .zero, // ◄ Removes default internal padding
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        onPressed: () {
+                          final currentRoute = ModalRoute.of(
+                            context,
+                          )?.settings.name;
+
+                          // 2. Define the name of the page you are trying to navigate to
+                          const targetRouteName = 'explore_page';
+                          if (currentRoute == targetRouteName) return;
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              settings: const RouteSettings(
+                                name: targetRouteName,
+                              ),
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      const ExplorePage(),
+                              transitionDuration: const Duration(
+                                milliseconds: 550,
+                              ),
+                              reverseTransitionDuration: const Duration(
+                                milliseconds: 500,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    final begin = const Offset(1.5, 0.0);
+                                    final end = Offset.zero;
+                                    final tween = Tween(begin: begin, end: end);
+                                    final curvedAnimation = CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeInOutCubic,
+                                    );
+                                    return SlideTransition(
+                                      position: tween.animate(curvedAnimation),
+                                      child: child,
+                                    );
+                                  },
                             ),
-                          ),
-                        ],
+                          );
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.explore,
+                              // color: Colors.white,
+                              size: 28,
+                              color: Colors.black.withOpacity(0.9),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Discover",
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
