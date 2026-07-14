@@ -162,7 +162,7 @@ class BookRemoteDatasource {
     final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
     print("New lastDoc: ${snapshot.docs.isNotEmpty ? snapshot.docs.last.id : null}");    
     final bool hasMore = books.length == limit;
-
+    print(" books data ${books}");
     return PaginatedResponse<BookEntity>(
       items: books,
       lastDocument: lastDoc,

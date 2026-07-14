@@ -102,7 +102,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       body: Stack(
         children: [
           PageView(
-            physics: const NeverScrollableScrollPhysics(),
+            // physics: const NeverScrollableScrollPhysics(),
             controller: _controller,
             onPageChanged: (index) {
               setState(() {

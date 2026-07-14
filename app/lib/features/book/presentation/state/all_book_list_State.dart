@@ -1,8 +1,5 @@
 import 'package:app/features/book/domain/entity/book_entity.dart';
-// import 'package:app/features/book/presentation/provider/book_data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:dartz/dartz.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BookListState {
   final List<BookEntity> books;
@@ -35,5 +32,31 @@ class BookListState {
     );
   }
 }
+
+
+class SearchBookListState {
+  final List<BookEntity> books;
+  final bool isLoading;
+  final String? errorMessage;
+
+  SearchBookListState({
+    this.books = const [],
+    this.isLoading = false,
+    this.errorMessage = "",
+  });
+
+  SearchBookListState copyWith({
+    List<BookEntity>? books,
+    bool? isLoading,
+    String? Function()? errorMessage,
+  }) {
+    return SearchBookListState(
+      books: books ?? this.books,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
+    );
+  }
+}
+
 
 

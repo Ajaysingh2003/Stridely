@@ -274,6 +274,7 @@ class FiltersBooksController extends StateNotifier<FilterBookState> {
 //   }
 // }
 
+
 class AllBooksController extends StateNotifier<BookListState> {
   final GetFiltersBooksUseCase _getFiltersBooksUseCase;
   AllBooksController(this._getFiltersBooksUseCase) : super(BookListState());
@@ -313,6 +314,51 @@ class AllBooksController extends StateNotifier<BookListState> {
       },
       (failure) {
         state = state.copyWith(isLoading: false, hasMore: false);
+      },
+    );
+  }
+}
+
+
+
+
+class SearchBooksController extends StateNotifier<SearchBookListState> {
+  final GetFiltersBooksUseCase _getFiltersBooksUseCase;
+  
+  SearchBooksController(this._getFiltersBooksUseCase) : super(SearchBookListState());
+  void clearResults() {
+    state = SearchBookListState();
+  }
+  
+  Future<void> searchBooks(String searchQuery) async {
+    print("search starting");
+    if (searchQuery.trim().isEmpty) {
+      state = SearchBookListState(books: []); // Reset if query empty
+      return;
+    }
+
+    print("search working");
+
+    // 1. Show loading, keep old books or clear them
+    state = state.copyWith(isLoading: true);
+
+    // 2. Fetch all matching books
+    final result = await _getFiltersBooksUseCase.call(
+      FilterBookParams(searchQuery: searchQuery),
+    );
+
+    result.fold(
+      (books) {
+        state = state.copyWith(
+          isLoading: false, 
+          books: books.items,
+        );
+      },
+      (failure) {
+        state = state.copyWith(
+          isLoading: false, 
+          errorMessage: ()=> failure.message,
+        );
       },
     );
   }

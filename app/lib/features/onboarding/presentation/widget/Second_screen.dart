@@ -212,7 +212,7 @@ class _SecondScreenState extends State<SecondScreen>
               },
               child: Center(
                 child: Image.asset(
-                  'assets/images/screen_2.png',
+                  'assets/images/screen_2_0.png',
                   height: 520,
                 ),
               ),
