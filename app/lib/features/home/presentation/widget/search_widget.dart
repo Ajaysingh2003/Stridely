@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app/core/app_background.dart';
 import 'package:app/features/book/presentation/provider/book_data_provider.dart';
+import 'package:app/features/book/presentation/screen/book_screen.dart';
 import 'package:app/features/home/data/state/recent_search_state.dart';
 import 'package:app/features/home/presentation/provider/home_provider.dart';
 import 'package:app/features/home/presentation/widget/book_search_result.dart';
@@ -55,7 +56,7 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
 
     // Live search as you type, like Udemy — pauses briefly so it
     // doesn't fire a request on every keystroke.
-    _debounce = Timer(const Duration(milliseconds: 400), () {
+    _debounce = Timer(const Duration(milliseconds: 800), () {
       ref.read(searchBooksControllerProvider.notifier).searchBooks(text);
     });
   }
@@ -123,14 +124,17 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
         ),
         child: Row(
           children: [
-            Icon(Icons.search_rounded, color: colors.onSurfaceVariant, size: 20),
+            Icon(
+              Icons.search_rounded,
+              color: colors.onSurfaceVariant,
+              size: 20,
+            ),
             const SizedBox(width: 10),
             Text(
               "Search books...",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: colors.onSurfaceVariant),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
             ),
           ],
         ),
@@ -166,7 +170,11 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.search_rounded, color: colors.onSurfaceVariant, size: 20),
+                        Icon(
+                          Icons.search_rounded,
+                          color: colors.onSurfaceVariant,
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: TextField(
@@ -178,7 +186,9 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
                             style: Theme.of(context).textTheme.bodyMedium,
                             decoration: InputDecoration(
                               hintText: "Search for books, authors, topics...",
-                              hintStyle: TextStyle(color: colors.onSurfaceVariant),
+                              hintStyle: TextStyle(
+                                color: colors.onSurfaceVariant,
+                              ),
                               border: InputBorder.none,
                               isDense: true,
                             ),
@@ -204,7 +214,11 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
           const Divider(height: 1),
 
           Expanded(
-            child: (!_hasText || state.books.isEmpty && !state.isLoading && state.errorMessage == null)
+            child:
+                (!_hasText ||
+                    state.books.isEmpty &&
+                        !state.isLoading &&
+                        state.errorMessage == null)
                 ? (_hasText ? _buildResultsList() : _buildBrowseState(context))
                 : _buildResultsList(),
           ),
@@ -242,10 +256,9 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
               Text(
                 "Try a different title, author, or topic.",
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: colors.onSurfaceVariant),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
               ),
               const SizedBox(height: 8),
               TextButton(
@@ -264,17 +277,38 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("All results", style: Theme.of(context).textTheme.headlineMedium),
+          Text(
+            "All results",
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
           const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics(),
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               itemCount: state.books.length,
               itemBuilder: (context, i) {
                 final book = state.books[i];
                 return GestureDetector(
                   onTap: () {
-                    // TODO: Navigate to book details page
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        settings: RouteSettings(name: 'book_page_${book.uid}'),
+                        transitionDuration: const Duration(milliseconds: 400),
+                        reverseTransitionDuration: const Duration(
+                          milliseconds: 350,
+                        ),
+                        pageBuilder: (_, animation, __) => FadeTransition(
+                          opacity: animation,
+                          child: BookPage(
+                            bookId: book.uid,
+                            // heroTag: _heroTag,
+                          ),
+                        ),
+                      ),
+                    );
                   },
                   child: BookSearchResult(book: book),
                 );
@@ -286,11 +320,16 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
     );
   }
 
-  // ─── DEFAULT STATE: recent searches + suggested categories ──────────────
   Widget _buildBrowseState(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final recentSearches = ref.watch(recentSearchProvider);
+
+    final List<String> suggestions = const [
+      'Self-improvement',
+      'Business',
+      'Psychology',
+    ];
 
     return ListView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -302,7 +341,9 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
             children: [
               Text(
                 "Recent searches",
-                style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                style: textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               GestureDetector(
                 onTap: () {
@@ -328,16 +369,71 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
                   );
                   setState(() => _hasText = true);
                   _debounce?.cancel();
-                  ref.read(searchBooksControllerProvider.notifier).searchBooks(search);
+                  ref
+                      .read(searchBooksControllerProvider.notifier)
+                      .searchBooks(search);
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Row(
                     children: [
-                      Icon(Icons.history_rounded, size: 18, color: colors.onSurfaceVariant),
+                      Icon(
+                        Icons.history_rounded,
+                        size: 18,
+                        color: colors.onSurfaceVariant,
+                      ),
                       const SizedBox(width: 12),
-                      Expanded(child: Text(search, style: textTheme.bodyMedium)),
-                      Icon(Icons.north_west_rounded, size: 16, color: colors.onSurfaceVariant),
+                      Expanded(
+                        child: Text(search, style: textTheme.bodyMedium),
+                      ),
+                      Icon(
+                        Icons.north_west_rounded,
+                        size: 16,
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+        ] else ...[
+          Text(
+            "Suggestion's",
+            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 12),
+          ...suggestions.map(
+            (suggestion) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: () {
+                  _controller.text = suggestion;
+                  _controller.selection = TextSelection.fromPosition(
+                    TextPosition(offset: suggestion.length),
+                  );
+                  setState(() => _hasText = true);
+                  _debounce?.cancel();
+                  ref
+                      .read(searchBooksControllerProvider.notifier)
+                      .searchBooks(suggestion);
+                },
+
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(suggestion, style: textTheme.titleSmall),
+                      ),
+                      Icon(
+                        Icons.north_west_rounded,
+                        size: 16,
+                        color: colors.onSurfaceVariant,
+                      ),
                     ],
                   ),
                 ),
@@ -363,10 +459,15 @@ class _SearchWidgetState extends ConsumerState<SearchWidget> {
                 setState(() => _hasText = true);
                 _debounce?.cancel();
                 ref.read(recentSearchProvider.notifier).addSearch(category);
-                ref.read(searchBooksControllerProvider.notifier).searchBooks(category);
+                ref
+                    .read(searchBooksControllerProvider.notifier)
+                    .searchBooks(category);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: colors.outlineVariant),
                   borderRadius: BorderRadius.circular(20),

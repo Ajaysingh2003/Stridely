@@ -59,6 +59,7 @@ dependencies:
   audio_service: ^0.18.18
   flutter_launcher_icons: ^0.13.1
   shared_preferences: ^2.5.5
+  in_app_review: ^2.0.12
 dev_dependencies:
   flutter_test:
     sdk: flutter

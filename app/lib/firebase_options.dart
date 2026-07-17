@@ -65,7 +65,7 @@ class DefaultFirebaseOptions {
     storageBucket: 'stridely-34510.firebasestorage.app',
     androidClientId: '431868831516-kj0emgghvd7k931qh5namspsnuk01ifs.apps.googleusercontent.com',
     iosClientId: '431868831516-g1ivsgqvsjlnchi954btuhhk5dms6oi0.apps.googleusercontent.com',
-    iosBundleId: 'com.ajaysingh.stridely',
+    iosBundleId: 'com.ajaysingh.booksly',
   );
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDHDOnqfx3nILn6zRHaJSGvOQJRFaoq8DI',

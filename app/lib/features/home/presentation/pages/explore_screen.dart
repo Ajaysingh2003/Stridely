@@ -1,5 +1,11 @@
 import 'package:app/core/app_background.dart';
+import 'package:app/core/func/Navigate.dart';
+import 'package:app/features/book/presentation/widget/CategoryMain.dart';
+import 'package:app/features/book/presentation/widget/category_widget.dart';
+import 'package:app/features/book/presentation/widget/getting_all_books.dart';
+import 'package:app/features/home/presentation/widget/Collections.dart';
 import 'package:app/features/home/presentation/widget/Collections_View.dart';
+import 'package:app/features/home/presentation/widget/Tops_chart.dart';
 import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/search_widget.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
@@ -59,7 +65,7 @@ class ExplorePage extends ConsumerWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigation(),
+      // bottomNavigationBar: BottomNavigation(currentIndex:2, onTap: (index) => moveTo(context, const ExplorePage(), "explore-screen") ,),
       body: AppBackground(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -67,8 +73,19 @@ class ExplorePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // CollectionsView(),
                 SearchWidget(),
+                SizedBox(height: 10),
+                CategoryScroll(),
+                // SizedBox(height: 10),
+                BooksList(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "Daily Pick's",),
+                // SizedBox(height: 20),
+                BooksList(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "Self Growth",),
+                SizedBox(height: 20),
+                Collections(),
+                SizedBox(height: 20),
+                BooksList(categoryId: "lNFEAQfx4yhRnnZwQso0",title: "Amazon Most Read",),
+                SizedBox(height: 20),
+                BookListView(embedded: true,)
               ],
             ),
           ),

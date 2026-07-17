@@ -1,5 +1,6 @@
 import 'package:app/features/book/domain/entity/book_entity.dart';
 import 'package:app/features/book/domain/entity/insights_entity.dart';
+import 'package:app/features/home/domain/entity/category_entity.dart';
 import 'package:app/features/home/domain/entity/collection_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -19,7 +20,22 @@ class BookState {
   final String? insightsErrorMessage;
   final String? collectionsErrorMessage;
 
+  final List<CategoryEntity> categories;
+  final String? categoryError;
+  final bool categoryLoading;
+
+  final List<BookEntity>? bookmarkBooks;
+
+  final  String?  bookmarkError;
+
+  final  bool bookmarkDataLoading;
+
+  
+
   const BookState({
+    this.bookmarkBooks,
+    this.bookmarkError,
+    this.bookmarkDataLoading =false,
     this.books = const [],
     this.insights = const [],
     this.freeBooks = const [],
@@ -31,6 +47,9 @@ class BookState {
     this.collectionLoading = false,
     this.collections = const [],
     this.collectionsErrorMessage,
+    this.categories = const [],
+    this.categoryError,
+    this.categoryLoading = false,
   });
 
   BookState copyWith({
@@ -45,8 +64,26 @@ class BookState {
     String? Function()? collectionsErrorMessage,
     bool? collectionLoading,
     List<CollectionEntity>? collections,
+
+    String? Function()? categoryError,
+
+    bool? categoryLoading,
+
+    List<CategoryEntity>? categories,
+
+
+    List<BookEntity>? bookmarkBooks,
+
+    String? Function()? bookmarkError,
+
+    bool? bookmarkDataLoading
+
   }) {
     return BookState(
+      
+      bookmarkBooks:bookmarkBooks ?? this.bookmarkBooks,
+      bookmarkDataLoading:bookmarkDataLoading ?? this.bookmarkDataLoading,
+      bookmarkError: bookmarkError != null? bookmarkError() : this.bookmarkError,
       books: books ?? this.books,
       freeBooks: freeBooks ?? this.freeBooks,
       insightsLoading: insightsLoading ?? this.insightsLoading,
@@ -64,6 +101,13 @@ class BookState {
       collectionsErrorMessage: collectionsErrorMessage != null
           ? collectionsErrorMessage()
           : this.collectionsErrorMessage,
+
+      categoryError: categoryError != null
+          ? categoryError()
+          : this.categoryError,
+
+      categoryLoading: categoryLoading ?? this.categoryLoading
+      ,categories: categories ?? this.categories
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:app/core/app_background.dart';
+import 'package:app/core/func/Navigate.dart';
 import 'package:app/features/auth/domain/entities/user_entity.dart';
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/book/presentation/widget/category_widget.dart';
@@ -69,7 +70,7 @@ class HomePage extends ConsumerWidget {
         ],
         
       ),
-      bottomNavigationBar: BottomNavigation(),
+      // bottomNavigationBar: BottomNavigation(currentIndex:1, onTap: (index) => moveTo(context, const HomePage(), "home-screen") ,),
       body: AppBackground(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -81,9 +82,7 @@ class HomePage extends ConsumerWidget {
                 const PurchaseCarousel(),
                 const SizedBox(height: 20),
                 const BannerWidget(),
-
                 const SizedBox(height: 20),
-    
                 const InsightsView() ,
                 const SizedBox(height: 20),
                 CategoryWidget(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "New Arrivals",),
@@ -94,6 +93,7 @@ class HomePage extends ConsumerWidget {
                 BooksList(categoryId: "lNFEAQfx4yhRnnZwQso0",title: "Amazon Most Read",),
                 SizedBox(height: 20),
                 BookListView(embedded: true,)
+
               ],
             ),   
           ),

@@ -5,9 +5,11 @@ import 'package:app/features/book/domain/entity/book_failure.dart';
 import 'package:app/features/book/domain/entity/books_response.dart';
 import 'package:app/features/book/domain/entity/insights_entity.dart';
 import 'package:app/features/book/domain/repository/book_repository.dart';
+import 'package:app/features/home/domain/entity/category_entity.dart';
 import 'package:app/features/home/domain/entity/collection_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/rendering.dart';
 
 class BookRepositoryImpl implements BookRepository {
   final BookRemoteDatasource _datasource;
@@ -19,10 +21,8 @@ class BookRepositoryImpl implements BookRepository {
     try {
       final booksContent = await _datasource.getContents(uid);
       return Right(booksContent);
-    } catch (e,stack) {
-      // print('hey pichu : $e');
-      print('❌ FIRESTORE REPO ERROR: $e');
-    print('📋 STACK TRACE: $stack');
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getContents]: $e\n$stack');
       return const Left(BookServerFailure());
     }
   }
@@ -33,36 +33,27 @@ class BookRepositoryImpl implements BookRepository {
   ) async {
     try {
       final booksContent = await _datasource.getContentTitle(bookId);
-
-      print('here is your data:${booksContent}');
       return Right(booksContent);
-    } catch (e,stack) {
-      print('❌ FIRESTORE REPO ERROR: $e');
-    print('📋 STACK TRACE: $stack');
-      // Catch block wildcard (_) ignores unused error variable warnings cleanly
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getContentTitle]: $e\n$stack');
       return const Left(BookServerFailure());
     }
   }
+
   @override
   Future<Either<BookFailure, List<Map<String, String>>>> getChapters(
     String bookId,
   ) async {
     try {
       final booksContent = await _datasource.getChapters(bookId);
-
-      // print('here is your data:${booksContent}');
       return Right(booksContent);
-    } catch (_) {
-      // print('❌ FIRESTORE REPO ERROR: $e');
-    // print('📋 STACK TRACE: $stack');
-      // Catch block wildcard (_) ignores unused error variable warnings cleanly
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getChapters]: $e\n$stack');
       return const Left(BookServerFailure());
     }
   }
 
-
   @override
-
   Future<Either<PaginatedResponse<BookEntity>, BookFailure>> getFilteredBooks({
     String? categoryId,
     String? collectionId,
@@ -78,57 +69,76 @@ class BookRepositoryImpl implements BookRepository {
         limit: limit,
         lastDocument: lastDocument,
       );
-      
-
       return Left(paginatedResult);
-    } catch (error) {
-      print(' looky looky  $error');
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getFilteredBooks]: $e\n$stack');
       return const Right(BookServerFailure());
     }
   }
-  
 
   @override
   Future<Either<BookFailure, List<BookEntity>>> getBooks() async {
-
     try {
       final books = await _datasource.getBooks();
       return Right(books);
-    } catch (_) {
-      // print('hey pichu : $e');
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getBooks]: $e\n$stack');
+      return const Left(BookServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<BookFailure, List<CollectionEntity>>> getCollections() async {
+    try {
+      final collection = await _datasource.getCollections();
+      return Right(collection);
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getCollections]: $e\n$stack');
       return const Left(BookServerFailure());
     }
   }
   
   @override
-  Future<Either<BookFailure, List<CollectionEntity>>> getCollections() async {
-    
+  Future<Either<BookFailure, List<CategoryEntity>>> getCategory() async {
     try {
-      final collection = await _datasource.getCollections();
-      return Right(collection);
-    } catch (e) {
-      print(' look at thissss  $e');
+      final category = await _datasource.getCategories();
+      return Right(category);
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getCategory]: $e\n$stack');
       return const Left(BookServerFailure());
     }
   }
 
+  @override
   Future<Either<BookFailure, List<BookEntity>>> getFreeBooks() async {
-
     try {
       final books = await _datasource.getFreeBooks();
       return Right(books);
-    } catch (e) {
-      print('hey pichu : $e');
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getFreeBooks]: $e\n$stack');
       return const Left(BookServerFailure());
     }
-
   }
+
+  @override
+  Future<Either<BookFailure, List<BookEntity>>> getBooksFromIds(List<String> bookIds) async {
+    try {
+      // FIXED: Now passing parameters down to correct datasource query mechanism
+      final books = await _datasource.getBooksFromIds(bookIds);
+      return Right(books);
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getBooksFromIds]: $e\n$stack');
+      return const Left(BookServerFailure());
+    }
+  }
+
+  @override
   Future<Either<BookFailure, List<InsightsEntity>>> getInsightes() async {
     try {
       final insights = await _datasource.getInsightes();
       return Right(insights);
-    } catch (e) {
-      print(' error from insights $e');
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getInsightes]: $e\n$stack');
       return const Left(BookServerFailure());
     }
   }
@@ -137,14 +147,12 @@ class BookRepositoryImpl implements BookRepository {
   Future<Either<BookFailure, BookEntity>> getBookById(String bookId) async {
     try {
       final book = await _datasource.getBookById(bookId);
-
       if (book == null) {
         return const Left(BookNotFoundFailure());
       }
-
       return Right(book);
-    } catch (e) {
-      print('hey pichu : $e');
+    } catch (e, stack) {
+      debugPrint('❌ REPO ERROR [getBookById]: $e\n$stack');
       return const Left(BookServerFailure());
     }
   }

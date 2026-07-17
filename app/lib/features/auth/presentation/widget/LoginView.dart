@@ -258,6 +258,7 @@ import 'package:app/features/auth/presentation/pages/signup_screen.dart';
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/auth/presentation/widget/Login_form.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart'; // Verified import path matches
+import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/subscriptions/service/init.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -278,7 +279,7 @@ class LoginView extends ConsumerWidget {
         if (nextHasUser == true && context.mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(builder: (context) => const MainNavigationShell(initialIndex: 0,)),
           );
         }
       },
