@@ -15,6 +15,8 @@ import 'package:app/features/book/domain/usercases/get_insights.dart';
 import 'package:app/features/book/presentation/provider/books_controller.dart';
 import 'package:app/features/book/presentation/state/all_book_list_State.dart';
 import 'package:app/features/book/presentation/state/bookState.dart';
+import 'package:app/features/home/domain/usecase/get_books_from_ids.dart';
+import 'package:app/features/home/domain/usecase/get_category_usecase.dart';
 import 'package:app/features/home/domain/usecase/get_collection_usecase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -55,10 +57,6 @@ final getBookContentUseCaseProvider = Provider(
   (ref) => GetContentUseCase(ref.watch(booksRepositoryProvider)),
 );
 
-// final getContentTitleUseCaseProvider = Provider(
-//   (ref) => GetContentTitleUseCase(ref.watch(booksRepositoryProvider)),
-// );
-
 final getContentTitleUseCaseProvider = Provider(
   (ref) => GetContentTitleUseCase(ref.watch(booksRepositoryProvider)),
 );
@@ -71,6 +69,16 @@ final getCollectionUseCaseProvider = Provider(
   (ref) => GetCollectionUseCase(ref.watch(booksRepositoryProvider)),
 );
 
+final getCategoryUseCaseProvider = Provider(
+  (ref) => GetCategoryUsecase(ref.watch(booksRepositoryProvider)),
+);
+
+final getBooksFromIdsUseCaseProvider = Provider(
+  (ref) => GetBooksFromIdsUsecase(ref.watch(booksRepositoryProvider)),
+);
+
+
+
 final booksControllerProvider =
     StateNotifierProvider<BooksController, BookState>((ref) {
       return BooksController(
@@ -78,6 +86,11 @@ final booksControllerProvider =
         ref.watch(getFreeBooksUseCaseProvider),
         ref.watch(getInsightsUseCaseProvider),
         ref.watch(getCollectionUseCaseProvider),
+        ref.watch(getCategoryUseCaseProvider),
+        ref.watch(getBooksFromIdsUseCaseProvider),
+        
+
+
       );
     });
 

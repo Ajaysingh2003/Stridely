@@ -1,5 +1,7 @@
+import 'package:app/core/func/Navigate.dart';
 import 'package:app/features/book/presentation/provider/book_data_provider.dart';
 import 'package:app/features/book/presentation/screen/book_screen.dart';
+import 'package:app/features/home/presentation/pages/home_screen.dart';
 import 'package:app/features/home/presentation/widget/Collection_cover.dart';
 import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -389,7 +391,7 @@ class _SingleCategoryState extends ConsumerState<CategoryPages> {
     final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigation(),
+      bottomNavigationBar: BottomNavigation(currentIndex:1, onTap: (index) => moveTo(context, const MainNavigationShell(initialIndex: 0,), "home-screen") ,),
       backgroundColor: colors.surface,
       extendBody: true,
       body: CustomScrollView(

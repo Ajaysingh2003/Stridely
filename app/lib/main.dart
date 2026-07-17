@@ -4,6 +4,7 @@ import 'package:app/features/auth/presentation/widget/autha_gatekeeper.dart';
 import 'package:app/features/book/presentation/screen/book_screen.dart';
 import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
 import 'package:app/features/home/presentation/pages/home_screen.dart';
+import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/onboarding/presentation/screen/onBoarding_screen.dart';
 import 'package:app/features/subscriptions/service/init.dart';
 // import 'package:audio_service/audio_service.dart';
@@ -28,7 +29,7 @@ void main() async {
   // and call it here when you want background playback + notifications.
   //
   // await JustAudioBackground.init(
-  //   androidNotificationChannelId: 'com.ajaysingh.stridely.channel.audio',
+  //   androidNotificationChannelId: 'com.ajaysingh.booksly.channel.audio',
   //   androidNotificationChannelName: 'Audio Playback',
   //   androidNotificationOngoing: true,
   // );
@@ -127,7 +128,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       // home: const HomePage(),
-      home: const HomePage(),
+      home: OnboardingScreen(),
     );
   }
 }

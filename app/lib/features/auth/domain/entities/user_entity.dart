@@ -9,9 +9,7 @@ class UserEntity extends Equatable {
   final String? imgUrl;
   final bool emailVerified;
   final bool isPremium;
-  // final bool isAnonymous;
-  // final AuthProviderType provider;
-
+  
   const UserEntity({
     required this.uid,
     this.email,
@@ -19,8 +17,6 @@ class UserEntity extends Equatable {
     this.imgUrl,
     required this.emailVerified,
     this.isPremium = false,
-    // required this.isAnonymous,
-    // required this.provider,
   });
 
   @override

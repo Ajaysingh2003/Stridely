@@ -47,7 +47,7 @@ class RevenueCatService {
       );
     } else if (Platform.isAndroid) {
       configuration = PurchasesConfiguration(
-        "test_wRjqVJSmIWgtGrVFPbxaMpgKthL",
+        "goog_pOQLjKWlvvgMJVQOJoZetRHoSQQ",
       );
     } else if (Platform.isIOS) {
       configuration = PurchasesConfiguration(

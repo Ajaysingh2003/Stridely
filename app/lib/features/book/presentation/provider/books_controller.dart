@@ -7,6 +7,8 @@ import 'package:app/features/book/domain/usercases/get_free_books.dart';
 import 'package:app/features/book/domain/usercases/get_insights.dart';
 import 'package:app/features/book/presentation/state/all_book_list_State.dart';
 import 'package:app/features/book/presentation/state/bookState.dart';
+import 'package:app/features/home/domain/usecase/get_books_from_ids.dart';
+import 'package:app/features/home/domain/usecase/get_category_usecase.dart';
 import 'package:app/features/home/domain/usecase/get_collection_usecase.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/legacy.dart';
@@ -16,13 +18,37 @@ class BooksController extends StateNotifier<BookState> {
   final GetFreeBooksUseCase _getFreeBooksUsecase;
   final GetInsightsUseCase _getInsightsUseCase;
   final GetCollectionUseCase _getCollectionUseCase;
-
+  final GetCategoryUsecase _getCategoryUsecase;
+  final GetBooksFromIdsUsecase _booksFromIdsUsecase;
   BooksController(
     this._getBooksUsecase,
     this._getFreeBooksUsecase,
     this._getInsightsUseCase,
     this._getCollectionUseCase,
+    this._getCategoryUsecase,
+    this._booksFromIdsUsecase
   ) : super(const BookState());
+
+  
+
+  Future <void> loadCategory() async{
+
+    state = state.copyWith(categoryLoading: true, categoryError: null);
+    final result = await _getCategoryUsecase.call();
+
+    result.fold(
+      (failure) => state = state.copyWith(
+        categoryLoading: false,
+        categoryError: () => failure.message,
+      ),
+
+      (categories) => state = state.copyWith(categoryLoading: false, categories: categories),
+      
+    );
+  }
+
+
+
 
   Future<void> loadAllBooks() async {
     state = state.copyWith(isLoading: true, booksErrorMessage: null);
@@ -34,6 +60,19 @@ class BooksController extends StateNotifier<BookState> {
         booksErrorMessage: () => failure.message,
       ),
       (booksList) => state = state.copyWith(isLoading: false, books: booksList),
+    );
+  }
+
+  Future<void> loadBooksFromIds(List<String> bookIds) async {
+    state = state.copyWith(bookmarkDataLoading: true, bookmarkError: null);
+    final result = await _booksFromIdsUsecase.call( bookIds);
+    
+    result.fold(
+      (failure) => state = state.copyWith(
+        bookmarkDataLoading: false,
+        bookmarkError: () => failure.message,
+      ),
+      (booksList) => state = state.copyWith(bookmarkDataLoading: false, bookmarkBooks: booksList),
     );
   }
 

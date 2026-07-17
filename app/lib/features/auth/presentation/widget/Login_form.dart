@@ -1,6 +1,7 @@
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/auth/presentation/widget/auth_banner.dart';
-import 'package:app/features/home/presentation/pages/home_screen.dart';
+// import 'package:app/features/home/presentation/pages/home_screen.dart';
+import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/subscriptions/service/init.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,7 +99,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       // 2. Perform safe context-driven navigation
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const MainNavigationShell(initialIndex: 0,)),
       );
     } catch (e) {
       if (mounted) {

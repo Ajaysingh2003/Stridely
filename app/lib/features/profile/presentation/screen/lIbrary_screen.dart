@@ -1,14 +1,11 @@
 import 'package:app/core/app_background.dart';
-import 'package:app/core/func/Navigate.dart';
-import 'package:app/features/home/presentation/widget/Collections_View.dart';
-import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
+import 'package:app/features/profile/presentation/widget/Library_books.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CollectionPage extends ConsumerWidget {
-  
-  const CollectionPage({super.key});
+class LibraryScreen extends ConsumerWidget {
+  const LibraryScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,7 +27,7 @@ class CollectionPage extends ConsumerWidget {
         title: Row(
           children: [
             Text(
-              "",
+              "Library",
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 24,
@@ -56,7 +53,7 @@ class CollectionPage extends ConsumerWidget {
           ),
         ],
       ),
-      // bottomNavigationBar: BottomNavigation(currentIndex:3, onTap: (index) => moveTo(context, const CollectionPage(), "collection-screen") ,),
+      // bottomNavigationBar: BottomNavigation(currentIndex:4, onTap: (index) => moveTo(context, const ProfileScreen(), "profile-screen") ,),
       body: AppBackground(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -64,12 +61,13 @@ class CollectionPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CollectionsView(),
+                LibraryBooks()
               ],
             ),
           ),
         ),
       ),
+      // bottomNavigationBar: BottomNavigation(currentIndex: 3,onTap: (value) => {},),
     );
   }
 }

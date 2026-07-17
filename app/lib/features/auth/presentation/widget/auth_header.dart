@@ -1,4 +1,5 @@
 import 'package:app/features/home/presentation/pages/home_screen.dart';
+import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class AuthHeader extends StatelessWidget {
       context,
       MaterialPageRoute(
         // Replace 'TermsView()' with the actual class name of your terms screen file
-        builder: (context) => const HomePage(),
+        builder: (context) => const MainNavigationShell(initialIndex: 0,),
       ),
     );
   }

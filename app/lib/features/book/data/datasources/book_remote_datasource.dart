@@ -4,6 +4,7 @@ import 'package:app/features/book/domain/entity/book_failure.dart';
 import 'package:app/features/book/domain/entity/books_response.dart';
 import 'package:app/features/book/domain/entity/insights_entity.dart';
 import 'package:app/features/book/domain/entity/tags_type.dart';
+import 'package:app/features/home/domain/entity/category_entity.dart';
 import 'package:app/features/home/domain/entity/collection_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -114,6 +115,15 @@ class BookRemoteDatasource {
     return collection;
 
   }
+  Future<List<CategoryEntity>> getCategories() async {
+
+    final snapshot = await _firestore.collection('category').get();
+
+    final category=snapshot.docs.map((doc) => _categoryMap(doc.id, doc.data())).toList();
+
+    return category;
+
+  }
 
   Future<PaginatedResponse<BookEntity>> getFilteredBooks({
     String? categoryId,
@@ -129,14 +139,15 @@ class BookRemoteDatasource {
     if (categoryId != null && categoryId.isNotEmpty) {
       query = query.where('category', arrayContains: categoryId);
     }
+    
     if (collectionId != null && collectionId.isNotEmpty) {
       query = query.where('collections', arrayContains: collectionId);
     }
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
       query = query
-          .where('title', isGreaterThanOrEqualTo: searchQuery)
-          .where('title', isLessThanOrEqualTo: '$searchQuery\uf8ff')
+          .where('searchKeywords', arrayContains: searchQuery)
+          // .where('title', isLessThanOrEqualTo: '$searchQuery\uf8ff')
           .orderBy('title');
     } else {
       query = query.orderBy('createdAt', descending: true);
@@ -171,21 +182,36 @@ class BookRemoteDatasource {
     );
   }
 
+  Future<List<BookEntity>> getBooksFromIds(List<String> bookIds) async {
+  // 1. Guard against empty lists to avoid broken SQL query syntax
+  if (bookIds.isEmpty) return [];
+
+
+  // 3. Query the 'books' table matching document IDs
+
+  final snapshot = await _firestore
+    .collection('books')
+    .where(FieldPath.documentId, whereIn: bookIds)
+    .get();
+
+  if (snapshot.docs.isEmpty) return [];
+
   
-  Future<List<BookEntity>> getFreeBooks() async {
-    final snapshot = await _booksCollection
-        .where('isDraft', isEqualTo: false)
-        .where('isFree', isEqualTo: true)
-        .get();
-    print('this is free books :$snapshot');
-    return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
-  }
+  return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
+
+}
 
   Future<List<InsightsEntity>> getInsightes() async {
     final snapshot = await _firestore.collection("insights").get();
 
     print(' snap from insightes $snapshot');
     return snapshot.docs.map((doc) => _mapInsight(doc.id, doc.data())).toList();
+  }
+  Future<List<BookEntity>> getFreeBooks() async {
+    final snapshot = await _firestore.collection("books").get();
+
+    print(' snap from insightes $snapshot');
+    return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
   }
 
   Future<BookEntity?> getBookById(String bookId) async {
@@ -233,14 +259,19 @@ class BookRemoteDatasource {
   }
 
   CollectionEntity _collectionMap(String id, Map<String, dynamic> data) {
-    // print(data['secondaryCoverUrl'],);
-    // print("fuck a girl");
     return CollectionEntity(
       uid: data['uid'] as String,
       title: data['title'] as String,
       description: data['description'] as String,
       coverUrl: data['coverUrl'] as String,
       secondaryCoverUrl:data["secondaryCoverUrl"] as String?
+    );
+  }
+
+  CategoryEntity _categoryMap(String id, Map<String, dynamic> data) {
+    return CategoryEntity(
+      uid: data['uid'] as String,
+      title: data['title'] as String,
     );
   }
 
@@ -266,6 +297,8 @@ class BookRemoteDatasource {
 
     return const [];
   }
+
+
 
   double _toDouble(dynamic value) {
     if (value is int) return value.toDouble();

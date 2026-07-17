@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:431868831516:android:c0ad46fb68bf6ce6727cd9",
+        "mobilesdk_app_id": "1:431868831516:android:e893ceb3885c980f727cd9",
         "android_client_info": {
-          "package_name": "com.ajaysingh.stridely"
+          "package_name": "com.ajaysingh.booksly"
         }
       },
       "oauth_client": [
         {
-          "client_id": "431868831516-kj0emgghvd7k931qh5namspsnuk01ifs.apps.googleusercontent.com",
+          "client_id": "431868831516-0et2iohrf4cu1t01lbp3e5clg0levicg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.ajaysingh.stridely",
+            "package_name": "com.ajaysingh.booksly",
             "certificate_hash": "93a6bb97f5c111818c6d8d8abedc79464a459853"
           }
         },
@@ -37,14 +37,8 @@
             {
               "client_id": "431868831516-hk27e87h6mhuinoe1n84rd7utfv2irm6.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "431868831516-g1ivsgqvsjlnchi954btuhhk5dms6oi0.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ajaysingh.stridely"
-              }
             }
+          
           ]
         }
       }
