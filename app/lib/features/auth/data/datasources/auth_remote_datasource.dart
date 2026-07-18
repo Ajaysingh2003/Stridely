@@ -1,7 +1,9 @@
 import 'package:app/features/auth/data/datasources/contract_datasource.dart';
+import 'package:app/features/auth/domain/entities/auth_failure.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'auth_data_source_contract.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthRemoteDatasource implements AuthDataSourceContract {
@@ -56,17 +58,43 @@ class AuthRemoteDatasource implements AuthDataSourceContract {
     return data;
   }
 
-  @override
-  Future<User> signInWithEmail({
-    required String email,
-    required String password,
-  }) async {
+ @override
+Future<(User?, AuthFailure?)> signInWithEmail({
+  required String email,
+  required String password,
+}) async {
+  try {
     final cred = await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-    return cred.user!;
+
+    if (cred.user != null) {
+      return (cred.user, null); // Success: Return user, no failure
+    } else {
+      debugPrint("⚠️ Auth succeeded, but user object was null.");
+      return (null, const ServerFailure('User data missing after auth.'));
+    }
+  } on FirebaseAuthException catch (e) {
+
+    print(e.code);
+    print("tracing the error");
+    debugPrint("❌ Firebase Auth Error [${e.code}]: ${e.message}");
+    
+    // Map Firebase errors directly to your custom AuthFailure classes
+    final failure = switch (e.code) {
+      'invalid-credential' => const UserNotFoundFailure(),
+      'wrong-password' => const WrongPasswordFailure(),
+      'invalid-email' => const InvalidEmailFailure(),
+      _ => ServerFailure(e.message ?? 'Authentication failed.'),
+    };
+    
+    return (null, failure); // Return the concrete failure object
+  } catch (e) {
+    debugPrint("❌ Unexpected Auth Error: $e");
+    return (null, ServerFailure(e.toString()));
   }
+}
 
   @override
   Future<User> signUpWithEmail({

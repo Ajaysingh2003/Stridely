@@ -1,17 +1,17 @@
-import 'package:app/features/auth/presentation/pages/signup_screen.dart';
-import 'package:app/features/auth/presentation/widget/SignupView.dart';
-import 'package:app/features/auth/presentation/widget/autha_gatekeeper.dart';
-import 'package:app/features/book/presentation/screen/book_screen.dart';
-import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
-import 'package:app/features/home/presentation/pages/home_screen.dart';
-import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
+// import 'package:app/features/auth/presentation/pages/signup_screen.dart';
+// import 'package:app/features/auth/presentation/widget/SignupView.dart';
+// import 'package:app/features/auth/presentation/widget/autha_gatekeeper.dart';
+// import 'package:app/features/book/presentation/screen/book_screen.dart';
+// import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
+// import 'package:app/features/home/presentation/pages/home_screen.dart';
+// import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/onboarding/presentation/screen/onBoarding_screen.dart';
 import 'package:app/features/subscriptions/service/init.dart';
 // import 'package:audio_service/audio_service.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
+// import 'package:just_audio/just_audio.dart';
+// import 'package:just_audio_background/just_audio_background.dart';
 import 'firebase_options.dart';
-import 'package:app/features/auth/presentation/pages/login_screen.dart';
+// import 'package:app/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +34,7 @@ void main() async {
   //   androidNotificationOngoing: true,
   // );
 
-  RevenueCatService.instance.init();
+  await RevenueCatService.instance.init();
 
   runApp(const ProviderScope(child: MyApp()));
 }
