@@ -52,23 +52,42 @@ class AuthRepositoryImpl implements AuthRepository {
     return _mapUserData(userData);
   }
 
-  @override
-  Future<Either<AuthFailure, UserEntity>> signInWithEmail({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final rawUser = await _datasource.signInWithEmail(
-        email: email,
-        password: password,
-      );
-      return _successOrMappingFailure(_mapFirebaseUser(rawUser));
-    } on FirebaseAuthException catch (e) {
-      return Left(_mapFirebaseError(e));
-    } catch (_) {
-      return const Left(ServerFailure());
+ @override
+Future<Either<AuthFailure, UserEntity>> signInWithEmail({
+  required String email,
+  required String password,
+}) async {
+  try {
+    // 1. Await the tuple record from your datasource
+    final (rawUser, failure) = await _datasource.signInWithEmail(
+      email: email,
+      password: password,
+    );
+
+    // 2. Check if the datasource returned an operational failure first
+    if (failure != null) {
+      return Left(failure);
     }
+
+    // 3. If rawUser is null, convert it to a ServerFailure, else map it to UserEntity
+    if (rawUser == null) {
+      return const Left(ServerFailure('User data missing after successful auth.'));
+    }
+
+    // 4. Map the valid Firebase User to your clean domain UserEntity
+    final userEntity = _mapFirebaseUser(rawUser);
+
+    if (userEntity == null) {
+  return const Left(ServerFailure('Failed to parse user profile data.'));
+}
+    return Right(userEntity);
+
+  } on FirebaseAuthException catch (e) {
+    return Left(_mapFirebaseError(e));
+  } catch (_) {
+    return const Left(ServerFailure());
   }
+}
 
   @override
   Future<Either<AuthFailure, UserEntity>> signUpWithEmail({

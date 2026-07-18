@@ -5,6 +5,7 @@ import 'package:app/features/book/presentation/widget/book_details_skeleton.dart
 import 'package:app/features/book/presentation/widget/book_view.dart';
 import 'package:app/features/book/presentation/provider/book_data_provider.dart';
 import 'package:app/features/bookmark/notifier/notifier.dart';
+import 'package:app/features/shared/share.dart';
 import 'package:app/features/subscriptions/providers/subscription_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,7 +41,10 @@ class _BookPageState extends ConsumerState<BookPage> {
           offset = _scrollController.offset;
         }
 
-        final progress = (offset / (_expandedHeight - kToolbarHeight)).clamp(0.0, 1.0);
+        final progress = (offset / (_expandedHeight - kToolbarHeight)).clamp(
+          0.0,
+          1.0,
+        );
         final imageScale = 1.0 - (progress * 0.45);
         final imageOpacity = (1.0 - (progress * 1.4)).clamp(0.0, 1.0);
 
@@ -83,9 +87,9 @@ class _BookPageState extends ConsumerState<BookPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.white.withOpacity(0.9),
-                  fontWeight: FontWeight.w700,
-                ),
+              color: Colors.white.withOpacity(0.9),
+              fontWeight: FontWeight.w700,
+            ),
           ),
         );
       },
@@ -129,7 +133,8 @@ class _BookPageState extends ConsumerState<BookPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BookContentPage(contentId: contentId),
+                            builder: (context) =>
+                                BookContentPage(contentId: contentId),
                           ),
                         );
                       },
@@ -158,7 +163,15 @@ class _BookPageState extends ConsumerState<BookPage> {
                           ),
                         ),
                       ),
-                      onPressed: () => Navigator.maybePop(context),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookContentPage(
+                            contentId: contentId,
+                            openAudio: true,
+                          ),
+                        ),
+                      ),
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: const BoxDecoration(
@@ -180,21 +193,28 @@ class _BookPageState extends ConsumerState<BookPage> {
                   backgroundColor: const Color(0xFF212121),
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 onPressed: () async {
-                  final PaywallResult result = await RevenueCatUI.presentPaywall(
-                    displayCloseButton: true,
-                  );
+                  final PaywallResult result =
+                      await RevenueCatUI.presentPaywall(
+                        displayCloseButton: true,
+                      );
 
-                  if ((result == PaywallResult.purchased || result == PaywallResult.restored) && context.mounted) {
+                  if ((result == PaywallResult.purchased ||
+                          result == PaywallResult.restored) &&
+                      context.mounted) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BookContentPage(contentId: contentId),
+                        builder: (context) =>
+                            BookContentPage(contentId: contentId),
                       ),
                     );
                   }
@@ -227,7 +247,7 @@ class _BookPageState extends ConsumerState<BookPage> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final bookId = widget.bookId;
-    
+
     final bookAsync = ref.watch(singleBookProvider(bookId));
     final contentSync = ref.watch(bookTitleControllerProvider(bookId)).titles;
     final firstContent = contentSync.isNotEmpty ? contentSync.first : null;
@@ -299,10 +319,16 @@ class _BookPageState extends ConsumerState<BookPage> {
                                       padding: EdgeInsets.zero,
                                     ),
                                     onPressed: () {
-                                      ref.read(bookmarkNotifierProvider.notifier).toggle(widget.bookId);
+                                      ref
+                                          .read(
+                                            bookmarkNotifierProvider.notifier,
+                                          )
+                                          .toggle(widget.bookId);
                                     },
                                     icon: Icon(
-                                      ref.watch(bookmarkNotifierProvider).contains(widget.bookId)
+                                      ref
+                                              .watch(bookmarkNotifierProvider)
+                                              .contains(widget.bookId)
                                           ? Icons.bookmark_added_rounded
                                           : Icons.bookmark_border_rounded,
                                       color: colors.onSecondary,
@@ -317,7 +343,12 @@ class _BookPageState extends ConsumerState<BookPage> {
                                       shape: const CircleBorder(),
                                       padding: EdgeInsets.zero,
                                     ),
-                                    onPressed: () => print("Share clicked"),
+                                    onPressed: () async {
+                                      await BookSharer.shareBookWithImage(
+                                        title: book.title ?? "",
+                                        imageUrl: book.bookCover,
+                                      );
+                                    },
                                     icon: Icon(
                                       Icons.ios_share_outlined,
                                       color: colors.onSecondary,
@@ -354,7 +385,8 @@ class _BookPageState extends ConsumerState<BookPage> {
             ),
           );
         },
-        error: (error, stackTrace) => Center(child: Text('System Error occurred: $error')),
+        error: (error, stackTrace) =>
+            Center(child: Text('System Error occurred: $error')),
         loading: () => const Center(child: BookDetailSkeleton()),
       ),
     );

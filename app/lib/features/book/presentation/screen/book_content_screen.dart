@@ -1,16 +1,16 @@
 import 'package:app/features/book/presentation/provider/book_data_provider.dart';
-import 'package:app/features/book/presentation/widget/FloatingButtonSwitch.dart';
+// import 'package:app/features/book/presentation/widget/FloatingButtonSwitch.dart';
 import 'package:app/features/book/presentation/widget/ReadInterface.dart';
 import 'package:app/features/book/presentation/widget/book_audio.dart';
 import 'package:app/features/book/presentation/widget/book_content_loader.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+// import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BookContentPage extends ConsumerStatefulWidget {
   final String contentId;
-
-  const BookContentPage({super.key, required this.contentId});
+  final bool openAudio ;
+  const BookContentPage({super.key, required this.contentId, this.openAudio  =false});
 
   @override
   ConsumerState<BookContentPage> createState() => _BookContentPageState();
@@ -18,12 +18,20 @@ class BookContentPage extends ConsumerStatefulWidget {
 
 class _BookContentPageState extends ConsumerState<BookContentPage> {
 
-  bool _isAudioMode = false;
+late bool _isAudioMode;
 
+
+@override
+  void initState() {
+    super.initState();
+
+    _isAudioMode = widget.openAudio;
+  }
   
 
   @override
   Widget build(BuildContext context) {
+  // bool _isAudioMode =  widget.openAudio ? true :false;
     final colors = Theme.of(context).colorScheme;
     print("🔍 BookContentPage built — contentId: ${widget.contentId}");
     final bookContentAsync = ref.watch(
@@ -115,7 +123,9 @@ class _BookContentPageState extends ConsumerState<BookContentPage> {
                             ),
                             onPressed: () {
                               setState(() {
+
                                 _isAudioMode=false;
+
                               });
                             },
                             icon: const Icon(Icons.menu_book_rounded, size: 25),

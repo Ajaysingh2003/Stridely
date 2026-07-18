@@ -1,3 +1,4 @@
+import 'package:app/features/auth/domain/entities/auth_failure.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class AuthDataSourceContract {
@@ -5,7 +6,7 @@ Stream<Map<String, dynamic>?> authStateChanges();
 
   Future<Map<String, dynamic>?> currentUser();
 
-  Future<User> signInWithEmail({
+  Future<(User?, AuthFailure?)> signInWithEmail({
     required String email,
     required String password,
   });

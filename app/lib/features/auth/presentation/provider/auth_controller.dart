@@ -1,4 +1,6 @@
 // presentation/controllers/auth_controller.dart
+import 'dart:ffi';
+
 import 'package:app/features/auth/domain/entities/user_entity.dart';
 import 'package:app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:app/features/auth/domain/usecases/sign_in_with_email.dart';
@@ -26,6 +28,16 @@ class AuthController extends StateNotifier<AuthUIState> {
     this._currentUser
     ,this._signOutUseCase
   ) : super(const AuthUIState());
+
+  
+  // Future <String?> setError(String ? errorMessage) async {
+
+
+  //     // if (errorMessage == "") {return; };
+  //   state.copyWith(failure: ()=> errorMessage );
+  // }
+
+
 
   Future<UserEntity?> getCurrentUser() async {
     final results=await _currentUser.call();

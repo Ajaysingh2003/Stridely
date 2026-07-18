@@ -89,7 +89,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         // Pass the real Firebase UID instead of the '/' placeholder
         await RevenueCatService.instance.loginUser(user);
       } else {
-        debugPrint("⚠️ Auth succeeded, but user object or UID was null.");
+
+
+        // debugPrint("⚠️ Auth succeeded, but user object or UID was null.");
+        // ref.read(authControllerProvider.notifier)
+
+        return ;
       }
       // RevenueCatService.instance.loginUser(userId);
 

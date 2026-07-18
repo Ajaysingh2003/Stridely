@@ -30,7 +30,7 @@ class CollectionPage extends ConsumerWidget {
         title: Row(
           children: [
             Text(
-              "",
+              "Tailored",
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 24,
