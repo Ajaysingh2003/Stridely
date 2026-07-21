@@ -8,7 +8,7 @@ class GetInsightsUseCase {
   final BookRepository _repository;
   const GetInsightsUseCase(this._repository);
 
-  Future<Either<BookFailure, List<InsightsEntity>>> call() {
+  Future<Either<BookFailure, List<BookEntity>>> call() {
     return _repository.getInsightes();
   }
 

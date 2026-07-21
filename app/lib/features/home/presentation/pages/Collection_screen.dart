@@ -1,7 +1,7 @@
 import 'package:app/core/app_background.dart';
-import 'package:app/core/func/Navigate.dart';
+// import 'package:app/core/func/Navigate.dart';
 import 'package:app/features/home/presentation/widget/Collections_View.dart';
-import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
+// import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,23 +38,23 @@ class CollectionPage extends ConsumerWidget {
             ),
           ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(
-                  Icons.sort,
-                  size: 36,
-                  color: Color.fromARGB(173, 0, 0, 0),
-                ),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              ),
-            ),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 16),
+        //     child: Builder(
+        //       builder: (context) => IconButton(
+        //         icon: const Icon(
+        //           Icons.sort,
+        //           size: 36,
+        //           color: Color.fromARGB(173, 0, 0, 0),
+        //         ),
+        //         onPressed: () {
+        //           Scaffold.of(context).openDrawer();
+        //         },
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       // bottomNavigationBar: BottomNavigation(currentIndex:3, onTap: (index) => moveTo(context, const CollectionPage(), "collection-screen") ,),
       body: AppBackground(

@@ -78,6 +78,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 // Single source of truth for customer info — listener is stored and
 // cleaned up on dispose, avoiding the duplicate/leaking listener that
 // existed as a top-level `late final` stream in the old service file.
+
 final customerInfoProvider = StreamProvider<CustomerInfo>((ref) {
   final controller = StreamController<CustomerInfo>.broadcast();
 

@@ -25,7 +25,7 @@ abstract class BookRepository {
     DocumentSnapshot? lastDocument,
   });
 
-  Future<Either<BookFailure, List<InsightsEntity>>> getInsightes();
+  Future<Either<BookFailure, List<BookEntity>>> getInsightes();
 
   Future<Either<BookFailure, List<CollectionEntity>>> getCollections();
 

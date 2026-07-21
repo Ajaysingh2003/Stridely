@@ -294,7 +294,7 @@ class LoginView extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustomBackButton(),
+            const CustomBackButton(isLoginScreen: true,),
             const SizedBox(height: 25),
             const AuthHeader(
               title: "Welcome Back",

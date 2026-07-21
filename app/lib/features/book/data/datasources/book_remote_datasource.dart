@@ -7,6 +7,7 @@ import 'package:app/features/book/domain/entity/tags_type.dart';
 import 'package:app/features/home/domain/entity/category_entity.dart';
 import 'package:app/features/home/domain/entity/collection_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 
 class BookRemoteDatasource {
   final FirebaseFirestore _firestore;
@@ -201,12 +202,13 @@ class BookRemoteDatasource {
 
 }
 
-  Future<List<InsightsEntity>> getInsightes() async {
-    final snapshot = await _firestore.collection("insights").get();
+  Future<List<BookEntity>> getInsightes() async {
+    final snapshot = await _firestore.collection("books").where("isFeatured",isEqualTo: true).get();
 
     print(' snap from insightes $snapshot');
-    return snapshot.docs.map((doc) => _mapInsight(doc.id, doc.data())).toList();
+    return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
   }
+
   Future<List<BookEntity>> getFreeBooks() async {
     final snapshot = await _firestore.collection("books").get();
 
@@ -234,6 +236,7 @@ class BookRemoteDatasource {
         Map<String, dynamic>.from(data['author'] as Map? ?? {}),
       ),
       isFree: data['isFree'] as bool? ?? false,
+      isFeatured: data['isFeatured'] as bool? ?? false,
       duration: data['duration'] ?? 0,
       isDraft: data['isDraft'] as bool? ?? false,
       bookCover: data['bookCover'] as String? ?? '',

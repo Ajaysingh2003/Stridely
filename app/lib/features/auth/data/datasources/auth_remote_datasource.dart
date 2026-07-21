@@ -37,6 +37,7 @@ class AuthRemoteDatasource implements AuthDataSourceContract {
               'name': data['name'] ?? firebaseUser.displayName,
               'imgUrl': data['imgUrl'] ?? firebaseUser.photoURL,
               'emailVerified': firebaseUser.emailVerified,
+              "points":data["points"],
               ...data,
             };
           });

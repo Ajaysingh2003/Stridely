@@ -270,31 +270,29 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BooksList extends ConsumerStatefulWidget {
-  final String categoryId;
-  final String title;
-  const BooksList({super.key, required this.categoryId, required this.title});
+class DailyPicks extends ConsumerStatefulWidget {
+  // final String categoryId;
+  // final String title;
+  const DailyPicks({super.key});
   
   @override
-  ConsumerState<BooksList> createState() => _BooksListWidgetState();
+  ConsumerState<DailyPicks> createState() => _DailyPicksBooksListWidgetState();
 }
 
-class _BooksListWidgetState extends ConsumerState<BooksList> {
+class _DailyPicksBooksListWidgetState extends ConsumerState<DailyPicks> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ref.read(filterdBooksControllerProvider(widget.categoryId).notifier)
-           .loadFilterdBooks(categoryId: widget.categoryId, limit: 6, isRefresh: true);
-      }
+    Future.microtask(() {
+      ref.read(booksControllerProvider.notifier).loadInsights();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(filterdBooksControllerProvider(widget.categoryId));
-    final books = state.books;
+    final insightsState = ref.watch(booksControllerProvider);
+    
+    // final List structuralList = List.generate(1, (_) => insightsState).expand((i) => i).toList();
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -307,9 +305,9 @@ class _BooksListWidgetState extends ConsumerState<BooksList> {
           const SizedBox(height: 12),
           SizedBox(
             height: 210, // Consistent fixed height
-            child: state.isLoading && books.isEmpty 
+            child: insightsState.insightsLoading && insightsState.insights.isEmpty 
                 ? _buildLoadingList() 
-                : _buildBookList(books),
+                : _buildBookList(insightsState.insights),
           ),
         ],
       ),
@@ -323,23 +321,23 @@ class _BooksListWidgetState extends ConsumerState<BooksList> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            widget.title,
+            "Daily Pick's",
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSecondary,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          TextButton(
-            onPressed: () => _navigateToCategory(context),
-            child: const Row(
-              children: [
-                Text("View All", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                SizedBox(width: 4),
-                Icon(Icons.arrow_forward_ios_rounded, size: 10),
-              ],
-            ),
-          ),
+          // TextButton(
+          //   onPressed: () => _navigateToCategory(context),
+          //   child: const Row(
+          //     children: [
+          //       Text("View All", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          //       SizedBox(width: 4),
+          //       Icon(Icons.arrow_forward_ios_rounded, size: 10),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
@@ -406,15 +404,15 @@ class _BooksListWidgetState extends ConsumerState<BooksList> {
   }
 
   // Helper methods to keep build clean
-  void _navigateToCategory(BuildContext context) {
-    Navigator.push(context, PageRouteBuilder(
-      pageBuilder: (_, __, ___) => CategoryPages(
-        title: widget.title,
-        coverUrl: "...",
-        categoryId: widget.categoryId,
-      ),
-    ));
-  }
+  // void _navigateToCategory(BuildContext context) {
+  //   Navigator.push(context, PageRouteBuilder(
+  //     pageBuilder: (_, __, ___) => CategoryPages(
+  //       title: widget.title,
+  //       coverUrl: "...",
+  //       categoryId: widget.categoryId,
+  //     ),
+  //   ));
+  // }
 
   PageRouteBuilder _buildBookPageRoute(String bookId) {
     return PageRouteBuilder(

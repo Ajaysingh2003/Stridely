@@ -1,7 +1,7 @@
 import 'package:app/features/auth/presentation/pages/login_screen.dart';
-import 'package:app/features/auth/presentation/pages/signup_screen.dart';
+// import 'package:app/features/auth/presentation/pages/signup_screen.dart';
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
-import 'package:app/features/auth/presentation/widget/Login_form.dart';
+// import 'package:app/features/auth/presentation/widget/Login_form.dart';
 import 'package:app/features/auth/presentation/widget/signup_form.dart';
 import 'package:app/features/subscriptions/service/init.dart';
 import 'package:flutter/gestures.dart';
@@ -23,7 +23,7 @@ class SignupView extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustomBackButton(),
+            const CustomBackButton(isLoginScreen: false),
             const SizedBox(height: 25),
             const AuthHeader(
               title: "Register Account",

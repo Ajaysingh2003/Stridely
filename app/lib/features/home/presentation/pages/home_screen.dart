@@ -1,32 +1,31 @@
 import 'package:app/core/app_background.dart';
 import 'package:app/core/func/Navigate.dart';
-import 'package:app/features/auth/domain/entities/user_entity.dart';
-import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:app/features/book/presentation/widget/category_widget.dart';
 import 'package:app/features/book/presentation/widget/getting_all_books.dart';
 import 'package:app/features/home/presentation/widget/Collections.dart';
 import 'package:app/features/home/presentation/widget/InsightsView.dart';
 import 'package:app/features/home/presentation/widget/Tops_chart.dart';
 import 'package:app/features/home/presentation/widget/banner_widget.dart';
-import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/purchase_carousel.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
-import 'package:dartz/dartz.dart';
+import 'package:app/features/profile/presentation/screen/lIbrary_screen.dart';
+import 'package:app/features/subscriptions/providers/subscription_provider.dart';
+import 'package:purchases_ui_flutter/paywall_result.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+// import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
+// import 'package:dartz/dartz.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeColors = Theme.of(context).colorScheme;
+    // final userData=ref.watch(authControllerProvider).user;
 
-    // 🚀 1. Listen to the live stream directly.
-    // When Firebase logs out, this triggers an automatic redraw instantly!
-    final authStateAsync = ref.watch(authStateStreamProvider);
-    final UserEntity? user = ref.watch(authStateStreamProvider).value;
-    print('🔥 RAW FIRESTORE DATA: $user');
     return Scaffold(
       extendBody: true,
       drawer: const SideMenu(),
@@ -52,51 +51,111 @@ class HomePage extends ConsumerWidget {
           ],
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(
-                  Icons.sort,
-                  size: 36,
-                  color: Color.fromARGB(173, 0, 0, 0),
-                ),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              ),
+          IconButton(
+            onPressed: () {
+              moveTo(context, LibraryScreen(), "library-stored-books");
+            },
+            icon: Icon(
+              Icons
+                  .bookmark_add_sharp,
+              size: 34,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
-        
       ),
-      // bottomNavigationBar: BottomNavigation(currentIndex:1, onTap: (index) => moveTo(context, const HomePage(), "home-screen") ,),
       body: AppBackground(
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 100),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-               
-                const PurchaseCarousel(),
-                const SizedBox(height: 20),
-                const BannerWidget(),
-                const SizedBox(height: 20),
-                const InsightsView() ,
-                const SizedBox(height: 20),
-                CategoryWidget(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "New Arrivals",),
-                BooksList(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "Self Growth",),
-                SizedBox(height: 20),
-                Collections(),
-                SizedBox(height: 20),
-                BooksList(categoryId: "lNFEAQfx4yhRnnZwQso0",title: "Amazon Most Read",),
-                SizedBox(height: 20),
-                BookListView(embedded: true,)
+        child: Stack(
+          children: [
+            // LAYER 1: Scrollable Feed Content (No internal positioning hacks)
+            SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(
+                  bottom: 120,
+                ), // Added padding so content clears the button
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const PurchaseCarousel(),
+                    const SizedBox(height: 20),
+                    const BannerWidget(),
+                    const SizedBox(height: 20),
+                    const InsightsView(),
+                    const SizedBox(height: 20),
+                    CategoryWidget(
+                      categoryId: "uYP6thI5CjeQtdyhAXzI",
+                      title: "New Arrivals",
+                    ),
+                    BooksList(
+                      categoryId: "uYP6thI5CjeQtdyhAXzI",
+                      title: "Self Growth",
+                    ),
+                    const SizedBox(height: 20),
+                    Collections(),
+                    const SizedBox(height: 20),
+                    BooksList(
+                      categoryId: "lNFEAQfx4yhRnnZwQso0",
+                      title: "Amazon Most Read",
+                    ),
+                    const SizedBox(height: 20),
+                    BookListView(embedded: true),
+                  ],
+                ),
+              ),
+            ),
 
-              ],
-            ),   
-          ),
+            // LAYER 2: Completely static Floating Gift Button
+            Positioned(
+              bottom: 160,
+              right: 20,
+              child: GestureDetector(
+                onTap: () async {
+                  print("looking for offering...");
+
+                  try {
+                    // 1. Await the future to turn Future<Offerings?> into a raw Offerings? object
+                    final Offerings? offerings = await ref
+                        .read(subscriptionActionsProvider)
+                        .fetchOfferings();
+
+                    print("Resolved Offerings data object: $offerings");
+
+                    // 2. Safely check if offerings is not null, then access the .all map
+                    if (offerings != null &&
+                        offerings.all["yearly_offer"] != null) {
+                      final PaywallResult result =
+                          await RevenueCatUI.presentPaywall(
+                            displayCloseButton: true,
+                            offering: offerings.all["yearly_offer"]!,
+                          );
+                    } else {
+                      print(
+                        "⚠️ Target offering ID 'yearly_offer' not found in dashboard.",
+                      );
+                    }
+                  } catch (e) {
+                    print("❌ Failed to resolve network offerings: $e");
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(
+                    8,
+                  ), // Padding around the asset image
+                  decoration: BoxDecoration(
+                    // color: Theme.of(context).colorScheme.primaryContainer,
+                    shape: BoxShape.circle,
+
+                  ),
+                  child: Image.asset(
+                    "assets/images/gift.png",
+                    width: 45,
+                    height: 45,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

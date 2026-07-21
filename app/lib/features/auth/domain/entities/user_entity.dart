@@ -9,10 +9,12 @@ class UserEntity extends Equatable {
   final String? imgUrl;
   final bool emailVerified;
   final bool isPremium;
+  final int? points;
   
   const UserEntity({
     required this.uid,
     this.email,
+    this.points,
     this.name,
     this.imgUrl,
     required this.emailVerified,
