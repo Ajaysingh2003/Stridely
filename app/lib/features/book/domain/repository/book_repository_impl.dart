@@ -133,7 +133,7 @@ class BookRepositoryImpl implements BookRepository {
   }
 
   @override
-  Future<Either<BookFailure, List<InsightsEntity>>> getInsightes() async {
+  Future<Either<BookFailure, List<BookEntity>>> getInsightes() async {
     try {
       final insights = await _datasource.getInsightes();
       return Right(insights);

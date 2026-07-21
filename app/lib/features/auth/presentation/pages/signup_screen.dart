@@ -1,9 +1,9 @@
-import 'package:app/core/app_background.dart';
+// import 'package:app/core/app_background.dart';
 import 'package:app/features/auth/presentation/widget/SignupView.dart';
 import 'package:flutter/material.dart';
-import 'package:app/features/home/presentation/widget/banner_widget.dart';
+// import 'package:app/features/home/presentation/widget/banner_widget.dart';
 
-import 'package:app/features/auth/presentation/widget/LoginView.dart';
+// import 'package:app/features/auth/presentation/widget/LoginView.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});

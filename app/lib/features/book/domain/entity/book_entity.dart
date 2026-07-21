@@ -25,6 +25,7 @@ class BookEntity extends Equatable {
   final String? forWhom;
   final AuthorType author;
   final bool isFree;
+  final bool isFeatured;
   final int duration;
   final bool isDraft;
   final String bookCover;
@@ -58,6 +59,7 @@ class BookEntity extends Equatable {
     required this.takeAways,
     required this.title,
     required this.whatsInside,
+    this.isFeatured=false,
     // this.chapterCount = 0,
     this.audioUrl
   });
@@ -77,6 +79,7 @@ class BookEntity extends Equatable {
     isFree,
     description,
     tags,
+    isFeatured,
     // chapterCount,
     audioUrl
   ];

@@ -36,7 +36,7 @@ abstract class BookSourceContract {
   Future<List<BookEntity>> getFreeBooks();
   Future<List<CollectionEntity>> getCollections();
   Future<List<CategoryEntity>> getCategories();
-  Future<InsightsEntity> getInsightes();
+  Future<BookEntity> getInsightes();
   Future<List<BookEntity>> getBooksFromIds(List<String> bookIds);
   Future<BookEntity?> getBookById(String bookId);
   Future<BookContent> getContents(String uid);

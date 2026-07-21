@@ -43,23 +43,9 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(
-                  Icons.sort,
-                  size: 36,
-                  color: Color.fromARGB(173, 0, 0, 0),
-                ),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              ),
-            ),
-          ),
-        ],
+      actions: [
+        
+      ],
       ),
       // bottomNavigationBar: BottomNavigation(currentIndex:4, onTap: (index) => moveTo(context, const ProfileScreen(), "profile-screen") ,),
       body: AppBackground(

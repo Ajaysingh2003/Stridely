@@ -17,8 +17,8 @@ class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
   final InAppReview _inAppReview = InAppReview.instance;
 
   static const _supportEmail = "ajaysingh131629@gmail.com";
-  static const _privacyUrl = "https://yourdomain.com/privacy"; // TODO: real URL
-  static const _termsUrl = "https://yourdomain.com/terms"; // TODO: real URL
+  static const _privacyUrl = "https://sites.google.com/view/booksly-privacy-policy?usp=sharing";
+  static const _termsUrl = "https://sites.google.com/view/booksly-terms/home?authuser=2";
 
   Future<void> _launchEmail() async {
     final Uri emailLaunchUri = Uri(

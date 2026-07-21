@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class BookState {
   final List<BookEntity> books;
   final List<BookEntity> freeBooks;
-  final List<InsightsEntity> insights;
+  final List<BookEntity> insights;
 
   final List<CollectionEntity> collections;
 
@@ -55,7 +55,8 @@ class BookState {
   BookState copyWith({
     List<BookEntity>? books,
     List<BookEntity>? freeBooks,
-    List<InsightsEntity>? insights,
+    List<BookEntity>? insights,
+
     bool? isLoading,
     bool? freeBooksLoading,
     bool? insightsLoading,

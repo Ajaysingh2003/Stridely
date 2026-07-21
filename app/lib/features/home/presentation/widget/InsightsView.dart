@@ -1,3 +1,4 @@
+import 'package:app/features/book/domain/entity/book_entity.dart';
 import 'package:app/features/book/domain/entity/insights_entity.dart';
 import 'package:app/features/book/presentation/provider/book_data_provider.dart';
 import 'package:app/features/home/presentation/pages/insights_screen.dart';
@@ -89,13 +90,13 @@ if (insightsState.isEmpty){
 }
 
 class InsightsCard extends ConsumerWidget {
-  final InsightsEntity card;
+  final BookEntity card;
   const InsightsCard({super.key, required this.card});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 1. WATCH the provider instead of reading/awaiting
-    final bookAsync = ref.watch(singleBookProvider(card.bookId));
+    final bookAsync = ref.watch(singleBookProvider(card.uid));
 
     return bookAsync.when(
       data: (eitherResult) =>eitherResult.fold((failure)=>Center(child: Text(failure.message),), (bookData)=>GestureDetector(
@@ -104,9 +105,9 @@ class InsightsCard extends ConsumerWidget {
             context,
             MaterialPageRoute(
               builder: (context) => InsightsPage(
-                author: card.author,
-                bookId: card.bookId,
-                insights: card.insights,
+                author: card.author.name,
+                bookId: card.uid,
+                insights: card.quotes,
               ),
             ),
           );

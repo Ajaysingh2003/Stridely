@@ -41,7 +41,7 @@ class LibraryScreen extends ConsumerWidget {
             child: Builder(
               builder: (context) => IconButton(
                 icon: const Icon(
-                  Icons.sort,
+                  Icons.person_outline_rounded,
                   size: 36,
                   color: Color.fromARGB(173, 0, 0, 0),
                 ),

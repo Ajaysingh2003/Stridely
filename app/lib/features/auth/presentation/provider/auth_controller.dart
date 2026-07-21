@@ -41,7 +41,8 @@ class AuthController extends StateNotifier<AuthUIState> {
 
   Future<UserEntity?> getCurrentUser() async {
     final results=await _currentUser.call();
-
+    print(results);
+    print("fucking girls");
       return results;
    }
 

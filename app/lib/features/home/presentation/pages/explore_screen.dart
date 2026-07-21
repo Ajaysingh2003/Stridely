@@ -5,12 +5,16 @@ import 'package:app/features/book/presentation/widget/category_widget.dart';
 import 'package:app/features/book/presentation/widget/getting_all_books.dart';
 import 'package:app/features/home/presentation/widget/Collections.dart';
 import 'package:app/features/home/presentation/widget/Collections_View.dart';
+import 'package:app/features/home/presentation/widget/Daily_picks.dart';
 import 'package:app/features/home/presentation/widget/Tops_chart.dart';
 import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/search_widget.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
+import 'package:app/features/subscriptions/providers/subscription_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 class ExplorePage extends ConsumerWidget {
   const ExplorePage({super.key});
@@ -48,21 +52,52 @@ class ExplorePage extends ConsumerWidget {
           ],
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(
-                  Icons.sort,
-                  size: 36,
-                  color: Color.fromARGB(173, 0, 0, 0),
-                ),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
+          GestureDetector(
+                onTap: () async {
+                  // print("looking for offering...");
+
+                  try {
+                    // 1. Await the future to turn Future<Offerings?> into a raw Offerings? object
+                    final Offerings? offerings = await ref
+                        .read(subscriptionActionsProvider)
+                        .fetchOfferings();
+
+                    // print("Resolved Offerings data object: $offerings");
+
+                    // 2. Safely check if offerings is not null, then access the .all map
+                    if (offerings != null &&
+                        offerings.all["yearly_offer"] != null) {
+                      final PaywallResult result =
+                          await RevenueCatUI.presentPaywall(
+                            displayCloseButton: true,
+                            offering: offerings.all["yearly_offer"]!,
+                          );
+                    } else {
+                      // print(
+                      //   "⚠️ Target offering ID 'yearly_offer' not found in dashboard.",
+                      // );
+                    }
+                  } catch (e) {
+                    // print("❌ Failed to resolve network offerings: $e");
+                  }
                 },
+                child: Container(
+                  padding: const EdgeInsets.all(
+                    8,
+                  ), // Padding around the asset image
+                  decoration: BoxDecoration(
+                    // color: Theme.of(context).colorScheme.primaryContainer,
+                    shape: BoxShape.circle,
+
+                  ),
+                  child: Image.asset(
+                    "assets/images/gift1.png",
+                    width: 45,
+                    height: 45,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
-            ),
-          ),
         ],
       ),
       // bottomNavigationBar: BottomNavigation(currentIndex:2, onTap: (index) => moveTo(context, const ExplorePage(), "explore-screen") ,),
@@ -73,11 +108,14 @@ class ExplorePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
+                SizedBox(height: 10),
                 SearchWidget(),
                 SizedBox(height: 10),
                 CategoryScroll(),
                 // SizedBox(height: 10),
-                BooksList(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "Daily Pick's",),
+                DailyPicks(),
+                // BooksList(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "Daily Pick's",),
                 // SizedBox(height: 20),
                 BooksList(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "Self Growth",),
                 SizedBox(height: 20),
