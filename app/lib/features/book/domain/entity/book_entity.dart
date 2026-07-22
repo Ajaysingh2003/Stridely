@@ -16,6 +16,9 @@ class AuthorType {
       bio: json['bio'] ?? '',
     );
   }
+
+  @override
+  String toString() => name;
 }
 
 class BookEntity extends Equatable {

@@ -213,7 +213,7 @@ Widget buildReadInterface(BuildContext context, dynamic bookContent, String book
         // Now you can use lowercase 'ref' to watch your provider
         final updatedState = ref.watch(bookTitleControllerProvider(bookId)).titles;
         
-        print(bookContent);
+        
         
 
   return SingleChildScrollView(
@@ -396,7 +396,7 @@ Widget buildReadInterface(BuildContext context, dynamic bookContent, String book
                           ),
                     ),
 
-// print(bookContent);
+// 
 SizedBox(height: 20,),
                     Center(
                       child: ChapterSwitcherButton(ref: ref,chapters: updatedState,currentContentId: bookContent.uid,),

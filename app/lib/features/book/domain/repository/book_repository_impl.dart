@@ -22,7 +22,7 @@ class BookRepositoryImpl implements BookRepository {
       final booksContent = await _datasource.getContents(uid);
       return Right(booksContent);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getContents]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }
@@ -35,7 +35,7 @@ class BookRepositoryImpl implements BookRepository {
       final booksContent = await _datasource.getContentTitle(bookId);
       return Right(booksContent);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getContentTitle]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }
@@ -48,7 +48,7 @@ class BookRepositoryImpl implements BookRepository {
       final booksContent = await _datasource.getChapters(bookId);
       return Right(booksContent);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getChapters]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }
@@ -71,7 +71,7 @@ class BookRepositoryImpl implements BookRepository {
       );
       return Left(paginatedResult);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getFilteredBooks]: $e\n$stack');
+      
       return const Right(BookServerFailure());
     }
   }
@@ -82,7 +82,7 @@ class BookRepositoryImpl implements BookRepository {
       final books = await _datasource.getBooks();
       return Right(books);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getBooks]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }
@@ -93,7 +93,7 @@ class BookRepositoryImpl implements BookRepository {
       final collection = await _datasource.getCollections();
       return Right(collection);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getCollections]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }
@@ -104,7 +104,7 @@ class BookRepositoryImpl implements BookRepository {
       final category = await _datasource.getCategories();
       return Right(category);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getCategory]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }
@@ -115,7 +115,7 @@ class BookRepositoryImpl implements BookRepository {
       final books = await _datasource.getFreeBooks();
       return Right(books);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getFreeBooks]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }
@@ -127,7 +127,7 @@ class BookRepositoryImpl implements BookRepository {
       final books = await _datasource.getBooksFromIds(bookIds);
       return Right(books);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getBooksFromIds]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }
@@ -138,7 +138,7 @@ class BookRepositoryImpl implements BookRepository {
       final insights = await _datasource.getInsightes();
       return Right(insights);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getInsightes]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }
@@ -152,7 +152,7 @@ class BookRepositoryImpl implements BookRepository {
       }
       return Right(book);
     } catch (e, stack) {
-      debugPrint('❌ REPO ERROR [getBookById]: $e\n$stack');
+      
       return const Left(BookServerFailure());
     }
   }

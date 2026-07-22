@@ -117,8 +117,8 @@ final isPremiumProvider = Provider<bool>((ref) {
     loading: () => false,
     error: (error, stackTrace) {
       // 👈 You can read, print, or report the error directly here
-      debugPrint("❌ RevenueCat CustomerInfo Error: $error");
-      debugPrint("💥 StackTrace: $stackTrace");
+      
+      
 
       return false; // Still defaults to false for the UI
     },

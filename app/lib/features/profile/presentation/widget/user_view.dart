@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:app/core/func/Navigate.dart';
 import 'package:app/features/auth/presentation/pages/login_screen.dart';
 import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
-import 'package:app/features/profile/presentation/screen/account_setting_page.dart';
+// import 'package:app/features/profile/presentation/screen/account_setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -291,7 +291,9 @@ class _LoggedInCard extends StatelessWidget {
                 _MemberBadge(colors: colors, textTheme: textTheme),
               ],
             ),
-            Padding(
+
+
+                Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Divider(
                 height: 1,
@@ -304,16 +306,16 @@ class _LoggedInCard extends StatelessWidget {
               children: [
                 // In _LoggedInCard, replace the static "Manage account" Text with:
                 InkWell(
-                  onTap: () => moveTo(
-                    context,
-                    const AccountSettingsPage(),
-                    "account-settings-page",
-                  ),
+                  // onTap: () => moveTo(
+                  //   context,
+                  //   const AccountSettingsPage(),
+                  //   "account-settings-page",
+                  // ),
                   borderRadius: BorderRadius.circular(8),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      "Manage account",
+                      "Upgrade Plan's",
                       style: textTheme.bodySmall?.copyWith(
                         color: colors.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
@@ -354,6 +356,20 @@ class _LoggedInCard extends StatelessWidget {
           ],
         ),
       ),
+    
+
+
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(vertical: 16),
+            //   child: Divider(
+            //     height: 1,
+            //     thickness: 0.5,
+            //     color: colors.onSurface.withOpacity(0.08),
+            //   ),
+            // ),
+          // ],
+        // ),
+      // ),
     );
   }
 }

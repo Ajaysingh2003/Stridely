@@ -1,3 +1,4 @@
+import 'package:app/core/providers/shared_providers.dart';
 import 'package:app/features/auth/presentation/pages/login_screen.dart';
 import 'package:app/features/onboarding/presentation/screen/questionsFlow_screen.dart';
 import 'package:app/features/onboarding/presentation/widget/First_screen.dart';
@@ -6,15 +7,16 @@ import 'package:app/features/onboarding/presentation/widget/Third_screen.dart';
 import 'package:app/features/onboarding/presentation/widget/second_screen.dart'; // Fixed snake_case/PascalCase import check
 import 'package:app/features/onboarding/presentation/widget/page_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen>
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     with SingleTickerProviderStateMixin {
   late final PageController _controller;
   int _currentPage = 0;
@@ -208,6 +210,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
                         onPressed: () async {
                           if (isLastPage) {
+
+                            await ref.read(onboardingStorageProvider).markOnboardingComplete();
+
+                            if (!context.mounted) return;
+                            
                             // Navigate to the next screen or perform any action for the last page
                             Navigator.push(
                               context,

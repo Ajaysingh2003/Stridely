@@ -64,7 +64,7 @@ class _BookAudioInterfaceState extends ConsumerState<BookAudioInterface>
     );
     final chaptersList = audioChaptersState.chapters;
 
-    print(' lolajaysingh $chaptersList');
+    
     return bookAsync.when(
       loading: () => const Scaffold(
         backgroundColor: _bg,
@@ -306,6 +306,27 @@ class _BookAudioInterfaceState extends ConsumerState<BookAudioInterface>
                         ),
                       ),
                       const SizedBox(height: 26),
+
+                      if (audioState.error != null) ...[
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.redAccent.withValues(alpha: 0.4)),
+                          ),
+                          child: Text(
+                            audioState.error!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

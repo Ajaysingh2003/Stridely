@@ -9,7 +9,7 @@ class AuthHeader extends StatelessWidget {
   const AuthHeader({super.key, required this.title, required this.subText});
 
   void _openTermsPage(BuildContext context) {
-    print("Navigate to Terms of Use Page or Open Web URL");
+    
 
     Navigator.push(
       context,

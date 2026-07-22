@@ -33,14 +33,10 @@ class BookRemoteDatasource {
 
       final firstDoc = snapshot.docs.first;
 
-      print('this is roxxie :$snapshot');
       return BookContent.fromFirestore(firstDoc);
-    } catch (e, stack) {
-      print('🚨 CRITICAL DATA SOURCE EXCEPTION: $e');
-      print('📋 STACK: $stack');
-
+    } catch (e) {
       if (e is BookFailure) rethrow;
-      throw const BookServerFailure();
+      rethrow;
     }
   }
 
@@ -64,8 +60,7 @@ class BookRemoteDatasource {
 
       return bookSummaries;
     } catch (e) {
-      print('data error is here ${e}');
-      throw const BookServerFailure('Failed to load content references.');
+      rethrow;
     }
   }
 
@@ -92,9 +87,7 @@ class BookRemoteDatasource {
 
       return bookSummaries;
     } catch (e) {
-      // This will print the precise error detail (like a missing index link) to your debug panel
-      print('🎯 Firestore Fetch Error Detail: $e');
-      throw const BookServerFailure('Failed to load content references.');
+      rethrow;
     }
   }
 
@@ -164,17 +157,13 @@ class BookRemoteDatasource {
       paginatedQuery = paginatedQuery.startAfterDocument(lastDocument);
     }
 
-    print("Previous lastDoc: ${lastDocument?.id}");
 
 
     final snapshot = await paginatedQuery.get();
     
     final books = snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
-    print("Returned docs:");
     final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
-    print("New lastDoc: ${snapshot.docs.isNotEmpty ? snapshot.docs.last.id : null}");    
     final bool hasMore = books.length == limit;
-    print(" books data ${books}");
     return PaginatedResponse<BookEntity>(
       items: books,
       lastDocument: lastDoc,
@@ -205,14 +194,12 @@ class BookRemoteDatasource {
   Future<List<BookEntity>> getInsightes() async {
     final snapshot = await _firestore.collection("books").where("isFeatured",isEqualTo: true).get();
 
-    print(' snap from insightes $snapshot');
     return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
   }
 
   Future<List<BookEntity>> getFreeBooks() async {
     final snapshot = await _firestore.collection("books").get();
 
-    print(' snap from insightes $snapshot');
     return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
   }
 
@@ -248,7 +235,7 @@ class BookRemoteDatasource {
       takeAways: _toStringList(data['takeAways']),
       quotes: _toStringList(data['quotes']),
       // chapterCount: data["chapterCount"] ?? 0,
-      description: data["description"] ?? "aa",
+      description: data["description"] ?? "",
       tags:
           (data['tags'] as List<dynamic>?)
               ?.map(

@@ -52,7 +52,7 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
 
     final freeBooks = bookState.freeBooks;
 
-    // print('🔥 FREE BOOKS DATA: $freeBooks');
+    // 
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -154,7 +154,7 @@ class _CarouselWrapperState extends ConsumerState<CarouselWrapper> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: CachedNetworkImage(
-                          imageUrl: book.bookCover!,
+                          imageUrl: book.bookCover ?? '',
                           fit: BoxFit.cover,
                         ),
                       ),

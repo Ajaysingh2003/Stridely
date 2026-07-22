@@ -57,7 +57,7 @@ class _SignupFormState extends ConsumerState<SignupForm> {
         // Pass the real Firebase UID instead of the '/' placeholder
         await RevenueCatService.instance.loginUser(user);
       } else {
-        debugPrint("⚠️ Auth succeeded, but user object or UID was null.");
+        
       }
 
       // if (mounted) {

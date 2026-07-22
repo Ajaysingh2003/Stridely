@@ -25,7 +25,7 @@ class ExplorePage extends ConsumerWidget {
 
     return Scaffold(
       extendBody: true,
-      
+
       drawer: const SideMenu(),
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -34,7 +34,7 @@ class ExplorePage extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        
+
         shadowColor: Colors.transparent,
         scrolledUnderElevation: 0,
         titleSpacing: 16,
@@ -53,51 +53,48 @@ class ExplorePage extends ConsumerWidget {
         ),
         actions: [
           GestureDetector(
-                onTap: () async {
-                  // print("looking for offering...");
+            onTap: () async {
+              // 
 
-                  try {
-                    // 1. Await the future to turn Future<Offerings?> into a raw Offerings? object
-                    final Offerings? offerings = await ref
-                        .read(subscriptionActionsProvider)
-                        .fetchOfferings();
+              try {
+                // 1. Await the future to turn Future<Offerings?> into a raw Offerings? object
+                final Offerings? offerings = await ref
+                    .read(subscriptionActionsProvider)
+                    .fetchOfferings();
 
-                    // print("Resolved Offerings data object: $offerings");
+                // 
 
-                    // 2. Safely check if offerings is not null, then access the .all map
-                    if (offerings != null &&
-                        offerings.all["yearly_offer"] != null) {
-                      final PaywallResult result =
-                          await RevenueCatUI.presentPaywall(
-                            displayCloseButton: true,
-                            offering: offerings.all["yearly_offer"]!,
-                          );
-                    } else {
-                      // print(
-                      //   "⚠️ Target offering ID 'yearly_offer' not found in dashboard.",
-                      // );
-                    }
-                  } catch (e) {
-                    // print("❌ Failed to resolve network offerings: $e");
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(
-                    8,
-                  ), // Padding around the asset image
-                  decoration: BoxDecoration(
-                    // color: Theme.of(context).colorScheme.primaryContainer,
-                    shape: BoxShape.circle,
-
-                  ),
-                  child: Image.asset(
-                    "assets/images/gift1.png",
-                    width: 45,
-                    height: 45,
-                    fit: BoxFit.contain,
-                  ),
-                ),
+                // 2. Safely check if offerings is not null, then access the .all map
+                if (offerings != null &&
+                    offerings.all["yearly_offer"] != null) {
+                  final PaywallResult result =
+                      await RevenueCatUI.presentPaywall(
+                        displayCloseButton: true,
+                        offering: offerings.all["yearly_offer"]!,
+                      );
+                } else {
+                  // 
+                }
+              } catch (e) {
+                // 
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+              ), // Padding around the asset image
+              decoration: BoxDecoration(
+                // color: Theme.of(context).colorScheme.primaryContainer,
+                shape: BoxShape.circle,
               ),
+              child: Image.asset(
+                "assets/images/gift1.png",
+                width: 40,
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
         ],
       ),
       // bottomNavigationBar: BottomNavigation(currentIndex:2, onTap: (index) => moveTo(context, const ExplorePage(), "explore-screen") ,),
@@ -108,7 +105,6 @@ class ExplorePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 SizedBox(height: 10),
                 SearchWidget(),
                 SizedBox(height: 10),
@@ -117,13 +113,19 @@ class ExplorePage extends ConsumerWidget {
                 DailyPicks(),
                 // BooksList(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "Daily Pick's",),
                 // SizedBox(height: 20),
-                BooksList(categoryId: "uYP6thI5CjeQtdyhAXzI",title: "Self Growth",),
+                BooksList(
+                  categoryId: "uYP6thI5CjeQtdyhAXzI",
+                  title: "Self Growth",
+                ),
                 SizedBox(height: 20),
                 Collections(),
                 SizedBox(height: 20),
-                BooksList(categoryId: "lNFEAQfx4yhRnnZwQso0",title: "Amazon Most Read",),
+                BooksList(
+                  categoryId: "lNFEAQfx4yhRnnZwQso0",
+                  title: "Amazon Most Read",
+                ),
                 SizedBox(height: 20),
-                BookListView(embedded: true,)
+                BookListView(embedded: true),
               ],
             ),
           ),

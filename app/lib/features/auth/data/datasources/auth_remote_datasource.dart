@@ -73,14 +73,14 @@ Future<(User?, AuthFailure?)> signInWithEmail({
     if (cred.user != null) {
       return (cred.user, null); // Success: Return user, no failure
     } else {
-      debugPrint("⚠️ Auth succeeded, but user object was null.");
+      
       return (null, const ServerFailure('User data missing after auth.'));
     }
   } on FirebaseAuthException catch (e) {
 
-    print(e.code);
-    print("tracing the error");
-    debugPrint("❌ Firebase Auth Error [${e.code}]: ${e.message}");
+    
+    
+    
     
     // Map Firebase errors directly to your custom AuthFailure classes
     final failure = switch (e.code) {
@@ -92,7 +92,7 @@ Future<(User?, AuthFailure?)> signInWithEmail({
     
     return (null, failure); // Return the concrete failure object
   } catch (e) {
-    debugPrint("❌ Unexpected Auth Error: $e");
+    
     return (null, ServerFailure(e.toString()));
   }
 }

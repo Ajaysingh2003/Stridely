@@ -91,7 +91,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       } else {
 
 
-        // debugPrint("⚠️ Auth succeeded, but user object or UID was null.");
+        // 
         // ref.read(authControllerProvider.notifier)
 
         return ;
@@ -241,33 +241,34 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               },
             ),
             const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor:
-                      Colors.white70, // Text color (and ripple color)
-                  minimumSize:
-                      Size.zero, // Removes default padding restrictions
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  tapTargetSize: MaterialTapTargetSize
-                      .shrinkWrap, // Shrinks the hit test box to fit nicely
-                ),
-                onPressed: () {
-                  // Navigate to reset password screen
-                },
-                child: Text(
-                  "Forgot Password?",
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    decoration: TextDecoration.underline,
-                    decorationColor: Theme.of(context).colorScheme.surface,
-                  ),
-                ),
-              ),
-            ),
+
+            // Align(
+            //   alignment: Alignment.centerRight,
+            //   child: TextButton(
+            //     style: TextButton.styleFrom(
+            //       foregroundColor:
+            //           Colors.white70, // Text color (and ripple color)
+            //       minimumSize:
+            //           Size.zero, // Removes default padding restrictions
+            //       padding: const EdgeInsets.symmetric(
+            //         horizontal: 8,
+            //         vertical: 4,
+            //       ),
+            //       tapTargetSize: MaterialTapTargetSize
+            //           .shrinkWrap, // Shrinks the hit test box to fit nicely
+            //     ),
+            //     onPressed: () {
+            //       // Navigate to reset password screen
+            //     },
+            //     child: Text(
+            //       "Forgot Password?",
+            //       style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            //         decoration: TextDecoration.underline,
+            //         decorationColor: Theme.of(context).colorScheme.surface,
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
 
           if (authState.failure != null) ...[

@@ -1,8 +1,10 @@
 import 'package:app/core/app_background.dart';
+import 'package:app/core/func/Navigate.dart';
 // import 'package:app/core/func/Navigate.dart';
 import 'package:app/features/home/presentation/widget/Collections_View.dart';
 // import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
+import 'package:app/features/profile/presentation/screen/lIbrary_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +32,7 @@ class CollectionPage extends ConsumerWidget {
         title: Row(
           children: [
             Text(
-              "Tailored",
+              "Collection",
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 24,
@@ -38,23 +40,19 @@ class CollectionPage extends ConsumerWidget {
             ),
           ],
         ),
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 16),
-        //     child: Builder(
-        //       builder: (context) => IconButton(
-        //         icon: const Icon(
-        //           Icons.sort,
-        //           size: 36,
-        //           color: Color.fromARGB(173, 0, 0, 0),
-        //         ),
-        //         onPressed: () {
-        //           Scaffold.of(context).openDrawer();
-        //         },
-        //       ),
-        //     ),
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            onPressed: () {
+              moveTo(context, LibraryScreen(), "library-stored-books");
+            },
+            icon: Icon(
+              Icons
+                  .bookmark_add_sharp,
+              size: 34,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ],
       ),
       // bottomNavigationBar: BottomNavigation(currentIndex:3, onTap: (index) => moveTo(context, const CollectionPage(), "collection-screen") ,),
       body: AppBackground(

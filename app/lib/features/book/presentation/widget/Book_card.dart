@@ -40,7 +40,7 @@ class BookCard extends StatelessWidget {
                 // resting on the card — rather than the card itself
                 // having a heavy drop shadow.
                 Hero(
-                  tag: book.uid ?? book.title ?? "",
+                  tag: 'book_card_${book.uid}_${identityHashCode(this)}',
                   child: Container(
                     width: 84,
                     height: 122,

@@ -345,10 +345,10 @@ class AllBooksController extends StateNotifier<BookListState> {
           hasMore: paginatedResponse.hasMore,
         );
 
-        print("========== LOAD ==========");
-        print("Current books: ${state.books.length}");
-        print("Current cursor: ${state.lastDocument?.id}");
-        print("Refresh: $isRefresh");
+        
+        
+        
+        
         
       },
       (failure) {
@@ -370,13 +370,13 @@ class SearchBooksController extends StateNotifier<SearchBookListState> {
   }
   
   Future<void> searchBooks(String searchQuery) async {
-    print("search starting");
+    
     if (searchQuery.trim().isEmpty) {
       state = SearchBookListState(books: []); // Reset if query empty
       return;
     }
 
-    print("search working");
+    
 
     // 1. Show loading, keep old books or clear them
     state = state.copyWith(isLoading: true);

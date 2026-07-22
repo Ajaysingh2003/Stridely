@@ -26,4 +26,5 @@ abstract class AuthRepository {
   Future<Either<AuthFailure, Unit>> reloadUser();
 
   Future<void> signOut();
+  Future<void> delete();
 }
