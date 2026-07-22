@@ -253,8 +253,8 @@ class _BookPageState extends ConsumerState<BookPage> {
     final firstContent = contentSync.isNotEmpty ? contentSync.first : null;
     final isPremium = ref.watch(isPremiumProvider);
 
-    print(isPremium);
-    print("singhsingha");
+    
+    
     return Scaffold(
       backgroundColor: colors.surface,
       extendBody: true,

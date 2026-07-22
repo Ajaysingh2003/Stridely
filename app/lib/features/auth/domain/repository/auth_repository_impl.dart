@@ -126,7 +126,7 @@ Future<Either<AuthFailure, UserEntity>> signInWithEmail({
         ServerFailure(e.message ?? 'Platform error during Google Sign-In.'),
       );
     } catch (_) {
-      // print('Unexpected error during Google Sign-In: $e');
+      // 
       return const Left(ServerFailure());
     }
   }
@@ -158,6 +158,11 @@ Future<Either<AuthFailure, UserEntity>> signInWithEmail({
       return const Left(ServerFailure());
     }
   }
+
+  
+  @override
+  Future<void> delete() => _datasource.deleteAccount();
+
 
   @override
   Future<Either<AuthFailure, Unit>> sendPasswordResetEmail({

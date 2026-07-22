@@ -14,7 +14,7 @@ class RecentSearchNotifier extends StateNotifier<List<String>> {
   }
 
   Future<void> addSearch(String query) async {
-    print("starting work with add");
+    
   final trimmedQuery = query.trim();
   if (trimmedQuery.isEmpty) return;
 

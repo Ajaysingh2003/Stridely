@@ -26,7 +26,7 @@ class _CollectionWidgetState extends ConsumerState<Collections> {
   Widget build(BuildContext context) {
     final collectionState = ref.watch(booksControllerProvider);
     final collections = collectionState.collections;
-    print('this is chiru $collections');
+    
     if (collectionState.collectionLoading && collections.isEmpty) {
       return Container(
         padding: const EdgeInsets.symmetric(vertical: 14),

@@ -41,7 +41,7 @@ class BookSharer {
         ),
       );
     } catch (e) {
-      print("❌ Error processing book layout share: $e");
+      
     }
   }
 }

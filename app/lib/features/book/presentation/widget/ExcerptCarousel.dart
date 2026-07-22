@@ -324,7 +324,7 @@ class _CarouselWrapperState extends State<Excerptcarousel> {
       ),
     );
   } catch (e) {
-    debugPrint('❌ Excerpt share error: $e');
+    
   }
 }
     return Column(

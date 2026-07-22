@@ -1,6 +1,7 @@
 import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:app/features/auth/domain/repository/auth_repository.dart';
 import 'package:app/features/auth/domain/repository/auth_repository_impl.dart';
+import 'package:app/features/auth/domain/usecases/delete_account.dart';
 import 'package:app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:app/features/auth/domain/usecases/sign_in_with_email.dart';
 import 'package:app/features/auth/domain/usecases/sign_in_with_google.dart';
@@ -29,6 +30,9 @@ final authRepositoryProvider = Provider<AuthRepository>(
 );
 
 
+// final deleteAccountUseCaseProvider = Provider(
+//   (ref) => DeleteAccountUseCase(ref.watch(authRepositoryProvider)),
+// );
 final signInWithEmailUseCaseProvider = Provider(
   (ref) => SignInWithEmailUsecase(ref.watch(authRepositoryProvider)),
 );
@@ -48,15 +52,21 @@ final signOutUseCase = Provider<SignOutUseCase>(
   (ref) => SignOutUseCase(ref.watch(authRepositoryProvider)),
 );
 
+final deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>((ref) {
+  final authRepository = ref.read(authRepositoryProvider);
+  return DeleteAccountUseCase(authRepository);
+});
 
 final authControllerProvider =
     StateNotifierProvider<AuthController, AuthUIState>((ref) {
       return AuthController(
+        ref.watch(deleteAccountUseCaseProvider),
         ref.watch(signInWithEmailUseCaseProvider),
         ref.watch(signUpWithEmailUseCaseProvider),
         ref.watch(signInWithGoogleUseCaseProvider),
         ref.watch(getCurrentUserUsecases),
         ref.watch(signOutUseCase),
+        
 
       );
     });
@@ -64,3 +74,5 @@ final authControllerProvider =
 final authStateStreamProvider = StreamProvider((ref) {
   return ref.watch(authRepositoryProvider).authStateChanges;
 });
+
+

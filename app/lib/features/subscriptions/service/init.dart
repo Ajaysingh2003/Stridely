@@ -22,7 +22,7 @@
 //         await Purchases.setDisplayName(user.name!);
 //       }
 //     } catch (e) {
-//       debugPrint('RevenueCat login failed: $e');
+//       
 //     }
 //   }
 
@@ -30,7 +30,7 @@
 //     try {
 //       await Purchases.logOut();
 //     } catch (e) {
-//       debugPrint('RevenueCat logout failed: $e');
+//       
 //     }
 //   }
 
@@ -81,9 +81,7 @@
 //     try {
 //       return await Purchases.getOfferings();
 //     } on PlatformException catch (e) {
-//       print(
-//         "❌ Failed to fetch structural offerings package arrays: ${e.message}",
-//       );
+//       
 //       return null;
 //     }
 //   }
@@ -102,9 +100,7 @@
 //     } on PlatformException catch (e) {
 //       final errorCode = PurchasesErrorHelper.getErrorCode(e);
 //       if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
-//         print(
-//           "💥 Operational checkout transaction crash breakdown: ${e.message}",
-//         );
+//         
 //       }
 //       return false;
 //     }
@@ -276,7 +272,7 @@ class RevenueCatService {
   void _log(String message) {
     if (kDebugMode) {
       // ignore: avoid_print
-      print('[RevenueCatService] $message');
+      
     }
   }
 }

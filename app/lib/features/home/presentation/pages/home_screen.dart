@@ -110,7 +110,7 @@ class HomePage extends ConsumerWidget {
               right: 20,
               child: GestureDetector(
                 onTap: () async {
-                  print("looking for offering...");
+                  
 
                   try {
                     // 1. Await the future to turn Future<Offerings?> into a raw Offerings? object
@@ -118,7 +118,7 @@ class HomePage extends ConsumerWidget {
                         .read(subscriptionActionsProvider)
                         .fetchOfferings();
 
-                    print("Resolved Offerings data object: $offerings");
+                    
 
                     // 2. Safely check if offerings is not null, then access the .all map
                     if (offerings != null &&
@@ -129,12 +129,10 @@ class HomePage extends ConsumerWidget {
                             offering: offerings.all["yearly_offer"]!,
                           );
                     } else {
-                      print(
-                        "⚠️ Target offering ID 'yearly_offer' not found in dashboard.",
-                      );
+                      
                     }
                   } catch (e) {
-                    print("❌ Failed to resolve network offerings: $e");
+                    
                   }
                 },
                 child: Container(

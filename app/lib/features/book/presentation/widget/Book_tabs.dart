@@ -58,8 +58,8 @@ class _BookTabState extends ConsumerState<BookTab> with SingleTickerProviderStat
     );
 
     final updatedState = ref.watch(bookTitleControllerProvider(bookId));
-    print('🎯 Fresh titles data length: ${updatedState.titles}');
-    print('⚠️ Any error message? ${updatedState.errorMessage}');
+    
+    
 
     // final List<KeyPoint> contents = [
     //   KeyPoint(id: "kp1", text: "First key concept overview data markerssss."),

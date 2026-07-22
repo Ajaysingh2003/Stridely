@@ -1,18 +1,24 @@
-import 'package:app/core/app_background.dart';
+import 'package:app/features/auth/presentation/provider/auth_di_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:in_app_review/in_app_review.dart';
 
-class AccountSettingsPage extends ConsumerStatefulWidget {
-  const AccountSettingsPage({super.key});
+/// Account settings view — drop this directly into any screen's body layout.
+/// The parent widget manages the top AppBar, root Scaffold, and global page tracking.
+class AccountSettingsView extends ConsumerStatefulWidget {
+  final String appVersion;
+
+  const AccountSettingsView({
+    super.key,
+    this.appVersion = '1.0.0 (Build 24)',
+  });
 
   @override
-  ConsumerState<AccountSettingsPage> createState() =>
-      _AccountSettingsPageState();
+  ConsumerState<AccountSettingsView> createState() => _AccountSettingsViewState();
 }
 
-class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
+class _AccountSettingsViewState extends ConsumerState<AccountSettingsView> {
   bool _isDeleting = false;
   final InAppReview _inAppReview = InAppReview.instance;
 
@@ -25,9 +31,8 @@ class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
       scheme: 'mailto',
       path: _supportEmail,
       queryParameters: {
-        'subject': 'App Support Request (v1.0.0)',
-        'body':
-            'Hi Support Team,\n\n[Please enter your message here]\n\n---\nApp Version: 1.0.0 (Build 24)',
+        'subject': 'App Support Request (${widget.appVersion})',
+        'body': 'Hi Support Team,\n\n[Please enter your message here]\n\n---\nApp Version: ${widget.appVersion}',
       },
     );
 
@@ -39,13 +44,7 @@ class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Could not open mail client. Please email us directly at $_supportEmail",
-            ),
-          ),
-        );
+        _showSnackBar("Could not open mail client. Please email us directly at $_supportEmail");
       }
     }
   }
@@ -57,11 +56,7 @@ class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Couldn't open link.")),
-        );
-      }
+      if (mounted) _showSnackBar("Couldn't open link.");
     }
   }
 
@@ -76,194 +71,198 @@ class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
           microsoftStoreId: null,
         );
       }
-    } catch (_) {
-      // Quietly ignore — never let review prompt crash settings.
-    }
+    } catch (_) {}
   }
 
-  Future<void> _showDeleteFlow() async {
-    final confirmed = await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const DeleteAccountSheet(),
-    );
+Future<void> _showDeleteFlow() async {
+  // 1. Wait for the sheet to finish its hold animation and pop back "true"
+  final confirmed = await showModalBottomSheet<bool>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => const DeleteAccountSheet(),
+  );
 
-    if (confirmed != true || !mounted) return;
+  // If they backed out or lifted their finger early, confirmed will be null/false
+  if (confirmed != true || !mounted) return;
 
-    setState(() => _isDeleting = true);
+  // 2. The user successfully completed the hold action! Run the API logic
+  setState(() => _isDeleting = true);
 
-    try {
-      // await ref.read(authControllerProvider.notifier).deleteAccount();
-      if (mounted) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isDeleting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.toString().contains('requires-recent-login')
-                  ? 'Please sign in again to confirm account deletion.'
-                  : 'Something went wrong. Please try again.',
-            ),
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _handleLogout() async {
+  try {
+  await ref.read(authControllerProvider.notifier).deleteAccount();
+  
+  if (mounted) {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
+} catch (e) {
+  
+  
+  if (mounted) {
+    setState(() => _isDeleting = false);
+    
+    // Check for both the classic standard error string or the explicit exception code structure
+    final errorString = e.toString();
+    final isRecentLoginError = errorString.contains('requires-recent-login') || 
+                               errorString.contains('CREDENTIAL_TOO_OLD_LOGIN_AGAIN');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isRecentLoginError
+              ? 'Security Measure: Please log out and sign back in fresh to confirm account deletion.'
+              : 'Failed to delete account. Please try again.',
+        ),
+        duration: const Duration(seconds: 5),
+        backgroundColor: isRecentLoginError ? Colors.orangeAccent : Theme.of(context).colorScheme.error,
+        action: isRecentLoginError 
+          ? SnackBarAction(
+              label: 'Sign Out',
+              textColor: Colors.white,
+              onPressed: () {
+                // Kick the user out so they can log back in fresh instantly
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+            )
+          : null,
+      ),
+    );
+  }
+}
+}
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(
-          "Settings",
-          style: textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.4,
-            color: colors.onSurface,
+    // ListView is left unconstrained here so it rolls smoothly into parent screen stacks.
+    return ListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      // physics: const ClampingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      children: [
+        _SectionLabel(text: "Support", colors: colors, textTheme: textTheme),
+        _SettingsGroup(
+          colors: colors,
+          children: [
+            _SettingsTile(
+              icon: Icons.mail_outline_rounded,
+              title: "Contact us",
+              subtitle: "Get in touch with our team directly",
+              onTap: _launchEmail,
+              colors: colors,
+              textTheme: textTheme,
+              trailingStyle: _TrailingStyle.none,
+            ),
+            _SettingsTile(
+              icon: Icons.star_outline_rounded,
+              title: "Rate & feedback",
+              subtitle: "Tap to quickly rate us on the app store",
+              onTap: _triggerInAppReview,
+              colors: colors,
+              textTheme: textTheme,
+              isLast: true,
+              trailingStyle: _TrailingStyle.none,
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 24),
+        _SectionLabel(text: "Legal & data", colors: colors, textTheme: textTheme),
+        _SettingsGroup(
+          colors: colors,
+          children: [
+            _SettingsTile(
+              icon: Icons.privacy_tip_outlined,
+              title: "Privacy policy",
+              onTap: () => _openUrl(_privacyUrl),
+              colors: colors,
+              textTheme: textTheme,
+              trailingStyle: _TrailingStyle.external,
+            ),
+            _SettingsTile(
+              icon: Icons.description_outlined,
+              title: "Terms of service",
+              onTap: () => _openUrl(_termsUrl),
+              colors: colors,
+              textTheme: textTheme,
+              trailingStyle: _TrailingStyle.external,
+            ),
+            _SettingsTile(
+              icon: Icons.cleaning_services_outlined,
+              title: "Clear cache",
+              subtitle: "Free up storage space locally",
+              onTap: () => _showSnackBar('App cache cleared successfully.'),
+              colors: colors,
+              textTheme: textTheme,
+              isLast: true,
+              trailingStyle: _TrailingStyle.none,
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 28),
+        _SectionLabel(
+          text: "Danger zone",
+          colors: colors,
+          textTheme: textTheme,
+          isDanger: true,
+        ),
+        _SettingsGroup(
+          colors: colors,
+          isDanger: true,
+          children: [
+            _SettingsTile(
+              icon: Icons.delete_forever_rounded,
+              title: _isDeleting ? "Deleting account…" : "Delete account",
+              onTap: _isDeleting ? null : _showDeleteFlow,
+              colors: colors,
+              textTheme: textTheme,
+              isDanger: true,
+              isLast: true,
+              trailingStyle: _TrailingStyle.none,
+              trailing: _isDeleting
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: colors.error,
+                      ),
+                    )
+                  : null,
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 32),
+        Center(
+          child: Text(
+            "Version ${widget.appVersion}",
+            style: textTheme.labelSmall?.copyWith(
+              color: colors.onSurfaceVariant.withOpacity(0.4),
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.2,
+            ),
           ),
         ),
-        iconTheme: IconThemeData(color: colors.onSurface),
-        centerTitle: false,
-      ),
-      body: AppBackground(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            children: [
-              _SectionLabel(text: "Support", colors: colors, textTheme: textTheme),
-              _SettingsGroup(
-                colors: colors,
-                children: [
-                  _SettingsTile(
-                    icon: Icons.mail_outline_rounded,
-                    title: "Contact us",
-                    subtitle: "Get in touch with our team directly",
-                    onTap: _launchEmail,
-                    colors: colors,
-                    textTheme: textTheme,
-                    trailingStyle: _TrailingStyle.none,
-                  ),
-                  _SettingsTile(
-                    icon: Icons.star_outline_rounded,
-                    title: "Rate & feedback",
-                    subtitle: "Tap to quickly rate us on the app store",
-                    onTap: _triggerInAppReview,
-                    colors: colors,
-                    textTheme: textTheme,
-                    isLast: true,
-                    trailingStyle: _TrailingStyle.none,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-              _SectionLabel(text: "Legal & data", colors: colors, textTheme: textTheme),
-              _SettingsGroup(
-                colors: colors,
-                children: [
-                  _SettingsTile(
-                    icon: Icons.privacy_tip_outlined,
-                    title: "Privacy policy",
-                    onTap: () => _openUrl(_privacyUrl),
-                    colors: colors,
-                    textTheme: textTheme,
-                    trailingStyle: _TrailingStyle.external,
-                  ),
-                  _SettingsTile(
-                    icon: Icons.description_outlined,
-                    title: "Terms of service",
-                    onTap: () => _openUrl(_termsUrl),
-                    colors: colors,
-                    textTheme: textTheme,
-                    trailingStyle: _TrailingStyle.external,
-                  ),
-                  _SettingsTile(
-                    icon: Icons.cleaning_services_outlined,
-                    title: "Clear cache",
-                    subtitle: "Free up storage space locally",
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('App cache cleared successfully.')),
-                      );
-                    },
-                    colors: colors,
-                    textTheme: textTheme,
-                    isLast: true,
-                    trailingStyle: _TrailingStyle.none,
-                  ),
-                ],
-              ),
-
-
-              const SizedBox(height: 28),
-              _SectionLabel(
-                text: "Danger zone",
-                colors: colors,
-                textTheme: textTheme,
-                isDanger: true,
-              ),
-              _SettingsGroup(
-                colors: colors,
-                isDanger: true,
-                children: [
-                  _SettingsTile(
-                    icon: Icons.delete_forever_rounded,
-                    title: _isDeleting ? "Deleting account…" : "Delete account",
-                    onTap: _isDeleting ? null : _showDeleteFlow,
-                    colors: colors,
-                    textTheme: textTheme,
-                    isDanger: true,
-                    isLast: true,
-                    trailingStyle: _TrailingStyle.none,
-                    trailing: _isDeleting
-                        ? SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: colors.error,
-                            ),
-                          )
-                        : null,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 32),
-              Center(
-                child: Text(
-                  "Version 1.0.0 (Build 24)",
-                  style: textTheme.labelSmall?.copyWith(
-                    color: colors.onSurfaceVariant.withOpacity(0.4),
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
-      ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }
+
+// ─── Supporting Design Sub-Components ───
 
 class _SectionLabel extends StatelessWidget {
   final String text;
@@ -285,9 +284,7 @@ class _SectionLabel extends StatelessWidget {
       child: Text(
         text.toUpperCase(),
         style: textTheme.labelSmall?.copyWith(
-          color: isDanger
-              ? colors.error.withOpacity(0.7)
-              : colors.onSurfaceVariant.withOpacity(0.6),
+          color: isDanger ? colors.error.withOpacity(0.7) : colors.onSurfaceVariant.withOpacity(0.6),
           fontWeight: FontWeight.w600,
           letterSpacing: 0.7,
         ),
@@ -316,14 +313,12 @@ class _SettingsGroup extends StatelessWidget {
           color: colors.surface.withOpacity(0.65),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: isDanger
-                ? colors.error.withOpacity(0.16)
-                : colors.onSurface.withOpacity(0.06),
+            color: isDanger ? colors.error.withOpacity(0.16) : colors.onSurface.withOpacity(0.06),
             width: 0.6,
           ),
           boxShadow: [
             BoxShadow(
-              color: colors.onSurface.withOpacity(0.03),
+              color: colors.onSurface.withOpacity(0.02),
               blurRadius: 20,
               offset: const Offset(0, 6),
             ),
@@ -460,31 +455,30 @@ class _SettingsTile extends StatelessWidget {
   }
 }
 
-
-
-
-class DeleteAccountSheet extends StatefulWidget {
+class DeleteAccountSheet extends ConsumerStatefulWidget {
   const DeleteAccountSheet({super.key});
 
   @override
-  State<DeleteAccountSheet> createState() => _DeleteAccountSheetState();
+  ConsumerState<DeleteAccountSheet> createState() => _DeleteAccountSheetState();
 }
 
-class _DeleteAccountSheetState extends State<DeleteAccountSheet> with SingleTickerProviderStateMixin {
+class _DeleteAccountSheetState extends ConsumerState<DeleteAccountSheet> with SingleTickerProviderStateMixin {
   late AnimationController _progressController;
   bool _isHolding = false;
 
   @override
   void initState() {
     super.initState();
-    _progressController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2), // Duration required to hold for deletion
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          Navigator.of(context).pop(true);
-        }
-      });
+
+_progressController = AnimationController(
+  vsync: this,
+  duration: const Duration(seconds: 2),
+)..addStatusListener((status) async { 
+    if (status == AnimationStatus.completed) {
+
+      Navigator.of(context).pop(true);
+    }
+  });
   }
 
   @override
@@ -498,9 +492,12 @@ class _DeleteAccountSheetState extends State<DeleteAccountSheet> with SingleTick
     _progressController.forward();
   }
 
+
   void _onTapUp(TapUpDetails details) {
     if (_progressController.status != AnimationStatus.completed) {
       setState(() => _isHolding = false);
+
+    // final delete=ref.watch(authControllerProvider.notifier).deleteAccount();
       _progressController.reverse();
     }
   }
@@ -509,7 +506,6 @@ class _DeleteAccountSheetState extends State<DeleteAccountSheet> with SingleTick
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
@@ -558,8 +554,8 @@ class _DeleteAccountSheetState extends State<DeleteAccountSheet> with SingleTick
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.info_outline_rounded, 
-                  size: 18, 
+                  Icons.info_outline_rounded,
+                  size: 18,
                   color: colors.error.withOpacity(0.8),
                 ),
                 const SizedBox(width: 10),
@@ -613,9 +609,7 @@ class _DeleteAccountSheetState extends State<DeleteAccountSheet> with SingleTick
                       duration: const Duration(milliseconds: 200),
                       height: 52,
                       decoration: BoxDecoration(
-                        color: _isHolding 
-                            ? colors.error.withOpacity(0.1) 
-                            : colors.error,
+                        color: _isHolding ? colors.error.withOpacity(0.1) : colors.error,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           if (!_isHolding)
@@ -667,6 +661,3 @@ class _DeleteAccountSheetState extends State<DeleteAccountSheet> with SingleTick
     );
   }
 }
-
-
-

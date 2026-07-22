@@ -2,6 +2,7 @@
 import 'dart:ffi';
 
 import 'package:app/features/auth/domain/entities/user_entity.dart';
+import 'package:app/features/auth/domain/usecases/delete_account.dart';
 import 'package:app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:app/features/auth/domain/usecases/sign_in_with_email.dart';
 import 'package:app/features/auth/domain/usecases/sign_in_with_google.dart';
@@ -20,8 +21,9 @@ class AuthController extends StateNotifier<AuthUIState> {
   final SignInWithGoogleUseCase _signInWithGoogle;
   final GetCurrentUserUseCase _currentUser;
   final SignOutUseCase _signOutUseCase;
+  final DeleteAccountUseCase _deleteAccountUseCase;
   AuthController(
-
+    this._deleteAccountUseCase,
     this._signInUseCase,
     this._signUpUseCase,
     this._signInWithGoogle,
@@ -30,19 +32,9 @@ class AuthController extends StateNotifier<AuthUIState> {
   ) : super(const AuthUIState());
 
   
-  // Future <String?> setError(String ? errorMessage) async {
-
-
-  //     // if (errorMessage == "") {return; };
-  //   state.copyWith(failure: ()=> errorMessage );
-  // }
-
-
 
   Future<UserEntity?> getCurrentUser() async {
     final results=await _currentUser.call();
-    print(results);
-    print("fucking girls");
       return results;
    }
 
@@ -55,6 +47,27 @@ class AuthController extends StateNotifier<AuthUIState> {
       state = state.copyWith(isLoading: false);
     }
   }
+  Future<void> deleteAccount() async {
+  // 1. Set the visual loading state indicator immediately
+  state = state.copyWith(isLoading: true);
+  
+  try {
+    // 2. Execute the async backend deletion process logic
+    await _deleteAccountUseCase.call();
+    
+    // 3. Safely verify that the state notifier is still mounted before clearing state
+    if (mounted) {
+      state = const AuthUIState(); 
+    }
+  } catch (e) {
+    // 4. Reset loading status cleanly if an execution block occurs
+    if (mounted) {
+      state = state.copyWith(isLoading: false);
+    }
+    // 5. Rethrow the error so your UI view can catch it and display a SnackBar alert
+    rethrow;
+  }
+}
 
   Future<void> signInWithGoogle() async {
     state = state.copyWith(

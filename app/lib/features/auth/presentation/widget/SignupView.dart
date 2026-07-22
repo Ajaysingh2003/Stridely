@@ -115,18 +115,12 @@ class SignupView extends ConsumerWidget {
                       if (user != null) {
                         // Pass the real Firebase UID instead of a placeholder
                         await RevenueCatService.instance.loginUser(user);
-                        debugPrint(
-                          "🔗 Successfully synchronized Firebase UID ($user) with RevenueCat.",
-                        );
+                        
                       } else {
-                        debugPrint(
-                          "⚠️ Auth completed, but user object or UID was null.",
-                        );
+                        
                       }
                     } catch (e) {
-                      debugPrint(
-                        "💥 Google Sign-In workflow encountered an error: $e",
-                      );
+                      
                     }
                   },
                   child: Row(

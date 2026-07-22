@@ -1,12 +1,13 @@
 import 'package:app/core/app_background.dart';
 import 'package:app/core/func/Navigate.dart';
-import 'package:app/features/bookmark/notifier/notifier.dart';
+// import 'package:app/features/bookmark/notifier/notifier.dart';
 // import 'package:app/core/func/Navigate.dart';
 // import 'package:app/features/home/presentation/widget/Collections_View.dart';
 // import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
-import 'package:app/features/home/presentation/widget/streak_data.dart';
+// import 'package:app/features/home/presentation/widget/streak_data.dart';
 import 'package:app/features/profile/presentation/screen/LIbrary_screen.dart';
+import 'package:app/features/profile/presentation/screen/account_setting_page.dart';
 import 'package:app/features/profile/presentation/widget/saved_book.dart';
 import 'package:app/features/profile/presentation/widget/user_view.dart';
 import 'package:flutter/material.dart';
@@ -57,13 +58,8 @@ class ProfileScreen extends ConsumerWidget {
               children: [
                 UserView(),
                 SizedBox(height: 18),
-                StreakCard(
-                  currentStreak: 7,
-                  longestStreak: 7,
-                  weeklyProgress: [true, true, true, false, true, true, true],
-                  todayIndex: 6, // Sunday — 0=Mon ... 6=Sun
-                ),
-                SavedBookEntry(onTap: ()=>moveTo(context, LibraryScreen(), "library-stored-books"),)
+                SavedBookEntry(onTap: ()=>moveTo(context, LibraryScreen(), "library-stored-books"),),
+                AccountSettingsView(),
               ],
             ),
           ),

@@ -1,5 +1,5 @@
 name: app
-description: "A new Flutter project."
+description: "Booksly - Premium book summaries, audiobooks, and reading insights."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -35,7 +35,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  change_app_package_name: ^1.5.0
   flutter_svg: ^2.2.4
   flutter_staggered_animations: ^1.1.1
   cached_network_image: ^3.4.1
@@ -54,10 +53,7 @@ dependencies:
   purchases_ui_flutter: ^10.4.0
   flutter_markdown: ^0.7.7+1
   just_audio: ^0.10.5
-  just_audio_background: ^0.0.1-beta.17
   audio_session: ^0.2.3
-  audio_service: ^0.18.18
-  flutter_launcher_icons: ^0.13.1
   shared_preferences: ^2.5.5
   in_app_review: ^2.0.12
 dev_dependencies:
@@ -71,6 +67,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   flutter_native_splash: ^2.4.7
+  change_app_package_name: ^1.5.0
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -79,8 +77,8 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/images/logo.png"
   adaptive_icon_background: "assets/images/logo_background.png"
-  adaptive_icon_foreground: "assets/images/logo_foreground.png"
-  # adaptive_icon_foreground_inset: 16
+  adaptive_icon_foreground: "assets/images/logo_foreground_padded.png"
+  # adaptive_icon_foreground_inset: 400
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is

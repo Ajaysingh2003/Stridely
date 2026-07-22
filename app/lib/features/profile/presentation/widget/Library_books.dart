@@ -23,8 +23,8 @@ void initState() {
   WidgetsBinding.instance.addPostFrameCallback((_) async {
     try {
       final List<String> bookIds = await ref.read(bookmarkNotifierProvider);
-      // print("go-go-go");
-      // print(bookIds);
+      // 
+      // 
 
       if (bookIds.isNotEmpty && mounted) {
         await ref
@@ -32,7 +32,7 @@ void initState() {
             .loadBooksFromIds(bookIds);
       }
     } catch (e) {
-      debugPrint('Failed to initialize local library records: $e');
+      
     }
   });
 }

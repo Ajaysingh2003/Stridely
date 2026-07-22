@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'package:audio_session/audio_session.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 
 class CurrentChapter extends Equatable {
   final String title;
@@ -98,14 +99,29 @@ class AudioParams extends Equatable {
   });
 
   @override
-  List<Object?> get props => [bookId, bookTitle, audioUrl, chapters];
+  List<Object?> get props => [
+        bookId,
+        bookTitle,
+        audioUrl,
+        chapters.map((c) => '${c['title']}_${c['startTimeMs']}').join(','),
+      ];
 }
+
+// Single global AudioPlayer instance
+final globalAudioPlayerProvider = Provider<AudioPlayer>((ref) {
+  final player = AudioPlayer();
+  ref.onDispose(() => player.dispose());
+  return player;
+});
 
 class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   final AudioPlayer _player;
   final AudioParams params;
-  bool _isInitialized = false;
   bool _disposed = false;
+
+  StreamSubscription? _playerStateSub;
+  StreamSubscription? _positionSub;
+  StreamSubscription? _durationSub;
 
   AudioPlayerNotifier(this._player, this.params) : super(const AudioPlayerState()) {
     _init();
@@ -117,15 +133,17 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   }
 
   Future<void> _init() async {
-    if (_isInitialized) return;
-    _isInitialized = true;
-
     try {
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.speech());
+      await session.setActive(true);
+
+      await _playerStateSub?.cancel();
+      await _positionSub?.cancel();
+      await _durationSub?.cancel();
 
       // 1. Monitor Playback State
-      _player.playerStateStream.listen((s) {
+      _playerStateSub = _player.playerStateStream.listen((s) {
         if (_disposed) return;
         _safeUpdate(state.copyWith(
           isPlaying: s.playing,
@@ -135,7 +153,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       });
 
       // 2. Continuous Single Stream Position Listener
-      _player.positionStream.listen((p) {
+      _positionSub = _player.positionStream.listen((p) {
         if (_disposed) return;
         
         // Dynamically deduce the active chapter index based on current playback milliseconds
@@ -164,32 +182,45 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       });
 
       // 3. Audio Stream Total Duration Listener
-      _player.durationStream.listen((d) {
+      _durationSub = _player.durationStream.listen((d) {
         if (_disposed || d == null) return;
         _safeUpdate(state.copyWith(duration: d));
       });
 
-      // 4. Setup Single Audio Source with background controls
-      final source = AudioSource.uri(
-        Uri.parse(params.audioUrl),
-        tag: MediaItem(
-          id: params.bookId,
-          title: params.bookTitle,
-          album: 'Book Summary',
-        ),
-      );
+      // 4. Setup plain Audio Source (no background service dependency)
+      final String url = params.audioUrl.trim();
+      if (url.isEmpty) {
+        _safeUpdate(state.copyWith(isLoading: false, error: 'No audio URL available for this book.'));
+        return;
+      }
+
+      final AudioSource source;
+      if (url.startsWith('assets/') || url.startsWith('asset/')) {
+        source = AudioSource.asset(url);
+      } else {
+        source = AudioSource.uri(Uri.parse(url));
+      }
 
       _safeUpdate(state.copyWith(isLoading: true, error: null));
       await _player.setAudioSource(source);
-      _safeUpdate(state.copyWith(isLoading: false));
+      _safeUpdate(state.copyWith(isLoading: false, error: null));
 
     } catch (e) {
-      _safeUpdate(state.copyWith(isLoading: false, error: 'Failed to initialize master track: $e'));
+      
+      _safeUpdate(state.copyWith(isLoading: false, error: 'Failed to initialize audio: $e'));
     }
   }
 
   Future<void> playPause() async {
-    _player.playing ? await _player.pause() : await _player.play();
+    try {
+      if (_player.playing) {
+        await _player.pause();
+      } else {
+        await _player.play();
+      }
+    } catch (e) {
+      _safeUpdate(state.copyWith(error: 'Playback error: $e'));
+    }
   }
 
   Future<void> seekToProgress(double globalProgress) async {
@@ -236,15 +267,16 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   @override
   void dispose() {
     _disposed = true;
-    _player.stop();
+    _playerStateSub?.cancel();
+    _positionSub?.cancel();
+    _durationSub?.cancel();
     super.dispose();
   }
 }
 
-final audioPlayerProvider = StateNotifierProvider.family.autoDispose<AudioPlayerNotifier, AudioPlayerState, AudioParams>(
+final audioPlayerProvider = StateNotifierProvider.family<AudioPlayerNotifier, AudioPlayerState, AudioParams>(
   (ref, params) {
-    final player = AudioPlayer();
-    ref.onDispose(() => player.dispose());
+    final player = ref.watch(globalAudioPlayerProvider);
     return AudioPlayerNotifier(player, params);
   },
 );

@@ -1,42 +1,34 @@
-// import 'package:app/features/auth/presentation/pages/signup_screen.dart';
-// import 'package:app/features/auth/presentation/widget/SignupView.dart';
-// import 'package:app/features/auth/presentation/widget/autha_gatekeeper.dart';
-// import 'package:app/features/book/presentation/screen/book_screen.dart';
-// import 'package:app/features/book/presentation/widget/book_details_skeleton.dart';
-// import 'package:app/features/home/presentation/pages/home_screen.dart';
-// import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
+
+import 'package:app/core/app_root_gatekeeper.dart';
+import 'package:app/core/providers/shared_providers.dart';
 import 'package:app/features/onboarding/presentation/screen/onBoarding_screen.dart';
 import 'package:app/features/subscriptions/service/init.dart';
-// import 'package:audio_service/audio_service.dart';
-// import 'package:just_audio/just_audio.dart';
-// import 'package:just_audio_background/just_audio_background.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
-// import 'package:app/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'package:just_audio_background/just_audio_background.dart'; // re-enable when ready for background audio
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  final sharedPrefs = await SharedPreferences.getInstance();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Note: just_audio_background init temporarily disabled to avoid
-  // "single player" / LateInitializationError during development.
-  // Re-enable with proper AndroidManifest.xml service declarations
-  // and call it here when you want background playback + notifications.
-  //
-  // await JustAudioBackground.init(
-  //   androidNotificationChannelId: 'com.ajaysingh.booksly.channel.audio',
-  //   androidNotificationChannelName: 'Audio Playback',
-  //   androidNotificationOngoing: true,
-  // );
+  // Non-blocking RevenueCat initialization
+  RevenueCatService.instance.init().catchError((e) {
+    
+  });
 
-  await RevenueCatService.instance.init();
-
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -47,7 +39,7 @@ class MyApp extends StatelessWidget {
     final themeColors = Theme.of(context).colorScheme;
     // backgroundColor: const Color(),
     return MaterialApp(
-      title: 'Stridely',
+      title: 'Booksly',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: const ColorScheme.dark(
@@ -128,7 +120,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       // home: const HomePage(),
-      home: OnboardingScreen(),
+      home: AppRootGatekeeper(),
     );
   }
 }
