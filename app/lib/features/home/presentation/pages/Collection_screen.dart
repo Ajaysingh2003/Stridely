@@ -31,12 +31,54 @@ class CollectionPage extends ConsumerWidget {
         titleSpacing: 16,
         title: Row(
           children: [
-            Text(
-              "Collection",
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 24,
-              ),
+            Column(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Collection",
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(
+                      height: 6,
+                    ), // Subtle space between text baseline and the underline
+                    // 🚀 The Stylish Gradient Underline Dash
+                    ShaderMask(
+                      shaderCallback: (bounds) {
+                        return LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Theme.of(context)
+                                .colorScheme
+                                .primary,
+                            Theme.of(context).colorScheme.primary, 
+                            Colors
+                                .transparent,
+                          ],
+                          stops: const [0.0, 0.9, 1.0],
+                        ).createShader(bounds);
+                      },
+                      blendMode: BlendMode.srcIn,
+                      child: Container(
+                        width:84, 
+                        height:4,
+                        decoration: BoxDecoration(
+                          color: Colors.white, 
+                          borderRadius: BorderRadius.circular(2,), 
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),

@@ -3,9 +3,10 @@ import 'package:app/features/auth/domain/repository/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-
+import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../domain/entities/auth_failure.dart';
 import '../../domain/entities/user_entity.dart';
+
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDatasource _datasource;
@@ -52,42 +53,50 @@ class AuthRepositoryImpl implements AuthRepository {
     return _mapUserData(userData);
   }
 
- @override
-Future<Either<AuthFailure, UserEntity>> signInWithEmail({
-  required String email,
-  required String password,
-}) async {
-  try {
-    // 1. Await the tuple record from your datasource
-    final (rawUser, failure) = await _datasource.signInWithEmail(
-      email: email,
-      password: password,
-    );
+  @override
+  Future<Either<AuthFailure, UserEntity>> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      // 1. Await the tuple record from your datasource
+      final (rawUser, failure) = await _datasource.signInWithEmail(
+        email: email,
+        password: password,
+      );
 
-    // 2. Check if the datasource returned an operational failure first
-    if (failure != null) {
-      return Left(failure);
+      // 2. Check if the datasource returned an operational failure first
+      if (failure != null) {
+        return Left(failure);
+      }
+
+      // 3. If rawUser is null, convert it to a ServerFailure, else map it to UserEntity
+      if (rawUser == null) {
+        return const Left(
+          ServerFailure('User data missing after successful auth.'),
+        );
+      }
+
+      // 4. Map the valid Firebase User to your clean domain UserEntity
+      final userEntity = _mapFirebaseUser(rawUser);
+
+      final String permanentUid = userEntity?.uid ?? "";
+
+      await Purchases.logIn(permanentUid);
+
+      // final customerInfo = logInResult.customerInfo;
+      //   final isSubscribed = customerInfo.entitlements.all['premium']?.isActive ?? false;
+
+      if (userEntity == null) {
+        return const Left(ServerFailure('Failed to parse user profile data.'));
+      }
+      return Right(userEntity);
+    } on FirebaseAuthException catch (e) {
+      return Left(_mapFirebaseError(e));
+    } catch (_) {
+      return const Left(ServerFailure());
     }
-
-    // 3. If rawUser is null, convert it to a ServerFailure, else map it to UserEntity
-    if (rawUser == null) {
-      return const Left(ServerFailure('User data missing after successful auth.'));
-    }
-
-    // 4. Map the valid Firebase User to your clean domain UserEntity
-    final userEntity = _mapFirebaseUser(rawUser);
-
-    if (userEntity == null) {
-  return const Left(ServerFailure('Failed to parse user profile data.'));
-}
-    return Right(userEntity);
-
-  } on FirebaseAuthException catch (e) {
-    return Left(_mapFirebaseError(e));
-  } catch (_) {
-    return const Left(ServerFailure());
   }
-}
 
   @override
   Future<Either<AuthFailure, UserEntity>> signUpWithEmail({
@@ -101,6 +110,11 @@ Future<Either<AuthFailure, UserEntity>> signInWithEmail({
         password: password,
         displayName: displayName,
       );
+
+      final String permanentUid = rawUser?.uid ?? "";
+
+      await Purchases.logIn(permanentUid);
+
       return _successOrMappingFailure(_mapFirebaseUser(rawUser));
     } on FirebaseAuthException catch (e) {
       return Left(_mapFirebaseError(e));
@@ -113,6 +127,9 @@ Future<Either<AuthFailure, UserEntity>> signInWithEmail({
   Future<Either<AuthFailure, UserEntity>> signInWithGoogle() async {
     try {
       final rawUser = await _datasource.signInWithGoogle();
+      final String permanentUid = rawUser?.uid ?? "";
+
+    await Purchases.logIn(permanentUid);
       return _successOrMappingFailure(_mapFirebaseUser(rawUser));
     } on CancelledByUserFailure catch (e) {
       return Left(e);
@@ -126,26 +143,31 @@ Future<Either<AuthFailure, UserEntity>> signInWithEmail({
         ServerFailure(e.message ?? 'Platform error during Google Sign-In.'),
       );
     } catch (_) {
-      // 
+      //
       return const Left(ServerFailure());
     }
   }
 
-  @override
-  Future<Either<AuthFailure, UserEntity>> signInWithApple() async {
-    try {
-      final rawUser = await _datasource.signInWithApple();
-      return _successOrMappingFailure(_mapFirebaseUser(rawUser));
-    } on FirebaseAuthException catch (e) {
-      return Left(_mapFirebaseError(e));
-    } catch (e) {
-      final message = e.toString().toLowerCase();
-      if (message.contains('canceled') || message.contains('cancelled')) {
-        return const Left(CancelledByUserFailure());
-      }
-      return const Left(ServerFailure());
-    }
-  }
+  // @override
+  // Future<Either<AuthFailure, UserEntity>> signInWithApple() async {
+  //   try {
+  //     final rawUser = await _datasource.signInWithApple();
+
+  //     final String permanentUid = rawUser?.uid ?? "";
+
+  //     await Purchases.logIn(permanentUid);
+
+  //     return _successOrMappingFailure(_mapFirebaseUser(rawUser));
+  //   } on FirebaseAuthException catch (e) {
+  //     return Left(_mapFirebaseError(e));
+  //   } catch (e) {
+  //     final message = e.toString().toLowerCase();
+  //     if (message.contains('canceled') || message.contains('cancelled')) {
+  //       return const Left(CancelledByUserFailure());
+  //     }
+  //     return const Left(ServerFailure());
+  //   }
+  // }
 
   @override
   Future<Either<AuthFailure, Unit>> reloadUser() async {
@@ -159,10 +181,8 @@ Future<Either<AuthFailure, UserEntity>> signInWithEmail({
     }
   }
 
-  
   @override
   Future<void> delete() => _datasource.deleteAccount();
-
 
   @override
   Future<Either<AuthFailure, Unit>> sendPasswordResetEmail({

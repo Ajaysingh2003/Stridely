@@ -263,7 +263,7 @@ class _CarouselWrapperState extends State<Excerptcarousel> {
     // Brand name
     final brandPainter = TextPainter(
       text: const TextSpan(
-        text: 'Stridely',
+        text: 'Booklsy',
         style: TextStyle(
           color: Color(0xFF4A8FE8),
           fontSize: 20,
@@ -319,8 +319,8 @@ class _CarouselWrapperState extends State<Excerptcarousel> {
         files: [XFile.fromData(pngBytes, mimeType: 'image/png')],
         fileNameOverrides: ['stridely_excerpt.png'],
         text: bookTitle != null
-            ? '"$quoteText"\n\n— $bookTitle${bookAuthor != null ? ', $bookAuthor' : ''}\n\nRead on Stridely.'
-            : 'Shared via Stridely.',
+            ? '"$quoteText"\n\n— $bookTitle${bookAuthor != null ? ', $bookAuthor' : ''}\n\nRead on Booksly.'
+            : 'Shared via Booksly.',
       ),
     );
   } catch (e) {

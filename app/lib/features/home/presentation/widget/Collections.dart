@@ -28,63 +28,65 @@ class _CollectionWidgetState extends ConsumerState<Collections> {
     final collections = collectionState.collections;
     
     if (collectionState.collectionLoading && collections.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: const SkeletonBlock(
-                width: 160,
-                height: 22,
-                borderRadius: 4,
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 270,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(14),
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: 175,
-                    margin: const EdgeInsets.only(right: 14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const AspectRatio(
-                          aspectRatio: 0.7,
-                          child: SkeletonBlock(
-                            width: double.infinity,
-                            height: double.infinity,
-                            borderRadius: 12,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const SkeletonBlock(
-                          width: double.infinity,
-                          height: 12,
-                          borderRadius: 4,
-                        ),
-                        const SizedBox(height: 4),
-                        const SkeletonBlock(
-                          width: 60,
-                          height: 12,
-                          borderRadius: 4,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 14),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: const SkeletonBlock(
+            width: 160,
+            height: 22,
+            borderRadius: 4,
+          ),
         ),
-      );
-    }
+        const SizedBox(height: 16),
+        SizedBox(
+          // 🚀 Step 1: Expanded to 330 to safely containerize the calculated item sizes
+          height: 330, 
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            // 🚀 Step 2: Use symmetric horizontal padding so cards align with the header title 
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              return Container(
+                width: 175,
+                margin: const EdgeInsets.only(right: 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const AspectRatio(
+                      aspectRatio: 0.7, // Calculates height to exactly 250px
+                      child: SkeletonBlock(
+                        width: double.infinity,
+                        height: double.infinity,
+                        borderRadius: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const SkeletonBlock(
+                      width: double.infinity,
+                      height: 12,
+                      borderRadius: 4,
+                    ),
+                    const SizedBox(height: 4),
+                    const SkeletonBlock(
+                      width: 60,
+                      height: 12,
+                      borderRadius: 4,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
     if (collections.isEmpty) return const SizedBox.shrink();
 

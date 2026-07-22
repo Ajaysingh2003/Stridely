@@ -188,10 +188,10 @@ Future<(User?, AuthFailure?)> signInWithEmail({
     return cred.user!;
   }
 
-  @override
-  Future<User> signInWithApple() async {
-    throw UnimplementedError('Apple sign-in not implemented yet');
-  }
+  // @override
+  // Future<User> signInWithApple() async {
+  //   throw UnimplementedError('Apple sign-in not implemented yet');
+  // }
 
   @override
   Future<void> signOut() async {

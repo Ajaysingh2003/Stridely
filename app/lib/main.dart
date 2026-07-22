@@ -3,6 +3,8 @@ import 'package:app/core/app_root_gatekeeper.dart';
 import 'package:app/core/providers/shared_providers.dart';
 import 'package:app/features/onboarding/presentation/screen/onBoarding_screen.dart';
 import 'package:app/features/subscriptions/service/init.dart';
+import 'package:app/core/services/notification_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,10 @@ void main() async {
 
   final sharedPrefs = await SharedPreferences.getInstance();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize Firebase Cloud Messaging
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  await NotificationService.instance.init();
 
   // Non-blocking RevenueCat initialization
   RevenueCatService.instance.init().catchError((e) {
@@ -39,6 +45,7 @@ class MyApp extends StatelessWidget {
     final themeColors = Theme.of(context).colorScheme;
     // backgroundColor: const Color(),
     return MaterialApp(
+      navigatorKey: NotificationService.navigatorKey,
       title: 'Booksly',
       theme: ThemeData(
         useMaterial3: true,

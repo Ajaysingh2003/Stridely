@@ -18,7 +18,7 @@ Stream<Map<String, dynamic>?> authStateChanges();
 
   Future<User> signInWithGoogle();
 
-  Future<User> signInWithApple();
+  // Future<User> signInWithApple();
 
   Future<void> signOut();
 
