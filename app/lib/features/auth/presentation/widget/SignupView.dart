@@ -144,60 +144,60 @@ class SignupView extends ConsumerWidget {
             ),
             const SizedBox(height: 13),
 
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color.fromARGB(
-                        255,
-                        33,
-                        33,
-                        33,
-                      ).withOpacity(0.1),
-                      blurRadius: 1,
-                      spreadRadius: 1.2,
-                      offset: Offset.zero,
-                    ),
-                  ],
-                ),
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 14,
-                    ),
-                  ),
-                  onPressed: () {
-                    // Handle login logic here
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset("assets/images/apple.svg", height: 20),
-                      const SizedBox(width: 12),
-                      Text(
-                        "Signin with Google",
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              // fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                              // color: Colors.white,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            // SizedBox(
+            //   width: double.infinity,
+            //   height: 48,
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(16),
+            //       boxShadow: [
+            //         BoxShadow(
+            //           color: const Color.fromARGB(
+            //             255,
+            //             33,
+            //             33,
+            //             33,
+            //           ).withOpacity(0.1),
+            //           blurRadius: 1,
+            //           spreadRadius: 1.2,
+            //           offset: Offset.zero,
+            //         ),
+            //       ],
+            //     ),
+            //     child: OutlinedButton(
+            //       style: OutlinedButton.styleFrom(
+            //         backgroundColor: Theme.of(context).colorScheme.surface,
+            //         foregroundColor: Colors.black,
+            //         shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(16),
+            //         ),
+            //         padding: const EdgeInsets.symmetric(
+            //           horizontal: 20,
+            //           vertical: 14,
+            //         ),
+            //       ),
+            //       onPressed: () {
+            //         // Handle login logic here
+            //       },
+            //       child: Row(
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         children: [
+            //           SvgPicture.asset("assets/images/apple.svg", height: 20),
+            //           const SizedBox(width: 12),
+            //           Text(
+            //             "Signin with Google",
+            //             style: Theme.of(context).textTheme.headlineSmall
+            //                 ?.copyWith(
+            //                   // fontSize: 17,
+            //                   fontWeight: FontWeight.w500,
+            //                   // color: Colors.white,
+            //                 ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
             const SizedBox(height: 12),
             Center(

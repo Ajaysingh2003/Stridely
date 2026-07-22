@@ -58,7 +58,7 @@ class StridelyIntroCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Stridely',
+                          'Booksly',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,

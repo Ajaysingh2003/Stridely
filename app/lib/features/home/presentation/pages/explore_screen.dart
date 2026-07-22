@@ -1,13 +1,13 @@
 import 'package:app/core/app_background.dart';
-import 'package:app/core/func/Navigate.dart';
+// import 'package:app/core/func/Navigate.dart';
 import 'package:app/features/book/presentation/widget/CategoryMain.dart';
-import 'package:app/features/book/presentation/widget/category_widget.dart';
+// import 'package:app/features/book/presentation/widget/category_widget.dart';
 import 'package:app/features/book/presentation/widget/getting_all_books.dart';
 import 'package:app/features/home/presentation/widget/Collections.dart';
-import 'package:app/features/home/presentation/widget/Collections_View.dart';
+// import 'package:app/features/home/presentation/widget/Collections_View.dart';
 import 'package:app/features/home/presentation/widget/Daily_picks.dart';
 import 'package:app/features/home/presentation/widget/Tops_chart.dart';
-import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
+// import 'package:app/features/home/presentation/widget/bottom_navigation.dart';
 import 'package:app/features/home/presentation/widget/search_widget.dart';
 import 'package:app/features/home/presentation/widget/side_menu.dart';
 import 'package:app/features/subscriptions/providers/subscription_provider.dart';
@@ -38,16 +38,56 @@ class ExplorePage extends ConsumerWidget {
         shadowColor: Colors.transparent,
         scrolledUnderElevation: 0,
         titleSpacing: 16,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
+        title: Row(
           children: [
-            Text(
-              "Explore",
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 24,
-              ),
+            Column(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Explore",
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(
+                      height: 6,
+                    ), // Subtle space between text baseline and the underline
+                    // 🚀 The Stylish Gradient Underline Dash
+                    ShaderMask(
+                      shaderCallback: (bounds) {
+                        return LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Theme.of(context)
+                                .colorScheme
+                                .primary,
+                            Theme.of(context).colorScheme.primary, 
+                            Colors
+                                .transparent,
+                          ],
+                          stops: const [0.0, 0.9, 1.0],
+                        ).createShader(bounds);
+                      },
+                      blendMode: BlendMode.srcIn,
+                      child: Container(
+                        width:64, 
+                        height:4,
+                        decoration: BoxDecoration(
+                          color: Colors.white, 
+                          borderRadius: BorderRadius.circular(2,), 
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
