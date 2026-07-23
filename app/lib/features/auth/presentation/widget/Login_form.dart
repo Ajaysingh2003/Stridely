@@ -102,10 +102,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       if (!mounted) return;
 
       // 2. Perform safe context-driven navigation
+      
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MainNavigationShell(initialIndex: 0,)),
       );
+
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
