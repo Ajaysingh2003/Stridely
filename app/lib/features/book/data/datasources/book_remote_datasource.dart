@@ -198,7 +198,7 @@ class BookRemoteDatasource {
   }
 
   Future<List<BookEntity>> getFreeBooks() async {
-    final snapshot = await _firestore.collection("books").get();
+    final snapshot = await _firestore.collection("books").where("isFree",isEqualTo: true).get();
 
     return snapshot.docs.map((doc) => _mapBook(doc.id, doc.data())).toList();
   }
